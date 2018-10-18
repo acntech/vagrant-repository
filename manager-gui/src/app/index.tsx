@@ -8,7 +8,7 @@ const Root = () => {
     return (
         <h1>Vagrant Repository Manager GUI</h1>
     );
-}
+};
 
 render(
     <Root />,

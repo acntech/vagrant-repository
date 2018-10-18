@@ -16,9 +16,7 @@
     "scripts": {
         "clean": "rm -rf ./dist && mkdir ./dist",
         "build": "webpack -p --progress --colors",
-        "client": "webpack-dev-server --mode production --hot --progress --color --host 0.0.0.0 --port 3000",
-        "server": "nodemon ./src/server/index.js 8080",
-        "start": "concurrently \"yarn server\" \"yarn client\"",
+        "start": "webpack-dev-server --mode production --hot --progress --color --host 0.0.0.0 --port 3000",
         "dev-client": "webpack-dev-server --mode development --hot --progress --color --host 0.0.0.0 --port 3000",
         "dev-server": "nodemon ./src/server/index.js 8080",
         "dev-start": "concurrently \"yarn dev-server\" \"yarn dev-client\""

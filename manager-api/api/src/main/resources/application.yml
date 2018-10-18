@@ -1,0 +1,22 @@
+########################
+# SPRING Configuration #
+########################
+spring:
+  application:
+    name: vagrant-repository-manager-api
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 10MB
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+    default-property-inclusion: NON_NULL
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      adjust-dates-to-context-time-zone: false
+  jmx:
+    enabled: false
+  aop:
+    proxy-target-class: true
