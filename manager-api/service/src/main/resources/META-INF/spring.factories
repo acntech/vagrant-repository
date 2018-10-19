@@ -1,1 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=no.acntech.service.config.ServiceAutoConfig
