@@ -25,8 +25,8 @@ public class BoxService {
         this.groupRepository = groupRepository;
     }
 
-    public Optional<Box> get(final Long id) {
-        return boxRepository.findById(id);
+    public Optional<Box> get(final Long boxId) {
+        return boxRepository.findById(boxId);
     }
 
     public List<Box> find(final Long groupId, final String name) {
@@ -42,8 +42,8 @@ public class BoxService {
     }
 
     @Transactional
-    public Box create(final Long id, @Valid final Box box) {
-        Optional<Group> groupOptional = groupRepository.findById(id);
+    public Box create(final Long groupId, @Valid final Box box) {
+        Optional<Group> groupOptional = groupRepository.findById(groupId);
         if (groupOptional.isPresent()) {
             Group group = groupOptional.get();
             List<Box> boxes = boxRepository.findByGroupId(group.getId());
@@ -58,7 +58,7 @@ public class BoxService {
                         .orElseThrow(() -> new IllegalStateException("Save returned no value"));
             }
         } else {
-            throw new IllegalStateException("A group with id " + id + " does not exist");
+            throw new IllegalStateException("A group with ID " + groupId + " does not exist");
         }
     }
 }

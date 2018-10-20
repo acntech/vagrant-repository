@@ -86,6 +86,15 @@ public class Provider {
             return this;
         }
 
+        public Builder from(Provider provider) {
+            if (provider != null) {
+                this.type = provider.type;
+                this.size = provider.size;
+                this.version = provider.version;
+            }
+            return this;
+        }
+
         public Provider build() {
             Provider provider = new Provider();
             provider.type = this.type;

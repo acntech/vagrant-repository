@@ -9,19 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import no.acntech.common.model.Group;
-import no.acntech.service.repository.BoxRepository;
 import no.acntech.service.repository.GroupRepository;
 
 @Service
 public class GroupService {
 
     private final GroupRepository groupRepository;
-    private final BoxRepository boxRepository;
 
-    public GroupService(final GroupRepository groupRepository,
-                        final BoxRepository boxRepository) {
+    public GroupService(final GroupRepository groupRepository) {
         this.groupRepository = groupRepository;
-        this.boxRepository = boxRepository;
     }
 
     public List<Group> find(final String name) {
@@ -32,8 +28,8 @@ public class GroupService {
         }
     }
 
-    public Optional<Group> get(final Long id) {
-        return groupRepository.findById(id);
+    public Optional<Group> get(final Long groupId) {
+        return groupRepository.findById(groupId);
     }
 
     @Transactional
