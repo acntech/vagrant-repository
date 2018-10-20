@@ -44,16 +44,19 @@ public class VersionService {
     @Transactional
     public Version create(final Long boxId, @Valid final Version version) {
         Optional<Box> boxOptional = boxRepository.findById(boxId);
+
         if (boxOptional.isPresent()) {
             Box box = boxOptional.get();
             List<Version> versions = versionRepository.findByBoxId(box.getId());
-            if (versions.stream().anyMatch(v -> v.getName().equals(version.getName()))) {
-                throw new IllegalStateException("A version with name " + version.getName() + " already exists for box " + box.getName());
+            Version saveVersion = Version.builder()
+                    .from(version)
+                    .name(version.getName().toLowerCase())
+                    .box(box)
+                    .build();
+
+            if (versions.stream().anyMatch(v -> v.getName().equals(saveVersion.getName()))) {
+                throw new IllegalStateException("A version with name " + saveVersion.getName() + " already exists for box " + box.getName());
             } else {
-                Version saveVersion = Version.builder()
-                        .from(version)
-                        .box(box)
-                        .build();
                 return Optional.ofNullable(versionRepository.save(saveVersion))
                         .orElseThrow(() -> new IllegalStateException("Save returned no value"));
             }

@@ -30,14 +30,14 @@ public class ProviderService {
         return providerRepository.findById(providerId);
     }
 
-    public List<Provider> find(final Long versionId, final ProviderType type) {
+    public List<Provider> find(final Long versionId, final ProviderType providerType) {
         if (versionId == null) {
             throw new IllegalArgumentException("Version ID is null");
         } else {
-            if (type == null) {
+            if (providerType == null) {
                 return providerRepository.findByVersionId(versionId);
             } else {
-                return providerRepository.findByVersionIdAndType(versionId, type);
+                return providerRepository.findByVersionIdAndProviderType(versionId, providerType);
             }
         }
     }
@@ -45,16 +45,18 @@ public class ProviderService {
     @Transactional
     public Provider create(final Long versionId, @Valid final Provider provider) {
         Optional<Version> versionOptional = versionRepository.findById(versionId);
+
         if (versionOptional.isPresent()) {
             Version version = versionOptional.get();
             List<Provider> providers = providerRepository.findByVersionId(version.getId());
-            if (providers.stream().anyMatch(v -> v.getType().equals(provider.getType()))) {
-                throw new IllegalStateException("A provider of type " + provider.getType() + " already exists for version " + version.getName());
+            Provider saveProvider = Provider.builder()
+                    .from(provider)
+                    .version(version)
+                    .build();
+
+            if (providers.stream().anyMatch(v -> v.getProviderType().equals(saveProvider.getProviderType()))) {
+                throw new IllegalStateException("A provider of type " + saveProvider.getProviderType() + " already exists for version " + version.getName());
             } else {
-                Provider saveProvider = Provider.builder()
-                        .from(provider)
-                        .version(version)
-                        .build();
                 return Optional.ofNullable(providerRepository.save(saveProvider))
                         .orElseThrow(() -> new IllegalStateException("Save returned no value"));
             }

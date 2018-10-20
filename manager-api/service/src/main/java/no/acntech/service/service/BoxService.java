@@ -44,16 +44,19 @@ public class BoxService {
     @Transactional
     public Box create(final Long groupId, @Valid final Box box) {
         Optional<Group> groupOptional = groupRepository.findById(groupId);
+
         if (groupOptional.isPresent()) {
             Group group = groupOptional.get();
             List<Box> boxes = boxRepository.findByGroupId(group.getId());
-            if (boxes.stream().anyMatch(b -> b.getName().equals(box.getName()))) {
-                throw new IllegalStateException("A box with name " + box.getName() + " already exists for group " + group.getName());
+            Box saveBox = Box.builder()
+                    .from(box)
+                    .name(box.getName().toLowerCase())
+                    .group(group)
+                    .build();
+
+            if (boxes.stream().anyMatch(b -> b.getName().equals(saveBox.getName()))) {
+                throw new IllegalStateException("A box with name " + saveBox.getName() + " already exists for group " + group.getName());
             } else {
-                Box saveBox = Box.builder()
-                        .from(box)
-                        .group(group)
-                        .build();
                 return Optional.ofNullable(boxRepository.save(saveBox))
                         .orElseThrow(() -> new IllegalStateException("Save returned no value"));
             }

@@ -13,5 +13,5 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
 
     List<Provider> findByVersionId(Long versionId);
 
-    List<Provider> findByVersionIdAndType(Long versionId, ProviderType type);
+    List<Provider> findByVersionIdAndProviderType(Long versionId, ProviderType providerType);
 }

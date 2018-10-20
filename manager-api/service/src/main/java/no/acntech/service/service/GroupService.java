@@ -34,12 +34,17 @@ public class GroupService {
 
     @Transactional
     public Group create(@Valid final Group group) {
-        List<Group> groups = groupRepository.findByName(group.getName());
+        Group saveGroup = Group.builder()
+                .from(group)
+                .name(group.getName().toLowerCase())
+                .build();
+
+        List<Group> groups = groupRepository.findByName(saveGroup.getName());
         if (groups.isEmpty()) {
-            return Optional.ofNullable(groupRepository.save(group))
+            return Optional.ofNullable(groupRepository.save(saveGroup))
                     .orElseThrow(() -> new IllegalStateException("Save returned no value"));
         } else {
-            throw new IllegalStateException("A group with name " + group.getName() + " already exists");
+            throw new IllegalStateException("A group with name " + saveGroup.getName() + " already exists");
         }
     }
 }

@@ -70,6 +70,14 @@ public class Group {
             return this;
         }
 
+        public Builder from(Group group) {
+            if (group != null) {
+                this.name = group.name;
+                this.description = group.description;
+            }
+            return this;
+        }
+
         public Group build() {
             Group group = new Group();
             group.name = this.name;

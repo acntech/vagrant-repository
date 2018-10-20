@@ -42,8 +42,8 @@ public class VersionResource {
 
     @GetMapping(path = "{id}/providers")
     public ResponseEntity<List<Provider>> findVersionProviders(@PathVariable(name = "id") final Long versionId,
-                                                               @RequestParam(name = "type", required = false) final ProviderType type) {
-        List<Provider> providers = providerService.find(versionId, type);
+                                                               @RequestParam(name = "type", required = false) final ProviderType providerType) {
+        List<Provider> providers = providerService.find(versionId, providerType);
         return ResponseEntity.ok(providers);
     }
 
