@@ -1,6 +1,7 @@
 package no.acntech.service.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,24 @@ public class GroupService {
         this.groupRepository = groupRepository;
     }
 
-    public List<Group> find() {
-        return groupRepository.findAll();
+    public List<Group> find(final String name) {
+        if (name == null) {
+            return groupRepository.findAll();
+        } else {
+            return groupRepository.findByName(name);
+        }
+    }
+
+    public Optional<Group> get(final Long id) {
+        return groupRepository.findById(id);
+    }
+
+    public Optional<Group> save(final Group group) {
+        List<Group> groups = groupRepository.findByName(group.getName());
+        if (groups.isEmpty()) {
+            return Optional.ofNullable(groupRepository.save(group));
+        } else {
+            throw new IllegalStateException("A group with name " + group.getName() + " already exists");
+        }
     }
 }
