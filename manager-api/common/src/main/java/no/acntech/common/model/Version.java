@@ -1,19 +1,16 @@
 package no.acntech.common.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
-import java.util.List;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -25,14 +22,15 @@ public class Version {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    @Column(unique = false)
     private String name;
     private String description;
+    @Transient
+    private ZonedDateTime created;
+    @Transient
+    private ZonedDateTime modified;
     @ManyToOne
     @JoinColumn(name = "BOX_ID", nullable = false)
     private Box box;
-    @OneToMany(mappedBy = "version", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Provider> providers;
 
     public Long getId() {
         return id;
@@ -46,12 +44,16 @@ public class Version {
         return description;
     }
 
-    public Box getBox() {
-        return box;
+    public ZonedDateTime getCreated() {
+        return created;
     }
 
-    public List<Provider> getProviders() {
-        return providers;
+    public ZonedDateTime getModified() {
+        return modified;
+    }
+
+    public Box getBox() {
+        return box;
     }
 
     @JsonIgnore
@@ -64,7 +66,6 @@ public class Version {
         private String name;
         private String description;
         private Box box;
-        private List<Provider> providers;
 
         private Builder() {
         }
@@ -84,14 +85,8 @@ public class Version {
             return this;
         }
 
-        public Builder providers(List<Provider> providers) {
-            this.providers = providers;
-            return this;
-        }
-
         public Version build() {
             Version version = new Version();
-            version.providers = this.providers;
             version.description = this.description;
             version.name = this.name;
             version.box = this.box;

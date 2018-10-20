@@ -1,19 +1,16 @@
 package no.acntech.common.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
-import java.util.List;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -25,14 +22,15 @@ public class Box {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    @Column(unique = true)
     private String name;
     private String description;
+    @Transient
+    private ZonedDateTime created;
+    @Transient
+    private ZonedDateTime modified;
     @ManyToOne
     @JoinColumn(name = "GROUP_ID", nullable = false)
     private Group group;
-    @OneToMany(mappedBy = "box", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Version> versions;
 
     public Long getId() {
         return id;
@@ -46,12 +44,16 @@ public class Box {
         return description;
     }
 
-    public Group getGroup() {
-        return group;
+    public ZonedDateTime getCreated() {
+        return created;
     }
 
-    public List<Version> getVersions() {
-        return versions;
+    public ZonedDateTime getModified() {
+        return modified;
+    }
+
+    public Group getGroup() {
+        return group;
     }
 
     @JsonIgnore
@@ -64,7 +66,6 @@ public class Box {
         private String name;
         private String description;
         private Group group;
-        private List<Version> versions;
 
         private Builder() {
         }
@@ -84,14 +85,17 @@ public class Box {
             return this;
         }
 
-        public Builder versions(List<Version> versions) {
-            this.versions = versions;
+        public Builder from(Box box) {
+            if (box != null) {
+                this.name = box.name;
+                this.description = box.description;
+                this.group = box.group;
+            }
             return this;
         }
 
         public Box build() {
             Box box = new Box();
-            box.versions = this.versions;
             box.name = this.name;
             box.description = this.description;
             box.group = this.group;

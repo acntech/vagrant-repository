@@ -1,6 +1,5 @@
 package no.acntech.common.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,7 +7,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -20,11 +22,13 @@ public class Provider {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
-    @Column(nullable = false)
     private ProviderType type;
     @NotNull
-    @Column(nullable = false)
     private Long size;
+    @Transient
+    private ZonedDateTime created;
+    @Transient
+    private ZonedDateTime modified;
     @ManyToOne
     @JoinColumn(name = "VERSION_ID", nullable = false)
     private Version version;
@@ -39,6 +43,14 @@ public class Provider {
 
     public Long getSize() {
         return size;
+    }
+
+    public ZonedDateTime getCreated() {
+        return created;
+    }
+
+    public ZonedDateTime getModified() {
+        return modified;
     }
 
     public Version getVersion() {
