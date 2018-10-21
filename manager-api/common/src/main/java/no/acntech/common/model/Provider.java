@@ -49,6 +49,10 @@ public class Provider {
         return size;
     }
 
+    public void setSize(Long size) {
+        this.size = size;
+    }
+
     public ChecksumType getChecksumType() {
         return checksumType;
     }

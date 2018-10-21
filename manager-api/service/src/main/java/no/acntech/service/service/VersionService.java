@@ -36,7 +36,7 @@ public class VersionService {
             if (name == null) {
                 return versionRepository.findByBoxId(boxId);
             } else {
-                return versionRepository.findByBoxIdAndName(boxId, name);
+                return versionRepository.findByBoxIdAndName(boxId, name.toLowerCase());
             }
         }
     }

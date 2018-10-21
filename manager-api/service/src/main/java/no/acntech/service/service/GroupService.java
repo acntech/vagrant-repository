@@ -24,7 +24,7 @@ public class GroupService {
         if (name == null) {
             return groupRepository.findAll();
         } else {
-            return groupRepository.findByName(name);
+            return groupRepository.findByName(name.toLowerCase());
         }
     }
 

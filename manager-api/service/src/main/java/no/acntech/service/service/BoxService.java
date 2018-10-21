@@ -36,7 +36,7 @@ public class BoxService {
             if (name == null) {
                 return boxRepository.findByGroupId(groupId);
             } else {
-                return boxRepository.findByGroupIdAndName(groupId, name);
+                return boxRepository.findByGroupIdAndName(groupId, name.toLowerCase());
             }
         }
     }

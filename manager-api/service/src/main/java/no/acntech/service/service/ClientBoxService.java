@@ -47,7 +47,7 @@ public class ClientBoxService {
     }
 
     private ClientBox mapBox(final Group group, final String boxName) {
-        List<Box> boxes = boxRepository.findByGroupIdAndName(group.getId(), boxName);
+        List<Box> boxes = boxRepository.findByGroupIdAndName(group.getId(), boxName.toLowerCase());
 
         return boxes.stream()
                 .filter(Objects::nonNull)
@@ -103,6 +103,6 @@ public class ClientBoxService {
     }
 
     private String determineProviderUrl(final Group group, final Box box, final Version version) {
-        return "http://localhost:9090/vagrant/boxes/" + determineBoxNamespace(group, box) + "/" + version.getName() + "/image.box";
+        return "http://localhost:9090/vagrant/boxes/" + determineBoxNamespace(group, box) + "/" + version.getName().toLowerCase() + "/image.box";
     }
 }
