@@ -6,7 +6,9 @@ const groups = require('../data/groups.json');
 const boxes = require('../data/boxes.json');
 
 router.get('/', (req, res) => {
-    const name = req.query.name;
+    const { query } = req;
+    const { name } = query;
+
     if (name) {
         const entities = groups.filter(e => e.name === name);
         res.send(entities);
@@ -16,12 +18,15 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-    const id = req.params.id;
+    const { params } = req;
+    const { id } = params;
+
     if (!id) {
         res.status(404).send();
     }
 
     const entity = groups.find(e => e.id == id);
+
     if (entity) {
         res.send(entity);
     } else {
@@ -29,9 +34,31 @@ router.get('/:id', (req, res) => {
     }
 });
 
+router.post('/', (req, res) => {
+    const { body } = req;
+
+    if (!body || !body.name) {
+        res.status(400).send();
+    }
+
+    const { name } = body;
+
+    const entities = groups.filter(e => e.name === name);
+
+    if (entities && entities.length > 0) {
+        res.status(409).send();
+    } else {
+        const id = groups.length + 1;
+        const group = { ...body, id: id };
+        groups.push(group);
+        res.send(group);
+    }
+});
+
 router.get('/:id/boxes', (req, res) => {
-    const id = req.params.id;
-    const name = req.query.name;
+    const { params, query } = req;
+    const { id } = params;
+    const { name } = query;
 
     if (!id) {
         res.status(404).send();

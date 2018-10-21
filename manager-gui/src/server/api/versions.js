@@ -7,11 +7,13 @@ const providers = require('../data/providers.json');
 
 router.get('/:id', (req, res) => {
     const id = req.params.id;
+
     if (!id) {
         res.status(404).send();
     }
 
     const entity = versions.find(e => e.id == id);
+
     if (entity) {
         res.send(entity);
     } else {
