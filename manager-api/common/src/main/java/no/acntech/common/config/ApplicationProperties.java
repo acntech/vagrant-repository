@@ -30,6 +30,8 @@ public class ApplicationProperties {
         private String uploadDir;
         @NotBlank
         private String defaultFileName;
+        @NotBlank
+        private String rootContextPath;
 
         public String getUploadDir() {
             return uploadDir;
@@ -45,6 +47,14 @@ public class ApplicationProperties {
 
         public void setDefaultFileName(String defaultFileName) {
             this.defaultFileName = defaultFileName;
+        }
+
+        public String getRootContextPath() {
+            return rootContextPath;
+        }
+
+        public void setRootContextPath(String rootContextPath) {
+            this.rootContextPath = rootContextPath;
         }
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import no.acntech.common.model.Provider;
 import no.acntech.service.service.ProviderService;
 
-@RequestMapping(path = "providers")
+@RequestMapping(path = "api/providers")
 @RestController
 public class ProviderResource {
 

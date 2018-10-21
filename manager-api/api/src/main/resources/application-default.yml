@@ -28,4 +28,3 @@ logging:
 acntech:
   file:
     upload-dir: /tmp/vagrant-repository-manager/uploads
-    default-file-name: image.box

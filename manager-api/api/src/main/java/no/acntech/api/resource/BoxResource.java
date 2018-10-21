@@ -19,7 +19,7 @@ import no.acntech.common.model.Version;
 import no.acntech.service.service.BoxService;
 import no.acntech.service.service.VersionService;
 
-@RequestMapping(path = "boxes")
+@RequestMapping(path = "api/boxes")
 @RestController
 public class BoxResource {
 
@@ -49,7 +49,7 @@ public class BoxResource {
     @PostMapping(path = "{id}/versions")
     public ResponseEntity<Version> post(@PathVariable(name = "id") final Long boxId,
                                         @RequestBody final Version version,
-                                        UriComponentsBuilder uriBuilder) {
+                                        final UriComponentsBuilder uriBuilder) {
         Version createdVersion = versionService.create(boxId, version);
         URI uri = uriBuilder.path("versions/{id}").buildAndExpand(createdVersion.getId()).toUri();
         return ResponseEntity.created(uri).body(createdVersion);

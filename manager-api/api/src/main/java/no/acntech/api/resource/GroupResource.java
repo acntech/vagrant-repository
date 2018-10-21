@@ -19,7 +19,7 @@ import no.acntech.common.model.Group;
 import no.acntech.service.service.BoxService;
 import no.acntech.service.service.GroupService;
 
-@RequestMapping(path = "groups")
+@RequestMapping(path = "api/groups")
 @RestController
 public class GroupResource {
 
@@ -47,7 +47,7 @@ public class GroupResource {
 
     @PostMapping
     public ResponseEntity<Group> post(@RequestBody final Group group,
-                                      UriComponentsBuilder uriBuilder) {
+                                      final UriComponentsBuilder uriBuilder) {
         Group createdGroup = groupService.create(group);
         URI uri = uriBuilder.path("groups/{id}").buildAndExpand(createdGroup.getId()).toUri();
         return ResponseEntity.created(uri).body(createdGroup);
@@ -63,7 +63,7 @@ public class GroupResource {
     @PostMapping(path = "{id}/boxes")
     public ResponseEntity<Box> post(@PathVariable(name = "id") final Long groupId,
                                     @RequestBody final Box box,
-                                    UriComponentsBuilder uriBuilder) {
+                                    final UriComponentsBuilder uriBuilder) {
         Box createdBox = boxService.create(groupId, box);
         URI uri = uriBuilder.path("boxes/{id}").buildAndExpand(createdBox.getId()).toUri();
         return ResponseEntity.created(uri).body(createdBox);

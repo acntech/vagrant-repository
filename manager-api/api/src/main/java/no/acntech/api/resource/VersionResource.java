@@ -20,7 +20,7 @@ import no.acntech.common.model.Version;
 import no.acntech.service.service.ProviderService;
 import no.acntech.service.service.VersionService;
 
-@RequestMapping(path = "versions")
+@RequestMapping(path = "api/versions")
 @RestController
 public class VersionResource {
 
@@ -49,7 +49,8 @@ public class VersionResource {
 
     @PostMapping(path = "{id}/providers")
     public ResponseEntity<Provider> post(@PathVariable(name = "id") final Long versionId,
-                                         @RequestBody final Provider provider, UriComponentsBuilder uriBuilder) {
+                                         @RequestBody final Provider provider,
+                                         final UriComponentsBuilder uriBuilder) {
         Provider createdProvider = providerService.create(versionId, provider);
         URI uri = uriBuilder.path("providers/{id}").buildAndExpand(createdProvider.getId()).toUri();
         return ResponseEntity.created(uri).body(createdProvider);

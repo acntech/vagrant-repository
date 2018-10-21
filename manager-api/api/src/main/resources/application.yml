@@ -21,3 +21,11 @@ spring:
     enabled: false
   aop:
     proxy-target-class: true
+
+#########################
+# ACNTECH Configuration #
+#########################
+acntech:
+  file:
+    root-context-path: /api/vagrant/boxes
+    default-file-name: image.box

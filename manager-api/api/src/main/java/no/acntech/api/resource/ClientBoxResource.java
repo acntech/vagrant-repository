@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import no.acntech.common.model.ClientBox;
 import no.acntech.service.service.ClientBoxService;
 import no.acntech.service.service.FileService;
 
-@RequestMapping(path = "vagrant/boxes")
+@RequestMapping(path = "api/vagrant/boxes")
 @RestController
 public class ClientBoxResource {
 
@@ -30,8 +31,9 @@ public class ClientBoxResource {
 
     @GetMapping(path = "{groupName}/{boxName}")
     public ResponseEntity<ClientBox> get(@PathVariable(name = "groupName") String groupName,
-                                         @PathVariable(name = "boxName") String boxName) {
-        Optional<ClientBox> clientBox = clientBoxService.get(groupName, boxName);
+                                         @PathVariable(name = "boxName") String boxName,
+                                         final UriComponentsBuilder uriBuilder) {
+        Optional<ClientBox> clientBox = clientBoxService.get(groupName, boxName, uriBuilder);
         return clientBox.map(ResponseEntity::ok).orElseGet(ResponseEntity.notFound()::build);
     }
 
