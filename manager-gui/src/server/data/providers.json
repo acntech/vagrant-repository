@@ -1,0 +1,21 @@
+[
+    {
+        "id": 1,
+        "provider_type": "VIRTUALBOX",
+        "size": 104073,
+        "checksum_type": "SHA1",
+        "checksum": "4b70f9691f98c0277877be219a4ed162e1f6a310",
+        "version": {
+            "id": 1,
+            "name": "myversion",
+            "box": {
+                "id": 1,
+                "name": "mybox",
+                "group": {
+                    "id": 1,
+                    "name": "mygroup"
+                }
+            }
+        }
+    }
+]
