@@ -2,34 +2,52 @@ import * as React from 'react';
 import { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
+import { Container, Segment } from 'semantic-ui-react';
+import { MainHeader } from '../../components/main-header';
 
-import { RootState } from '../../models/types';
-import { HomeContainer, NotFoundContainer } from '../index';
+import { GroupState, RootState } from '../../models';
+import { findGroups } from '../../state/actions';
+import { HomeContainer, NotFoundContainer } from '../';
 
 interface ComponentStateProps {
+    groupState: GroupState;
 }
 
 interface ComponentDispatchProps {
+    findGroups: (name?: string) => Promise<any>;
 }
 
-class Root extends Component {
+type ComponentProps = ComponentDispatchProps & ComponentStateProps;
+
+class RootContainer extends Component<ComponentProps> {
+
+    componentDidMount() {
+        this.props.findGroups();
+    }
 
     public render(): ReactNode {
         return (
-            <Switch>
-                <Route path="/" exact component={HomeContainer} />
-                <Route component={NotFoundContainer} />
-            </Switch>
+            <Container>
+                <MainHeader title='Vagrant Repository Manager' />
+                <Segment vertical>
+                    <Switch>
+                        <Route path="/" exact component={HomeContainer} />
+                        <Route component={NotFoundContainer} />
+                    </Switch>
+                </Segment>
+            </Container>
         );
     }
 }
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
+    groupState: state.groupState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
+    findGroups: (name?: string) => dispatch(findGroups(name))
 });
 
-const RootContainer = connect(mapStateToProps, mapDispatchToProps)(Root);
+const ConnectedRootContainer = connect(mapStateToProps, mapDispatchToProps)(RootContainer);
 
-export { RootContainer };
+export { ConnectedRootContainer as RootContainer };

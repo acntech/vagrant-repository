@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { Container, Segment } from 'semantic-ui-react';
 
-import { UnknownErrorContainer } from './';
+import { UnknownErrorContainer } from '../../containers';
 import { MainHeader } from '../../components';
 
 interface ComponentProps {
@@ -12,7 +12,7 @@ interface ComponentState {
     hasError?: boolean;
 }
 
-class ErrorHandler extends Component<ComponentProps, ComponentState> {
+class ErrorHandlerProvider extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
@@ -30,7 +30,7 @@ class ErrorHandler extends Component<ComponentProps, ComponentState> {
         if (hasError) {
             return (
                 <Container>
-                    <MainHeader title='Rebuz' subtitle='Error' />
+                    <MainHeader title='Vagrant Repository Manager' subtitle='Error' />
                     <Segment vertical>
                         <UnknownErrorContainer />
                     </Segment>
@@ -42,4 +42,4 @@ class ErrorHandler extends Component<ComponentProps, ComponentState> {
     }
 }
 
-export { ErrorHandler };
+export { ErrorHandlerProvider };

@@ -16,8 +16,8 @@ const mode = process.env.NODE_ENV || 'development';
 
 module.exports = {
     entry: {
-        app: ['./src/app/index.tsx'],
-        vendor: ['react', 'react-dom', 'react-router', 'redux', 'react-redux', 'redux-thunk']
+        app: [ './src/app/index.tsx' ],
+        vendor: [ 'react', 'react-dom', 'react-router', 'redux', 'react-redux', 'redux-thunk' ]
     },
     output: {
         filename: 'main.bundle.js',
@@ -25,8 +25,8 @@ module.exports = {
         publicPath: '/'
     },
     resolve: {
-        extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-        modules: ['node_modules']
+        extensions: [ '.js', '.jsx', '.json', '.ts', '.tsx' ],
+        modules: [ 'node_modules' ]
     },
     module: {
         rules: [
@@ -62,9 +62,9 @@ module.exports = {
                                         '>1%',
                                         'last 4 versions',
                                         'Firefox ESR',
-                                        'not ie < 9', // React doesn't support IE8 anyway
+                                        'not ie < 9' // React doesn't support IE8 anyway
                                     ],
-                                    flexbox: 'no-2009',
+                                    flexbox: 'no-2009'
                                 })
                             ]
                         }
@@ -74,6 +74,10 @@ module.exports = {
             {
                 test: /\.(png|jpg|gif|ttf|eot|svg|woff2?)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'file-loader'
+            },
+            {
+                test: /\.json$/,
+                loader: 'json-loader'
             }
         ]
     },
@@ -104,4 +108,4 @@ module.exports = {
             template: indexFile
         })
     ]
-}
+};

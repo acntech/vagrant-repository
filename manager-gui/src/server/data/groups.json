@@ -2,5 +2,9 @@
     {
         "id": 1,
         "name": "mygroup"
+    },
+    {
+        "id": 2,
+        "name": "othergroup"
     }
 ]

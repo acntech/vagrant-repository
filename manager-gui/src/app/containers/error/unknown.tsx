@@ -6,7 +6,7 @@ class UnknownErrorContainer extends Component {
     public render(): ReactNode {
         return (
             <div className="error error-unknown">
-                <h3><Icon name='x' />An unknown error occured</h3>
+                <h3><Icon name='x' />An unknown error occurred</h3>
             </div>
         );
     }

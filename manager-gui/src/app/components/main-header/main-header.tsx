@@ -7,7 +7,7 @@ interface ComponentProps {
     subtitle?: string;
 }
 
-class MainHeader extends Component<ComponentProps> {
+class MainHeaderComponent extends Component<ComponentProps> {
 
     public render(): ReactNode {
         const title = this.processTitle();
@@ -33,4 +33,4 @@ class MainHeader extends Component<ComponentProps> {
     }
 }
 
-export { MainHeader };
+export { MainHeaderComponent as MainHeader };
