@@ -3,7 +3,6 @@ import { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
-import { Container, Segment } from 'semantic-ui-react';
 
 import { GroupState, RootState } from '../../models';
 import { findGroups } from '../../state/actions';
@@ -28,15 +27,11 @@ class RootContainer extends Component<ComponentProps> {
     public render(): ReactNode {
         return (
             <BrowserRouter>
-                <Container>
-                    <Segment vertical>
-                        <Switch>
-                            <Route path="/group/:groupId?" component={GroupContainer} />
-                            <Route path="/" exact component={HomeContainer} />
-                            <Route component={NotFoundContainer} />
-                        </Switch>
-                    </Segment>
-                </Container>
+                <Switch>
+                    <Route path="/group/:groupId?" component={GroupContainer} />
+                    <Route path="/" exact component={HomeContainer} />
+                    <Route component={NotFoundContainer} />
+                </Switch>
             </BrowserRouter>
         );
     }

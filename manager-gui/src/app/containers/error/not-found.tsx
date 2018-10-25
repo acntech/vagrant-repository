@@ -1,13 +1,29 @@
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
-import { Icon } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { Button, Container, Message, Segment } from 'semantic-ui-react';
 
-class NotFoundContainer extends Component {
+interface RouteProps {
+    history: any;
+}
+
+type ComponentProps = RouteProps;
+
+class NotFoundContainer extends Component<ComponentProps> {
     public render(): ReactNode {
         return (
-            <div className="error error-not-found">
-                <h3><Icon name='blind' />Page not found</h3>
-            </div>
+            <Container className="error error-not-found">
+                <Segment basic>
+                    <Message
+                        negative
+                        icon='blind'
+                        header='Page not found'
+                        content='Can not find the page' />
+                    <Link to='/'>
+                        <Button primary icon='home' size='mini' content='Home' />
+                    </Link>
+                </Segment>
+            </Container>
         );
     }
 }

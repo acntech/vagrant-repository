@@ -10,6 +10,12 @@ export enum FindGroupsActionType {
     ERROR = '[groups] FIND ERROR'
 }
 
+export enum GetBoxActionType {
+    LOADING = '[boxes] GET LOADING',
+    SUCCESS = '[boxes] GET SUCCESS',
+    ERROR = '[boxes] GET ERROR'
+}
+
 export enum FindBoxesActionType {
     LOADING = '[boxes] FIND LOADING',
     SUCCESS = '[boxes] FIND SUCCESS',

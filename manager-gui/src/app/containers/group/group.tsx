@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
-import { Dimmer, Loader, Table } from 'semantic-ui-react';
+import { Container, Header, Segment, Table } from 'semantic-ui-react';
 
-import { Box, BoxState, RootState } from '../../models';
-import { findBoxes } from '../../state/actions';
+import { Box, BoxState, Group, GroupState, RootState } from '../../models';
+import { findGroupBoxes } from '../../state/actions';
 import { MainHeader } from '../../components';
 
 interface RouteProps {
@@ -13,16 +13,18 @@ interface RouteProps {
 }
 
 interface ComponentStateProps {
+    groupState: GroupState;
     boxState: BoxState;
 }
 
 interface ComponentDispatchProps {
-    findBoxes: (groupId: number) => Promise<any>;
+    findGroupBoxes: (groupId: number) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
 
 interface ComponentState {
+    group?: Group;
     boxId?: number;
 }
 
@@ -35,27 +37,37 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
         this.state = initialState;
     }
 
-    componentDidMount(){
-        this.props.findBoxes(Number(this.props.match.params.groupId));
+    componentDidMount() {
+        const { groupId } = this.props.match.params;
+        this.props.findGroupBoxes(Number(groupId));
     }
 
+    componentDidUpdate() {
+        const { groupId } = this.props.match.params;
+        const { group } = this.state;
+        if (!group) {
+            const { groups } = this.props.groupState;
+            const currentGroup = groups.find((group) => group.id == groupId);
+            if (currentGroup) {
+                this.setState({ group: currentGroup });
+            }
+        }
+    }
 
     public render(): ReactNode {
-        const { boxId } = this.state;
+        const { boxId, group } = this.state;
         const { boxState } = this.props;
-//        const loading = groupState.loading;
-        const { boxes, loading } = boxState; 
+        const { boxes, loading } = boxState;
 
         if (boxId) {
             return <Redirect to={`/box/${boxId}`} />;
         } else if (loading) {
-            return <Loading />;
+            return <LoadingFragment />;
         } else {
-            console.log(boxes)
             return (
                 <div>
-                    <MainHeader title='Vagrant Repository Manager' />
-                    <Boxes boxes={boxes} onClick={this.onListItemClick} />
+                    <GroupFragment group={group} boxes={boxes} onClick={this.onListItemClick} />
+
                 </div>
             );
         }
@@ -65,21 +77,52 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
     };
 }
 
-interface BoxesProps {
+interface GroupFragmentProps {
+    group?: Group;
     boxes: Box[];
     onClick: (groupId: number) => void;
 }
 
-const Boxes: SFC<BoxesProps> = (props) => {
+const GroupFragment: SFC<GroupFragmentProps> = (props) => {
+    const { group, boxes, onClick } = props;
+
+    if (group) {
+        const { name, description } = group;
+        return (
+            <Container>
+                <MainHeader title='Vagrant Repository Manager' />
+                <Segment basic>
+                    <Header>{name}</Header>
+                    <Header.Subheader>{description}</Header.Subheader>
+                </Segment>
+                <BoxesFragment boxes={boxes} onClick={onClick} />
+            </Container>
+        );
+    } else {
+        return (
+            <Container>
+                <MainHeader title='Vagrant Repository Manager' />
+                <BoxesFragment boxes={boxes} onClick={onClick} />
+            </Container>
+        );
+    }
+}
+
+interface BoxesFragmentProps {
+    boxes: Box[];
+    onClick: (groupId: number) => void;
+}
+
+const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
     const { boxes, onClick } = props;
+
     return (
-        <div>
-        {boxes[0] ? <h3>Group: {boxes[0].group.name}</h3> : null}
+        <Segment basic>
             <Table celled selectable>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell>Box name</Table.HeaderCell>
-                        <Table.HeaderCell>Description</Table.HeaderCell>
+                        <Table.HeaderCell width={4}>Box name</Table.HeaderCell>
+                        <Table.HeaderCell width={10}>Description</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -94,27 +137,26 @@ const Boxes: SFC<BoxesProps> = (props) => {
                     })}
                 </Table.Body>
             </Table>
-        </div>
+        </Segment>
     );
 };
 
-const Loading: SFC<{}> = () => {
+const LoadingFragment: SFC<{}> = () => {
     return (
-        <div>
+        <Container>
             <MainHeader title='Vagrant Repository Manager' />
-            <Dimmer inverted active>
-                <Loader>Loading</Loader>
-            </Dimmer>
-        </div>
+            <Segment loading />
+        </Container>
     );
 };
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
+    groupState: state.groupState,
     boxState: state.boxState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
-        findBoxes:(groupId: number) => dispatch(findBoxes(groupId))
+    findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId))
 
 });
 

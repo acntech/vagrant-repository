@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
-import { Dimmer, Loader, Table } from 'semantic-ui-react';
+import { Container, Segment, Table } from 'semantic-ui-react';
 
 import { Group, GroupState, RootState } from '../../models';
 import { MainHeader } from '../../components';
@@ -37,10 +37,10 @@ class HomeContainer extends Component<ComponentProps, ComponentState> {
         if (groupId) {
             return <Redirect to={`/group/${groupId}`} />;
         } else if (loading) {
-            return <Loading />;
+            return <LoadingFragment />;
         } else {
             return (
-                <Groups groups={groups} onClick={this.onListItemClick} />
+                <GroupsFragment groups={groups} onClick={this.onListItemClick} />
             );
         }
     }
@@ -50,47 +50,48 @@ class HomeContainer extends Component<ComponentProps, ComponentState> {
     };
 }
 
-interface GroupsProps {
+interface GroupsFragmentProps {
     groups: Group[];
     onClick: (groupId: number) => void;
 }
 
-const Groups: SFC<GroupsProps> = (props) => {
+const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
     const { groups, onClick } = props;
+
     return (
-        <div>
+        <Container>
             <MainHeader title='Vagrant Repository Manager' />
-            <Table celled selectable>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Group</Table.HeaderCell>
-                        <Table.HeaderCell>Description</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {groups.map((group, index) => {
-                        const { id, name, description } = group;
-                        return (
-                            <Table.Row key={index} className='clickable-table-row' onClick={() => onClick(id)}>
-                                <Table.Cell>{name}</Table.Cell>
-                                <Table.Cell>{description}</Table.Cell>
-                            </Table.Row>
-                        );
-                    })}
-                </Table.Body>
-            </Table>
-        </div>
+            <Segment basic>
+                <Table celled selectable>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell width={4}>Group</Table.HeaderCell>
+                            <Table.HeaderCell width={10}>Description</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {groups.map((group, index) => {
+                            const { id, name, description } = group;
+                            return (
+                                <Table.Row key={index} className='clickable-table-row' onClick={() => onClick(id)}>
+                                    <Table.Cell>{name}</Table.Cell>
+                                    <Table.Cell>{description}</Table.Cell>
+                                </Table.Row>
+                            );
+                        })}
+                    </Table.Body>
+                </Table>
+            </Segment>
+        </Container>
     );
 };
 
-const Loading: SFC<{}> = () => {
+const LoadingFragment: SFC<{}> = () => {
     return (
-        <div>
+        <Container>
             <MainHeader title='Vagrant Repository Manager' />
-            <Dimmer inverted active>
-                <Loader>Loading</Loader>
-            </Dimmer>
-        </div>
+            <Segment loading />
+        </Container>
     );
 };
 

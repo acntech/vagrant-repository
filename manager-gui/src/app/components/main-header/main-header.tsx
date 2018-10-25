@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
-import { Header, Icon } from 'semantic-ui-react'
+import { Header, Icon, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 
 interface ComponentProps {
@@ -16,18 +16,20 @@ class MainHeaderComponent extends Component<ComponentProps> {
         document.title = title;
 
         return (
-            <Header as='h1'>
-                <Link className="header-link" to="/">
-                    <Icon name='cubes' />{title}
-                </Link>
-            </Header>
+            <Segment basic>
+                <Header as='h1'>
+                    <Link className="header-link" to="/">
+                        <Icon name='cubes' />{title}
+                    </Link>
+                </Header>
+            </Segment>
         );
     }
 
     private processTitle() {
         const { title, subtitle } = this.props;
         if (subtitle) {
-            return `${title} - ${subtitle}`;
+            return `${subtitle} - ${title}`;
         } else {
             return `${title}`;
         }

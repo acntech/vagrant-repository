@@ -12,20 +12,20 @@ import {
     GetGroupSuccessAction
 } from '../../models';
 
-const getGroupLoading = (loading: boolean): GetGroupLoadingAction => ({type: GetGroupActionType.LOADING, loading});
-const getGroupSuccess = (payload: Group): GetGroupSuccessAction => ({type: GetGroupActionType.SUCCESS, payload});
-const getGroupError = (error: any): GetGroupErrorAction => ({type: GetGroupActionType.ERROR, error});
+const getGroupLoading = (loading: boolean): GetGroupLoadingAction => ({ type: GetGroupActionType.LOADING, loading });
+const getGroupSuccess = (payload: Group): GetGroupSuccessAction => ({ type: GetGroupActionType.SUCCESS, payload });
+const getGroupError = (error: any): GetGroupErrorAction => ({ type: GetGroupActionType.ERROR, error });
 
-const findGroupsLoading = (loading: boolean): FindGroupsLoadingAction => ({type: FindGroupsActionType.LOADING, loading});
-const findGroupsSuccess = (payload: Group[]): FindGroupsSuccessAction => ({type: FindGroupsActionType.SUCCESS, payload});
-const findGroupsError = (error: any): FindGroupsErrorAction => ({type: FindGroupsActionType.ERROR, error});
+const findGroupsLoading = (loading: boolean): FindGroupsLoadingAction => ({ type: FindGroupsActionType.LOADING, loading });
+const findGroupsSuccess = (payload: Group[]): FindGroupsSuccessAction => ({ type: FindGroupsActionType.SUCCESS, payload });
+const findGroupsError = (error: any): FindGroupsErrorAction => ({ type: FindGroupsActionType.ERROR, error });
 
 const rootPath = '/api/groups';
 
-export function getGroup(id: number) {
+export function getGroup(groupId: number) {
     return (dispatch) => {
         dispatch(getGroupLoading(true));
-        const url = `${rootPath}/${id}`;
+        const url = `${rootPath}/${groupId}`;
         return axios.get(url)
             .then((response) => {
                 return dispatch(getGroupSuccess(response.data));
@@ -36,10 +36,10 @@ export function getGroup(id: number) {
     };
 }
 
-export function findGroups(name?: string) {
+export function findGroups(groupName?: string) {
     return (dispatch) => {
         dispatch(findGroupsLoading(true));
-        const url = name ? `${rootPath}?name=${name}` : rootPath;
+        const url = name ? `${rootPath}?name=${groupName}` : rootPath;
         return axios.get(url)
             .then((response) => {
                 return dispatch(findGroupsSuccess(response.data));

@@ -1,4 +1,4 @@
-import { FindBoxesActionType } from '../constants';
+import { GetBoxActionType, FindBoxesActionType } from '../constants';
 import { Error } from './globals';
 import { Group } from '../';
 
@@ -20,6 +20,21 @@ export const initialBoxState: BoxState = {
     boxes: []
 };
 
+export interface GetBoxLoadingAction {
+    type: GetBoxActionType.LOADING,
+    loading: boolean
+}
+
+export interface GetBoxSuccessAction {
+    type: GetBoxActionType.SUCCESS,
+    payload: Box
+}
+
+export interface GetBoxErrorAction {
+    type: GetBoxActionType.ERROR,
+    error: Error
+}
+
 export interface FindBoxesLoadingAction {
     type: FindBoxesActionType.LOADING,
     loading: boolean
@@ -35,6 +50,7 @@ export interface FindBoxesErrorAction {
     error: Error
 }
 
+export type GetBoxAction = GetBoxLoadingAction | GetBoxSuccessAction | GetBoxErrorAction;
 export type FindBoxesAction = FindBoxesLoadingAction | FindBoxesSuccessAction | FindBoxesErrorAction;
 
-export type BoxAction =  FindBoxesAction;
+export type BoxAction = GetBoxAction | FindBoxesAction;
