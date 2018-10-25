@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
 import { Header, Icon } from 'semantic-ui-react'
+import { Link } from 'react-router-dom';
 
 interface ComponentProps {
     title: string;
@@ -16,9 +17,9 @@ class MainHeaderComponent extends Component<ComponentProps> {
 
         return (
             <Header as='h1'>
-                <a className="header-link" href="/">
+                <Link className="header-link" to="/">
                     <Icon name='cubes' />{title}
-                </a>
+                </Link>
             </Header>
         );
     }

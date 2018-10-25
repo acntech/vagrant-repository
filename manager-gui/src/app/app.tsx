@@ -1,7 +1,6 @@
 import { Component, ReactNode } from 'react';
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
 
 import store from './state/store';
 import { ErrorHandlerProvider } from './providers';
@@ -16,9 +15,7 @@ class App extends Component {
         return (
             <Provider store={store}>
                 <ErrorHandlerProvider>
-                    <BrowserRouter>
-                            <RootContainer />
-                    </BrowserRouter>
+                    <RootContainer />
                 </ErrorHandlerProvider>
             </Provider>
         );
