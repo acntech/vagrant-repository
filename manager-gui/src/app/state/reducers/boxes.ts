@@ -20,13 +20,13 @@ export function reducer(state: BoxState = initialBoxState, action: BoxAction): B
 export function find(state: BoxState = initialBoxState, action: FindBoxesAction): BoxState {
     switch (action.type) {
         case FindBoxesActionType.LOADING: {
-            const {loading} = action;
-            return {...state, loading: loading};
+            const { loading } = action;
+            return { ...state, loading: loading };
         }
 
         case FindBoxesActionType.SUCCESS: {
-            const {payload} = action;
-            let {boxes} = state;
+            const { payload } = action;
+            let { boxes } = state;
             if (payload) {
                 payload.forEach(box => {
                     let index = boxes.indexOf(box);
@@ -37,12 +37,12 @@ export function find(state: BoxState = initialBoxState, action: FindBoxesAction)
                     }
                 });
             }
-            return {...initialBoxState, boxes: payload};
+            return { ...initialBoxState, boxes: payload };
         }
 
         case FindBoxesActionType.ERROR: {
-            const {error} = action;
-            return {...initialBoxState, error: error};
+            const { error } = action;
+            return { ...initialBoxState, error: error };
         }
 
         default: {

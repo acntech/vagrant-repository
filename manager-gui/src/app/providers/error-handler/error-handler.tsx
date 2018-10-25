@@ -16,21 +16,21 @@ class ErrorHandlerProvider extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
-        this.state = {hasError: false};
+        this.state = { hasError: false };
     }
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        this.setState({hasError: true});
+        this.setState({ hasError: true });
     }
 
     public render(): ReactNode {
-        const {hasError} = this.state;
-        const {children} = this.props;
+        const { hasError } = this.state;
+        const { children } = this.props;
 
         if (hasError) {
             return (
                 <Container>
-                    <MainHeader title='Vagrant Repository Manager' subtitle='Error' />
+                    <MainHeader headerTitle='Vagrant Repository Manager' headerSubtitle='Error' />
                     <Segment vertical>
                         <UnknownErrorContainer />
                     </Segment>

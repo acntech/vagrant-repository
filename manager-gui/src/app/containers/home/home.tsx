@@ -60,7 +60,7 @@ const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
 
     return (
         <Container>
-            <MainHeader title='Vagrant Repository Manager' />
+            <MainHeader headerTitle='Vagrant Repository Manager' />
             <Segment basic>
                 <Table celled selectable>
                     <Table.Header>
@@ -89,7 +89,7 @@ const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
 const LoadingFragment: SFC<{}> = () => {
     return (
         <Container>
-            <MainHeader title='Vagrant Repository Manager' />
+            <MainHeader headerTitle='Vagrant Repository Manager' />
             <Segment loading />
         </Container>
     );

@@ -21,3 +21,27 @@ export enum FindBoxesActionType {
     SUCCESS = '[boxes] FIND SUCCESS',
     ERROR = '[boxes] FIND ERROR'
 }
+
+export enum GetVersionActionType {
+    LOADING = '[versions] GET LOADING',
+    SUCCESS = '[versions] GET SUCCESS',
+    ERROR = '[versions] GET ERROR'
+}
+
+export enum FindVersionsActionType {
+    LOADING = '[versions] FIND LOADING',
+    SUCCESS = '[versions] FIND SUCCESS',
+    ERROR = '[versions] FIND ERROR'
+}
+
+export enum GetProviderActionType {
+    LOADING = '[providers] GET LOADING',
+    SUCCESS = '[providers] GET SUCCESS',
+    ERROR = '[providers] GET ERROR'
+}
+
+export enum FindProvidersActionType {
+    LOADING = '[providers] FIND LOADING',
+    SUCCESS = '[providers] FIND SUCCESS',
+    ERROR = '[providers] FIND ERROR'
+}

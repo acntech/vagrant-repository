@@ -26,28 +26,28 @@ export function reducer(state: GroupState = initialGroupState, action: GroupActi
 export function get(state: GroupState = initialGroupState, action: GetGroupAction): GroupState {
     switch (action.type) {
         case GetGroupActionType.LOADING: {
-            const {loading} = action;
-            return {...state, loading: loading};
+            const { loading } = action;
+            return { ...state, loading: loading };
         }
 
         case GetGroupActionType.SUCCESS: {
-            const {payload} = action;
-            let {groups} = state;
+            const { payload } = action;
+            let { groups } = state;
 
             if (payload) {
-                const {id: payloadId} = payload;
+                const { id: payloadId } = payload;
                 const group = groups.find(group => group.id === payloadId);
                 if (!group) {
                     groups = groups.concat(payload);
                 }
             }
 
-            return {...initialGroupState, groups: groups};
+            return { ...initialGroupState, groups: groups };
         }
 
         case GetGroupActionType.ERROR: {
-            const {error} = action;
-            return {...initialGroupState, error: error};
+            const { error } = action;
+            return { ...initialGroupState, error: error };
         }
 
         default: {
@@ -59,13 +59,13 @@ export function get(state: GroupState = initialGroupState, action: GetGroupActio
 export function find(state: GroupState = initialGroupState, action: FindGroupsAction): GroupState {
     switch (action.type) {
         case FindGroupsActionType.LOADING: {
-            const {loading} = action;
-            return {...state, loading: loading};
+            const { loading } = action;
+            return { ...state, loading: loading };
         }
 
         case FindGroupsActionType.SUCCESS: {
-            const {payload} = action;
-            let {groups} = state;
+            const { payload } = action;
+            let { groups } = state;
             if (payload) {
                 payload.forEach(group => {
                     let index = groups.indexOf(group);
@@ -76,12 +76,12 @@ export function find(state: GroupState = initialGroupState, action: FindGroupsAc
                     }
                 });
             }
-            return {...initialGroupState, groups: payload};
+            return { ...initialGroupState, groups: payload };
         }
 
         case FindGroupsActionType.ERROR: {
-            const {error} = action;
-            return {...initialGroupState, error: error};
+            const { error } = action;
+            return { ...initialGroupState, error: error };
         }
 
         default: {

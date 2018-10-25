@@ -7,13 +7,16 @@
         "checksum": "4b70f9691f98c0277877be219a4ed162e1f6a310",
         "version": {
             "id": 1,
-            "name": "myversion",
+            "name": "1.0.0",
+            "description": "Description of 1.0.0",
             "box": {
                 "id": 1,
                 "name": "mybox",
+                "description": "Description of mybox",
                 "group": {
                     "id": 1,
-                    "name": "mygroup"
+                    "name": "mygroup",
+                    "description": "Description of mygroup"
                 }
             }
         }

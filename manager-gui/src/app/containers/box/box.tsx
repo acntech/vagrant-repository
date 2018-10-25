@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Container, Header, Segment, Table } from 'semantic-ui-react';
 
-import { Box, BoxState, Group, GroupState, RootState } from '../../models';
-import { findGroups, findGroupBoxes } from '../../state/actions';
+import { Box, BoxState, Group, GroupState, RootState, Version, VersionState } from '../../models';
+import { findBoxVersions, findGroups, findGroupBoxes } from '../../state/actions';
 import { MainHeader } from '../../components';
 
 interface RouteProps {
@@ -15,23 +15,26 @@ interface RouteProps {
 interface ComponentStateProps {
     groupState: GroupState;
     boxState: BoxState;
+    versionState: VersionState;
 }
 
 interface ComponentDispatchProps {
     findGroups: (name?: string) => Promise<any>;
     findGroupBoxes: (groupId: number) => Promise<any>;
+    findBoxVersions: (boxId: number) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
 
 interface ComponentState {
     group?: Group;
-    boxId?: number;
+    box?: Box;
+    versionId?: number;
 }
 
 const initialState: ComponentState = {};
 
-class GroupContainer extends Component<ComponentProps, ComponentState> {
+class BoxContainer extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
@@ -39,14 +42,15 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
     }
 
     componentDidMount() {
-        const { groupId } = this.props.match.params;
+        const { groupId, boxId } = this.props.match.params;
         this.props.findGroups();
         this.props.findGroupBoxes(Number(groupId));
+        this.props.findBoxVersions(Number(boxId));
     }
 
     componentDidUpdate() {
-        const { groupId } = this.props.match.params;
-        const { group } = this.state;
+        const { groupId, boxId } = this.props.match.params;
+        const { group, box } = this.state;
 
         if (!group) {
             const { groups } = this.props.groupState;
@@ -55,79 +59,89 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
                 this.setState({ group: currentGroup });
             }
         }
-    }
 
-    public render(): ReactNode {
-        const { groupId } = this.props.match.params;
-        const { boxId, group } = this.state;
-        const { boxState } = this.props;
-        const { boxes, loading } = boxState;
-
-        if (boxId) {
-            return <Redirect to={`/group/${groupId}/box/${boxId}`} />;
-        } else if (loading) {
-            return <LoadingFragment />;
-        } else {
-            return <GroupFragment group={group} boxes={boxes} onClick={this.onListItemClick} />;
+        if (!box) {
+            const { boxes } = this.props.boxState;
+            const currentBox = boxes.find((box) => box.id == boxId);
+            if (currentBox) {
+                this.setState({ box: currentBox });
+            }
         }
     }
 
-    private onListItemClick = (boxId: number) => {
-        this.setState({ boxId: boxId });
+    public render(): ReactNode {
+        const { groupId, boxId } = this.props.match.params;
+        const { versionId, group, box } = this.state;
+        const { versionState } = this.props;
+        const { versions, loading } = versionState;
+
+        if (versionId) {
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
+        } else if (loading) {
+            return <LoadingFragment />;
+        } else {
+            return <BoxFragment group={group} box={box} versions={versions} onClick={this.onListItemClick} />;
+        }
+    }
+
+    private onListItemClick = (versionId: number) => {
+        this.setState({ versionId: versionId });
     };
 }
 
-interface GroupFragmentProps {
+interface BoxFragmentProps {
     group?: Group;
-    boxes: Box[];
-    onClick: (boxId: number) => void;
+    box?: Box;
+    versions: Version[];
+    onClick: (versionId: number) => void;
 }
 
-const GroupFragment: SFC<GroupFragmentProps> = (props) => {
-    const { group, boxes, onClick } = props;
+const BoxFragment: SFC<BoxFragmentProps> = (props) => {
+    const { group, box, versions, onClick } = props;
 
-    if (group) {
-        const { name, description } = group;
+    if (group && box) {
+        const { name: groupName } = group;
+        const { name: boxName, description } = box;
         return (
             <Container>
                 <MainHeader headerTitle='Vagrant Repository Manager' />
                 <Segment basic>
-                    <Header>{name}</Header>
+                    <Header>{groupName} / {boxName}</Header>
                     <Header.Subheader>{description}</Header.Subheader>
                 </Segment>
-                <BoxesFragment boxes={boxes} onClick={onClick} />
+                <VersionsFragment versions={versions} onClick={onClick} />
             </Container>
         );
     } else {
         return (
             <Container>
                 <MainHeader headerTitle='Vagrant Repository Manager' />
-                <BoxesFragment boxes={boxes} onClick={onClick} />
+                <VersionsFragment versions={versions} onClick={onClick} />
             </Container>
         );
     }
 }
 
-interface BoxesFragmentProps {
-    boxes: Box[];
-    onClick: (boxId: number) => void;
+interface VersionsFragmentProps {
+    versions: Version[];
+    onClick: (versionId: number) => void;
 }
 
-const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
-    const { boxes, onClick } = props;
+const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
+    const { versions, onClick } = props;
 
     return (
         <Segment basic>
             <Table celled selectable>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width={4}>Box name</Table.HeaderCell>
+                        <Table.HeaderCell width={4}>Version</Table.HeaderCell>
                         <Table.HeaderCell width={10}>Description</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {boxes.map((box, index) => {
-                        const { id, name, description } = box;
+                    {versions.map((version, index) => {
+                        const { id, name, description } = version;
                         return (
                             <Table.Row key={index} className='clickable-table-row' onClick={() => onClick(id)}>
                                 <Table.Cell>{name}</Table.Cell>
@@ -152,14 +166,16 @@ const LoadingFragment: SFC<{}> = () => {
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     groupState: state.groupState,
-    boxState: state.boxState
+    boxState: state.boxState,
+    versionState: state.versionState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     findGroups: (name?: string) => dispatch(findGroups(name)),
-    findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId))
+    findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
+    findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId))
 });
 
-const ConnectedGroupContainer = connect(mapStateToProps, mapDispatchToProps)(GroupContainer);
+const ConnectedBoxContainer = connect(mapStateToProps, mapDispatchToProps)(BoxContainer);
 
-export { ConnectedGroupContainer as GroupContainer };
+export { ConnectedBoxContainer as BoxContainer };
