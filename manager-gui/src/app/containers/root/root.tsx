@@ -3,11 +3,10 @@ import { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { Container, Segment } from 'semantic-ui-react';
-import { MainHeader } from '../../components/main-header';
 
 import { GroupState, RootState } from '../../models';
 import { findGroups } from '../../state/actions';
-import { HomeContainer, NotFoundContainer } from '../';
+import { HomeContainer, GroupContainer, NotFoundContainer } from '../';
 
 interface ComponentStateProps {
     groupState: GroupState;
@@ -28,9 +27,9 @@ class RootContainer extends Component<ComponentProps> {
     public render(): ReactNode {
         return (
             <Container>
-                <MainHeader title='Vagrant Repository Manager' />
                 <Segment vertical>
                     <Switch>
+                        <Route path="/group/:groupId?" component={GroupContainer} />
                         <Route path="/" exact component={HomeContainer} />
                         <Route component={NotFoundContainer} />
                     </Switch>

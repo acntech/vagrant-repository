@@ -1,10 +1,12 @@
 [
     {
         "id": 1,
-        "name": "mygroup"
+        "name": "mygroup",
+        "description": "Description of mygroup"
     },
     {
         "id": 2,
-        "name": "othergroup"
+        "name": "othergroup",
+        "description": "Description of othergroup"
     }
 ]
