@@ -5,8 +5,8 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Container, Header, Segment, Table } from 'semantic-ui-react';
 
-import { Box, BoxState, Group, GroupState, RootState, Version, VersionState } from '../../models';
-import { findBoxVersions, findGroups, findGroupBoxes } from '../../state/actions';
+import { Box, BoxState, Group, GroupState, Provider, ProviderState, RootState, Version, VersionState } from '../../models';
+import { findBoxVersions, findGroups, findGroupBoxes, findVersionProviders } from '../../state/actions';
 import { MainHeader } from '../../components';
 
 interface RouteProps {
@@ -17,12 +17,14 @@ interface ComponentStateProps {
     groupState: GroupState;
     boxState: BoxState;
     versionState: VersionState;
+    providerState: ProviderState;
 }
 
 interface ComponentDispatchProps {
     findGroups: (name?: string) => Promise<any>;
     findGroupBoxes: (groupId: number) => Promise<any>;
     findBoxVersions: (boxId: number) => Promise<any>;
+    findVersionProviders: (versionId: number) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
@@ -30,12 +32,13 @@ type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
 interface ComponentState {
     group?: Group;
     box?: Box;
-    versionId?: number;
+    version?: Version;
+    providerId?: number;
 }
 
 const initialState: ComponentState = {};
 
-class BoxContainer extends Component<ComponentProps, ComponentState> {
+class VersionContainer extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
@@ -43,15 +46,16 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
     }
 
     componentDidMount() {
-        const { groupId, boxId } = this.props.match.params;
+        const { groupId, boxId, versionId } = this.props.match.params;
         this.props.findGroups();
         this.props.findGroupBoxes(Number(groupId));
         this.props.findBoxVersions(Number(boxId));
+        this.props.findVersionProviders(Number(versionId));
     }
 
     componentDidUpdate() {
-        const { groupId, boxId } = this.props.match.params;
-        const { group, box } = this.state;
+        const { groupId, boxId, versionId } = this.props.match.params;
+        const { group, box, version } = this.state;
 
         if (!group) {
             const { groups } = this.props.groupState;
@@ -68,87 +72,100 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
                 this.setState({ box: currentBox });
             }
         }
+
+        if (!version) {
+            const { versions } = this.props.versionState;
+            const currentVersion = versions.find((version) => version.id == versionId);
+            if (currentVersion) {
+                this.setState({ version: currentVersion });
+            }
+        }
     }
 
     public render(): ReactNode {
         const { groupId, boxId } = this.props.match.params;
-        const { versionId, group, box } = this.state;
-        const { versionState } = this.props;
-        const { versions, loading } = versionState;
+        const { providerId, group, box, version } = this.state;
+        const { providerState } = this.props;
+        const { providers, loading } = providerState;
 
-        if (versionId) {
-            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
+        if (providerId) {
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${providerId}`} />;
         } else if (loading) {
             return <LoadingFragment />;
         } else {
-            return <BoxFragment group={group} box={box} versions={versions} onClick={this.onListItemClick} />;
+            return <VersionFragment group={group} box={box} version={version} providers={providers} onClick={this.onListItemClick} />;
         }
     }
 
     private onListItemClick = (versionId: number) => {
-        this.setState({ versionId: versionId });
     };
 }
 
-interface BoxFragmentProps {
+interface VersionFragmentProps {
     group?: Group;
     box?: Box;
-    versions: Version[];
-    onClick: (versionId: number) => void;
+    version?: Version;
+    providers: Provider[];
+    onClick: (providerId: number) => void;
 }
 
-const BoxFragment: SFC<BoxFragmentProps> = (props) => {
-    const { group, box, versions, onClick } = props;
+const VersionFragment: SFC<VersionFragmentProps> = (props) => {
+    const { group, box, version, providers, onClick } = props;
 
-    if (group && box) {
+    if (group && box && version) {
         const { id: groupId, name: groupName } = group;
-        const { id: boxId, name: boxName, description } = box;
+        const { id: boxId, name: boxName } = box;
+        const { id: versionId, name: versionName, description } = version;
         return (
             <Container>
                 <MainHeader headerTitle='Vagrant Repository Manager' />
                 <Segment basic>
                     <Header>
-                        <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>
+                        <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>
                     </Header>
                     <Header.Subheader>{description}</Header.Subheader>
                 </Segment>
-                <VersionsFragment versions={versions} onClick={onClick} />
+                <ProvidersFragment providers={providers} onClick={onClick} />
             </Container>
         );
     } else {
         return (
             <Container>
                 <MainHeader headerTitle='Vagrant Repository Manager' />
-                <VersionsFragment versions={versions} onClick={onClick} />
+                <ProvidersFragment providers={providers} onClick={onClick} />
             </Container>
         );
     }
 }
 
-interface VersionsFragmentProps {
-    versions: Version[];
-    onClick: (versionId: number) => void;
+interface ProvidersFragmentProps {
+    providers: Provider[];
+    onClick: (providerId: number) => void;
 }
 
-const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
-    const { versions, onClick } = props;
+const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
+    const { providers, onClick } = props;
 
     return (
         <Segment basic>
             <Table celled selectable>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width={4}>Version</Table.HeaderCell>
-                        <Table.HeaderCell width={10}>Description</Table.HeaderCell>
+                        <Table.HeaderCell width={4}>Provider</Table.HeaderCell>
+                        <Table.HeaderCell width={4}>Size</Table.HeaderCell>
+                        <Table.HeaderCell width={4}>Checksum type</Table.HeaderCell>
+                        <Table.HeaderCell width={4}>Checksum</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {versions.map((version, index) => {
-                        const { id, name, description } = version;
+                    {providers.map((provider, index) => {
+                        const { id, providerType, size, checksumType, checksum } = provider;
                         return (
                             <Table.Row key={index} className='clickable-table-row' onClick={() => onClick(id)}>
-                                <Table.Cell>{name}</Table.Cell>
-                                <Table.Cell>{description}</Table.Cell>
+                                <Table.Cell>{providerType}</Table.Cell>
+                                <Table.Cell>{size}</Table.Cell>
+                                <Table.Cell>{checksumType}</Table.Cell>
+                                <Table.Cell>{checksum}</Table.Cell>
                             </Table.Row>
                         );
                     })}
@@ -170,15 +187,17 @@ const LoadingFragment: SFC<{}> = () => {
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     groupState: state.groupState,
     boxState: state.boxState,
-    versionState: state.versionState
+    versionState: state.versionState,
+    providerState: state.providerState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     findGroups: (name?: string) => dispatch(findGroups(name)),
     findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
-    findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId))
+    findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId)),
+    findVersionProviders: (versionId: number) => dispatch(findVersionProviders(versionId))
 });
 
-const ConnectedBoxContainer = connect(mapStateToProps, mapDispatchToProps)(BoxContainer);
+const ConnectedVersionContainer = connect(mapStateToProps, mapDispatchToProps)(VersionContainer);
 
-export { ConnectedBoxContainer as BoxContainer };
+export { ConnectedVersionContainer as VersionContainer };

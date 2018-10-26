@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Container, Header, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState } from '../../models';
@@ -87,12 +88,14 @@ const GroupFragment: SFC<GroupFragmentProps> = (props) => {
     const { group, boxes, onClick } = props;
 
     if (group) {
-        const { name, description } = group;
+        const { id, name, description } = group;
         return (
             <Container>
                 <MainHeader headerTitle='Vagrant Repository Manager' />
                 <Segment basic>
-                    <Header>{name}</Header>
+                    <Header>
+                        <Link className="header-link" to={`/group/${id}`}>{name}</Link>
+                    </Header>
                     <Header.Subheader>{description}</Header.Subheader>
                 </Segment>
                 <BoxesFragment boxes={boxes} onClick={onClick} />

@@ -6,7 +6,7 @@ export interface Version {
     id: number;
     name: string;
     description: string;
-    group: Box;
+    box: Box;
 }
 
 export interface VersionState {
