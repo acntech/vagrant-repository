@@ -4,6 +4,7 @@ import thunk from "redux-thunk";
 
 import { RootState } from '../../models';
 import { rootReducer } from '../reducers';
+import { initialRootState } from './initial-state';
 
 const middlewares: Middleware[] = [];
 
@@ -13,6 +14,6 @@ if (process.env.NODE_ENV === 'development') {
     middlewares.push(logger);
 }
 
-export const store = createStore<RootState>(rootReducer, applyMiddleware(...middlewares));
+export const store = createStore<RootState>(rootReducer, initialRootState, applyMiddleware(...middlewares));
 
 export default store;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
-import { Container, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Segment, Table } from 'semantic-ui-react';
 
 import { Group, GroupState, RootState } from '../../models';
 import { MainHeader } from '../../components';
@@ -62,6 +62,9 @@ const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
         <Container>
             <MainHeader headerTitle='Vagrant Repository Manager' />
             <Segment basic>
+                <Button.Group>
+                    <Button size='tiny'>New group</Button>
+                </Button.Group>
                 <Table celled selectable>
                     <Table.Header>
                         <Table.Row>

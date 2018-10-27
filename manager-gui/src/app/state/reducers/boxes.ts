@@ -2,9 +2,9 @@ import {
     BoxState,
     BoxAction,
     FindBoxesAction,
-    FindBoxesActionType,
-    initialBoxState
+    FindBoxesActionType
 } from '../../models';
+import { initialBoxState } from '../store/initial-state';
 
 export function reducer(state: BoxState = initialBoxState, action: BoxAction): BoxState {
     switch (action.type) {

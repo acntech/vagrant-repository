@@ -4,9 +4,9 @@ import {
     GetGroupAction,
     GetGroupActionType,
     FindGroupsAction,
-    FindGroupsActionType,
-    initialGroupState
+    FindGroupsActionType
 } from '../../models';
+import { initialGroupState } from '../store/initial-state';
 
 export function reducer(state: GroupState = initialGroupState, action: GroupAction): GroupState {
     switch (action.type) {

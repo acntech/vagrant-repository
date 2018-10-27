@@ -13,11 +13,6 @@ export interface GroupState {
     error?: any;
 }
 
-export const initialGroupState: GroupState = {
-    loading: false,
-    groups: []
-};
-
 export interface GetGroupLoadingAction {
     type: GetGroupActionType.LOADING,
     loading: boolean

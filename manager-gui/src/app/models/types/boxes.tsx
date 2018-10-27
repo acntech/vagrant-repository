@@ -15,11 +15,6 @@ export interface BoxState {
     error?: any;
 }
 
-export const initialBoxState: BoxState = {
-    loading: false,
-    boxes: []
-};
-
 export interface GetBoxLoadingAction {
     type: GetBoxActionType.LOADING,
     loading: boolean

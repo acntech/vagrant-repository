@@ -1,6 +1,7 @@
 import { Component, ReactNode } from 'react';
 import * as React from 'react';
 import { Provider } from 'react-redux';
+import { IntlProvider } from "react-intl";
 
 import store from './state/store';
 import { ErrorHandlerProvider } from './providers';
@@ -15,7 +16,9 @@ class App extends Component {
         return (
             <Provider store={store}>
                 <ErrorHandlerProvider>
-                    <RootContainer />
+                    <IntlProvider locale='en'>
+                        <RootContainer />
+                    </IntlProvider>
                 </ErrorHandlerProvider>
             </Provider>
         );

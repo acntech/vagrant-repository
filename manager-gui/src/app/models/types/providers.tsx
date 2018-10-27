@@ -17,11 +17,6 @@ export interface ProviderState {
     error?: any;
 }
 
-export const initialProviderState: ProviderState = {
-    loading: false,
-    providers: []
-};
-
 export interface GetProviderLoadingAction {
     type: GetProviderActionType.LOADING,
     loading: boolean

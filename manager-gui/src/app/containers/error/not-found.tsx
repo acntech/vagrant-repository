@@ -18,7 +18,7 @@ class NotFoundContainer extends Component<ComponentProps> {
                         negative
                         icon='blind'
                         header='Page not found'
-                        content='Can not find the page' />
+                        content='Can not find the page you are looking for' />
                     <Link to='/'>
                         <Button primary icon='home' size='mini' content='Home' />
                     </Link>

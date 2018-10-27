@@ -15,11 +15,6 @@ export interface VersionState {
     error?: any;
 }
 
-export const initialVersionState: VersionState = {
-    loading: false,
-    versions: []
-};
-
 export interface GetVersionLoadingAction {
     type: GetVersionActionType.LOADING,
     loading: boolean

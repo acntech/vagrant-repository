@@ -2,9 +2,9 @@ import {
     VersionState,
     VersionAction,
     FindVersionsAction,
-    FindVersionsActionType,
-    initialVersionState
+    FindVersionsActionType
 } from '../../models';
+import { initialVersionState } from '../store/initial-state';
 
 export function reducer(state: VersionState = initialVersionState, action: VersionAction): VersionState {
     switch (action.type) {

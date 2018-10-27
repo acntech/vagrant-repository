@@ -3,7 +3,7 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Container, Header, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Header, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState } from '../../models';
 import { findGroups, findGroupBoxes } from '../../state/actions';
@@ -121,6 +121,9 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
 
     return (
         <Segment basic>
+            <Button.Group>
+                <Button>New</Button>
+            </Button.Group>
             <Table celled selectable>
                 <Table.Header>
                     <Table.Row>
