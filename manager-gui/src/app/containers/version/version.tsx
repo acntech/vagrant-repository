@@ -3,11 +3,11 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Container, Header, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Header, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, Provider, ProviderState, RootState, Version, VersionState } from '../../models';
 import { findBoxVersions, findGroups, findGroupBoxes, findVersionProviders } from '../../state/actions';
-import { MainHeader } from '../../components';
+import { MainHeader, LoadingIndicator } from '../../components';
 
 interface RouteProps {
     match: any;
@@ -91,7 +91,7 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
         if (providerId) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${providerId}`} />;
         } else if (loading) {
-            return <LoadingFragment />;
+            return <LoadingIndicator />;
         } else {
             return <VersionFragment group={group} box={box} version={version} providers={providers} onClick={this.onListItemClick} />;
         }
@@ -118,7 +118,7 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
         const { id: versionId, name: versionName, description } = version;
         return (
             <Container>
-                <MainHeader headerTitle='Vagrant Repository Manager' />
+                <MainHeader />
                 <Segment basic>
                     <Header>
                         <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>
@@ -131,7 +131,7 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
     } else {
         return (
             <Container>
-                <MainHeader headerTitle='Vagrant Repository Manager' />
+                <MainHeader />
                 <ProvidersFragment providers={providers} onClick={onClick} />
             </Container>
         );
@@ -148,6 +148,9 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
 
     return (
         <Segment basic>
+            <Button.Group>
+                <Button primary size='tiny'>New Provider</Button>
+            </Button.Group>
             <Table celled selectable>
                 <Table.Header>
                     <Table.Row>
@@ -172,15 +175,6 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
                 </Table.Body>
             </Table>
         </Segment>
-    );
-};
-
-const LoadingFragment: SFC<{}> = () => {
-    return (
-        <Container>
-            <MainHeader headerTitle='Vagrant Repository Manager' />
-            <Segment loading />
-        </Container>
     );
 };
 

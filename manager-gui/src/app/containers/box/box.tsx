@@ -3,11 +3,11 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Container, Header, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Header, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState, Version, VersionState } from '../../models';
 import { findBoxVersions, findGroups, findGroupBoxes } from '../../state/actions';
-import { MainHeader } from '../../components';
+import { MainHeader, LoadingIndicator } from '../../components';
 
 interface RouteProps {
     match: any;
@@ -79,7 +79,7 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
         if (versionId) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
         } else if (loading) {
-            return <LoadingFragment />;
+            return <LoadingIndicator />;
         } else {
             return <BoxFragment group={group} box={box} versions={versions} onClick={this.onListItemClick} />;
         }
@@ -105,7 +105,7 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
         const { id: boxId, name: boxName, description } = box;
         return (
             <Container>
-                <MainHeader headerTitle='Vagrant Repository Manager' />
+                <MainHeader />
                 <Segment basic>
                     <Header>
                         <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>
@@ -135,6 +135,9 @@ const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
 
     return (
         <Segment basic>
+            <Button.Group>
+                <Button primary size='tiny'>New Version</Button>
+            </Button.Group>
             <Table celled selectable>
                 <Table.Header>
                     <Table.Row>
@@ -155,15 +158,6 @@ const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
                 </Table.Body>
             </Table>
         </Segment>
-    );
-};
-
-const LoadingFragment: SFC<{}> = () => {
-    return (
-        <Container>
-            <MainHeader headerTitle='Vagrant Repository Manager' />
-            <Segment loading />
-        </Container>
     );
 };
 

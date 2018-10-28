@@ -30,7 +30,7 @@ class MainHeaderComponent extends Component<ComponentProps> {
 
     private browserTitle() {
         const { headerTitle, headerSubtitle } = this.props;
-        const formattedHeaderTitle = headerTitle ? headerTitle : 'Ouch';
+        const formattedHeaderTitle = headerTitle ? headerTitle : 'Vagrant Repository Manager';
         if (headerSubtitle) {
             return `${formattedHeaderTitle} - ${headerTitle}`;
         } else {
@@ -40,7 +40,7 @@ class MainHeaderComponent extends Component<ComponentProps> {
 
     private headerTitle() {
         const { headerTitle, headerSubtitle } = this.props;
-        const formattedHeaderTitle = headerTitle ? headerTitle : <FormattedMessage id='mainTitle' defaultMessage='Boo' />;
+        const formattedHeaderTitle = headerTitle ? headerTitle : <FormattedMessage id='mainTitle' defaultMessage='Vagrant Repository Manager' />;
         if (headerSubtitle) {
             return `${formattedHeaderTitle} - ${headerSubtitle}`;
         } else {

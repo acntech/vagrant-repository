@@ -1,3 +1,9 @@
+export enum CreateGroupActionType {
+    LOADING = '[groups] CREATE LOADING',
+    SUCCESS = '[groups] CREATE SUCCESS',
+    ERROR = '[groups] CREATE ERROR'
+}
+
 export enum GetGroupActionType {
     LOADING = '[groups] GET LOADING',
     SUCCESS = '[groups] GET SUCCESS',

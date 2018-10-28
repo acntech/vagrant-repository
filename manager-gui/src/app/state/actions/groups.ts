@@ -1,7 +1,12 @@
 import axios from 'axios';
 
 import {
+    CreateGroup,
     Group,
+    CreateGroupActionType,
+    CreateGroupErrorAction,
+    CreateGroupLoadingAction,
+    CreateGroupSuccessAction,
     FindGroupsActionType,
     FindGroupsErrorAction,
     FindGroupsLoadingAction,
@@ -20,7 +25,25 @@ const findGroupsLoading = (loading: boolean): FindGroupsLoadingAction => ({ type
 const findGroupsSuccess = (payload: Group[]): FindGroupsSuccessAction => ({ type: FindGroupsActionType.SUCCESS, payload });
 const findGroupsError = (error: any): FindGroupsErrorAction => ({ type: FindGroupsActionType.ERROR, error });
 
+const createGroupLoading = (loading: boolean): CreateGroupLoadingAction => ({ type: CreateGroupActionType.LOADING, loading });
+const createGroupSuccess = (payload: Group): CreateGroupSuccessAction => ({ type: CreateGroupActionType.SUCCESS, payload });
+const createGroupError = (error: any): CreateGroupErrorAction => ({ type: CreateGroupActionType.ERROR, error });
+
 const rootPath = '/api/groups';
+
+export function createGroup(group: CreateGroup) {
+    return (dispatch) => {
+        dispatch(createGroupLoading(true));
+        const url = `${rootPath}`;
+        return axios.post(url, group)
+            .then((response) => {
+                return dispatch(createGroupSuccess(response.data));
+            })
+            .catch((error) => {
+                return dispatch(createGroupError(error));
+            });
+    };
+}
 
 export function getGroup(groupId: number) {
     return (dispatch) => {

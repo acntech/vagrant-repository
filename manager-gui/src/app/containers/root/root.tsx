@@ -6,7 +6,14 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { GroupState, RootState } from '../../models';
 import { findGroups } from '../../state/actions';
-import { HomeContainer, BoxContainer, GroupContainer, NotFoundContainer, VersionContainer } from '../';
+import {
+    CreateGroupContainer,
+    HomeContainer,
+    BoxContainer,
+    GroupContainer,
+    NotFoundContainer,
+    VersionContainer
+} from '../';
 
 interface ComponentStateProps {
     groupState: GroupState;
@@ -31,6 +38,7 @@ class RootContainer extends Component<ComponentProps> {
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?" component={VersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?" component={BoxContainer} />
                     <Route path="/group/:groupId?" component={GroupContainer} />
+                    <Route path="/create/group" component={CreateGroupContainer} />
                     <Route path="/" exact component={HomeContainer} />
                     <Route component={NotFoundContainer} />
                 </Switch>

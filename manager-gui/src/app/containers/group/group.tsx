@@ -3,7 +3,7 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Header, Message, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState } from '../../models';
 import { findGroups, findGroupBoxes } from '../../state/actions';
@@ -28,9 +28,12 @@ type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
 interface ComponentState {
     group?: Group;
     boxId?: number;
+    createBox: boolean;
 }
 
-const initialState: ComponentState = {};
+const initialState: ComponentState = {
+    createBox: false
+};
 
 class GroupContainer extends Component<ComponentProps, ComponentState> {
 
@@ -60,7 +63,7 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId } = this.props.match.params;
-        const { boxId, group } = this.state;
+        const { boxId, group, createBox } = this.state;
         const { boxState } = this.props;
         const { boxes, loading } = boxState;
 
@@ -68,8 +71,12 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />;
         } else if (loading) {
             return <LoadingFragment />;
+        } else if (createBox) {
+            return <CreateBoxFragment />
+        } else if (!group) {
+            return <NoGroupFoundFragment groupId={groupId} />;
         } else {
-            return <GroupFragment group={group} boxes={boxes} onClick={this.onListItemClick} />;
+            return <GroupFragment group={group} boxes={boxes} onListItemClick={this.onListItemClick} />;
         }
     }
 
@@ -81,48 +88,48 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
 interface GroupFragmentProps {
     group?: Group;
     boxes: Box[];
-    onClick: (boxId: number) => void;
+    onListItemClick: (boxId: number) => void;
 }
 
 const GroupFragment: SFC<GroupFragmentProps> = (props) => {
-    const { group, boxes, onClick } = props;
+    const { group, boxes, onListItemClick } = props;
 
     if (group) {
         const { id, name, description } = group;
         return (
             <Container>
-                <MainHeader headerTitle='Vagrant Repository Manager' />
+                <MainHeader />
                 <Segment basic>
                     <Header>
                         <Link className="header-link" to={`/group/${id}`}>{name}</Link>
                     </Header>
                     <Header.Subheader>{description}</Header.Subheader>
                 </Segment>
-                <BoxesFragment boxes={boxes} onClick={onClick} />
+                <BoxesFragment boxes={boxes} onListItemClick={onListItemClick} />
             </Container>
         );
     } else {
         return (
             <Container>
-                <MainHeader headerTitle='Vagrant Repository Manager' />
-                <BoxesFragment boxes={boxes} onClick={onClick} />
+                <MainHeader />
+                <BoxesFragment boxes={boxes} onListItemClick={onListItemClick} />
             </Container>
         );
     }
-}
+};
 
 interface BoxesFragmentProps {
     boxes: Box[];
-    onClick: (boxId: number) => void;
-}
+    onListItemClick: (boxId: number) => void;
+};
 
 const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
-    const { boxes, onClick } = props;
+    const { boxes, onListItemClick } = props;
 
     return (
         <Segment basic>
             <Button.Group>
-                <Button>New</Button>
+                <Button primary size='tiny'>New Box</Button>
             </Button.Group>
             <Table celled selectable>
                 <Table.Header>
@@ -135,7 +142,7 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
                     {boxes.map((box, index) => {
                         const { id, name, description } = box;
                         return (
-                            <Table.Row key={index} className='clickable-table-row' onClick={() => onClick(id)}>
+                            <Table.Row key={index} className='clickable-table-row' onClick={() => onListItemClick(id)}>
                                 <Table.Cell>{name}</Table.Cell>
                                 <Table.Cell>{description}</Table.Cell>
                             </Table.Row>
@@ -147,11 +154,44 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
     );
 };
 
+interface CreateBoxFragmentProps {
+};
+
+const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
+    return (
+        <Container>
+            <MainHeader />
+            <Segment basic></Segment>
+        </Container>
+    );
+};
+
 const LoadingFragment: SFC<{}> = () => {
     return (
         <Container>
-            <MainHeader headerTitle='Vagrant Repository Manager' />
+            <MainHeader />
             <Segment loading />
+        </Container>
+    );
+};
+
+interface NoGroupFoundFragmentProps {
+    groupId: string;
+};
+
+const NoGroupFoundFragment: SFC<NoGroupFoundFragmentProps> = (props) => {
+    const { groupId } = props;
+
+    return (
+        <Container>
+            <MainHeader />
+            <Segment basic>
+                <Message
+                    negative
+                    icon='warning sign'
+                    header='No group found'
+                    content={`Could not find group for ID ${groupId}`} />
+            </Segment>
         </Container>
     );
 };

@@ -3,10 +3,10 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Group, GroupState, RootState } from '../../models';
-import { MainHeader } from '../../components';
+import { MainHeader, LoadingIndicator } from '../../components';
 
 interface ComponentStateProps {
     groupState: GroupState;
@@ -19,9 +19,12 @@ type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedInt
 
 interface ComponentState {
     groupId?: number;
+    createGroup: boolean;
 }
 
-const initialState: ComponentState = {};
+const initialState: ComponentState = {
+    createGroup: false
+};
 
 class HomeContainer extends Component<ComponentProps, ComponentState> {
 
@@ -31,7 +34,7 @@ class HomeContainer extends Component<ComponentProps, ComponentState> {
     }
 
     public render(): ReactNode {
-        const { groupId } = this.state;
+        const { groupId, createGroup } = this.state;
         const { groupState } = this.props;
         const { groups, loading } = groupState;
 
@@ -40,33 +43,45 @@ class HomeContainer extends Component<ComponentProps, ComponentState> {
         if (groupId) {
             return <Redirect to={`/group/${groupId}`} />;
         } else if (loading) {
-            return <LoadingFragment />;
+            return <LoadingIndicator />;
+        } else if (createGroup) {
+            return <Redirect to='/create/group' />;
         } else {
             return (
-                <GroupsFragment groups={groups} onClick={this.onListItemClick} />
+                <GroupsFragment
+                    groups={groups}
+                    onTableRowClick={this.onTableRowClick}
+                    onCreateGroupButtonClick={this.onCreateGroupButtonClick} />
             );
         }
     }
 
-    private onListItemClick = (groupId: number) => {
+    private onTableRowClick = (groupId: number) => {
         this.setState({ groupId: groupId });
+    };
+
+    private onCreateGroupButtonClick = () => {
+        this.setState({ createGroup: true });
     };
 }
 
 interface GroupsFragmentProps {
     groups: Group[];
-    onClick: (groupId: number) => void;
+    onTableRowClick: (groupId: number) => void;
+    onCreateGroupButtonClick: () => void;
 }
 
 const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
-    const { groups, onClick } = props;
+    const { groups, onTableRowClick, onCreateGroupButtonClick } = props;
 
     return (
         <Container>
             <MainHeader />
             <Segment basic>
                 <Button.Group>
-                    <Button size='tiny'>New group</Button>
+                    <Button primary size='tiny' onClick={onCreateGroupButtonClick}>
+                        <Icon name='group' />New Group
+                    </Button>
                 </Button.Group>
                 <Table celled selectable>
                     <Table.Header>
@@ -79,7 +94,7 @@ const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
                         {groups.map((group, index) => {
                             const { id, name, description } = group;
                             return (
-                                <Table.Row key={index} className='clickable-table-row' onClick={() => onClick(id)}>
+                                <Table.Row key={index} className='clickable-table-row' onClick={() => onTableRowClick(id)}>
                                     <Table.Cell>{name}</Table.Cell>
                                     <Table.Cell>{description}</Table.Cell>
                                 </Table.Row>
@@ -92,20 +107,12 @@ const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
     );
 };
 
-const LoadingFragment: SFC<{}> = () => {
-    return (
-        <Container>
-            <MainHeader headerTitle='Vagrant Repository Manager' />
-            <Segment loading />
-        </Container>
-    );
-};
-
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     groupState: state.groupState
 });
 
-const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({});
+const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
+});
 
 const ConnectedHomeContainer = connect(mapStateToProps, mapDispatchToProps)(HomeContainer);
 
