@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 import { Button, Container, Message, Segment } from 'semantic-ui-react'
 
 class UnknownErrorContainer extends Component {
@@ -13,9 +12,9 @@ class UnknownErrorContainer extends Component {
                         icon='frown outline'
                         header='Unknown error'
                         content='An unknown error occurred' />
-                    <Link to='/'>
+                    <a href='/'>
                         <Button primary icon='home' size='mini' content='Home' />
-                    </Link>
+                    </a>
                 </Segment>
             </Container>
         );

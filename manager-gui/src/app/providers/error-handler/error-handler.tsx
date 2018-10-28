@@ -3,7 +3,6 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 import { Container, Segment } from 'semantic-ui-react';
 
 import { UnknownErrorContainer } from '../../containers';
-import { MainHeader } from '../../components';
 
 interface ComponentProps {
 }
@@ -26,11 +25,9 @@ class ErrorHandlerProvider extends Component<ComponentProps, ComponentState> {
     public render(): ReactNode {
         const { hasError } = this.state;
         const { children } = this.props;
-
         if (hasError) {
             return (
                 <Container>
-                    <MainHeader headerTitle='Vagrant Repository Manager' headerSubtitle='Error' />
                     <Segment vertical>
                         <UnknownErrorContainer />
                     </Segment>

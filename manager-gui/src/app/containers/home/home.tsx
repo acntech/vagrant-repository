@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { InjectedIntlProps } from 'react-intl';
 import { Button, Container, Segment, Table } from 'semantic-ui-react';
 
 import { Group, GroupState, RootState } from '../../models';
@@ -14,7 +15,7 @@ interface ComponentStateProps {
 interface ComponentDispatchProps {
 }
 
-type ComponentProps = ComponentDispatchProps & ComponentStateProps;
+type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps;
 
 interface ComponentState {
     groupId?: number;
@@ -33,6 +34,8 @@ class HomeContainer extends Component<ComponentProps, ComponentState> {
         const { groupId } = this.state;
         const { groupState } = this.props;
         const { groups, loading } = groupState;
+
+        console.log(this.props.intl);
 
         if (groupId) {
             return <Redirect to={`/group/${groupId}`} />;
@@ -60,7 +63,7 @@ const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
 
     return (
         <Container>
-            <MainHeader headerTitle='Vagrant Repository Manager' />
+            <MainHeader />
             <Segment basic>
                 <Button.Group>
                     <Button size='tiny'>New group</Button>

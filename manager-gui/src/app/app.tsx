@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { IntlProvider } from "react-intl";
 
-import store from './state/store';
+import store, { initializeLocales } from './state/store';
 import { ErrorHandlerProvider } from './providers';
 import { RootContainer } from './containers';
 
@@ -12,14 +12,19 @@ import './index.css';
 
 class App extends Component {
 
+    constructor(props) {
+        super(props);
+        initializeLocales();
+    }
+
     public render(): ReactNode {
         return (
             <Provider store={store}>
-                <ErrorHandlerProvider>
-                    <IntlProvider locale='en'>
+                <IntlProvider locale='en'>
+                    <ErrorHandlerProvider>
                         <RootContainer />
-                    </IntlProvider>
-                </ErrorHandlerProvider>
+                    </ErrorHandlerProvider>
+                </IntlProvider>
             </Provider>
         );
     }

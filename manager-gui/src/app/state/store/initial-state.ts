@@ -24,6 +24,7 @@ export const initialProviderState: ProviderState = {
 };
 
 const INITIAL_STATE_MESSAGES = {
+    mainTitle: 'Whatever'
 };
 
 export const intitialIntlState: IntlState = {
@@ -31,7 +32,9 @@ export const intitialIntlState: IntlState = {
     messages: { ...INITIAL_STATE_MESSAGES }
 };
 
-addLocaleData([...enLocaleData]);
+export const initializeLocales = () => {
+    addLocaleData([...enLocaleData]);
+}
 
 export const initialRootState: RootState = {
     intl: intitialIntlState,

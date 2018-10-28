@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 import { Button, Container, Message, Segment } from 'semantic-ui-react';
 
 interface RouteProps {
@@ -19,9 +18,9 @@ class NotFoundContainer extends Component<ComponentProps> {
                         icon='blind'
                         header='Page not found'
                         content='Can not find the page you are looking for' />
-                    <Link to='/'>
+                    <a href='/'>
                         <Button primary icon='home' size='mini' content='Home' />
-                    </Link>
+                    </a>
                 </Segment>
             </Container>
         );
