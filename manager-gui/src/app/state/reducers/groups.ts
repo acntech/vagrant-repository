@@ -1,4 +1,5 @@
 import {
+    Group,
     GroupState,
     GroupAction,
     CreateGroupAction,
@@ -10,7 +11,7 @@ import {
 } from '../../models';
 import { initialGroupState } from '../store/initial-state';
 
-export function reducer(state: GroupState = initialGroupState, action: GroupAction): GroupState {
+export const reducer = (state: GroupState = initialGroupState, action: GroupAction): GroupState => {
     switch (action.type) {
         case CreateGroupActionType.LOADING:
         case CreateGroupActionType.SUCCESS:
@@ -29,7 +30,7 @@ export function reducer(state: GroupState = initialGroupState, action: GroupActi
     }
 }
 
-export function create(state: GroupState = initialGroupState, action: CreateGroupAction): GroupState {
+export const create = (state: GroupState = initialGroupState, action: CreateGroupAction): GroupState => {
     switch (action.type) {
         case CreateGroupActionType.LOADING: {
             const { loading } = action;
@@ -41,11 +42,7 @@ export function create(state: GroupState = initialGroupState, action: CreateGrou
             let { groups } = state;
 
             if (payload) {
-                const { id: payloadId } = payload;
-                const group = groups.find(group => group.id === payloadId);
-                if (!group) {
-                    groups = groups.concat(payload);
-                }
+                groups = replaceOrAppend(groups, payload);
             }
 
             return { ...initialGroupState, groups: groups };
@@ -62,7 +59,7 @@ export function create(state: GroupState = initialGroupState, action: CreateGrou
     }
 }
 
-export function get(state: GroupState = initialGroupState, action: GetGroupAction): GroupState {
+export const get = (state: GroupState = initialGroupState, action: GetGroupAction): GroupState => {
     switch (action.type) {
         case GetGroupActionType.LOADING: {
             const { loading } = action;
@@ -74,11 +71,7 @@ export function get(state: GroupState = initialGroupState, action: GetGroupActio
             let { groups } = state;
 
             if (payload) {
-                const { id: payloadId } = payload;
-                const group = groups.find(group => group.id === payloadId);
-                if (!group) {
-                    groups = groups.concat(payload);
-                }
+                groups = replaceOrAppend(groups, payload);
             }
 
             return { ...initialGroupState, groups: groups };
@@ -95,7 +88,7 @@ export function get(state: GroupState = initialGroupState, action: GetGroupActio
     }
 }
 
-export function find(state: GroupState = initialGroupState, action: FindGroupsAction): GroupState {
+export const find = (state: GroupState = initialGroupState, action: FindGroupsAction): GroupState => {
     switch (action.type) {
         case FindGroupsActionType.LOADING: {
             const { loading } = action;
@@ -107,12 +100,7 @@ export function find(state: GroupState = initialGroupState, action: FindGroupsAc
             let { groups } = state;
             if (payload) {
                 payload.forEach(group => {
-                    let index = groups.indexOf(group);
-                    if (~index) {
-                        groups[index] = group;
-                    } else {
-                        groups = groups.concat(payload);
-                    }
+                    groups = replaceOrAppend(groups, group);
                 });
             }
             return { ...initialGroupState, groups: payload };
@@ -127,4 +115,16 @@ export function find(state: GroupState = initialGroupState, action: FindGroupsAc
             return state;
         }
     }
+}
+
+const replaceOrAppend = (groups: Group[], group: Group) => {
+    const index = groups.map(group => group.id).indexOf(group.id);
+
+    if (~index) {
+        groups[index] = group;
+    } else {
+        groups = groups.concat(group);
+    }
+
+    return groups;
 }

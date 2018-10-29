@@ -41,18 +41,16 @@ router.post('/', (req, res) => {
         res.status(400).send();
     }
 
-    const { name } = body;
-
-    const entities = groups.filter(e => e.name === name);
+    const entities = groups.filter(e => e.name === body.name);
 
     if (entities && entities.length > 0) {
         res.status(409).send();
-    } else {
-        const id = groups.length + 1;
-        const group = { ...body, id: id };
-        groups.push(group);
-        res.send(group);
     }
+
+    const groupId = groups.length + 1;
+    const group = { ...body, id: groupId };
+    groups.push(group);
+    res.send(group);
 });
 
 router.get('/:id/boxes', (req, res) => {
@@ -72,5 +70,58 @@ router.get('/:id/boxes', (req, res) => {
         res.send(entities);
     }
 });
+
+router.post('/:id/boxes', (req, res) => {
+    const { params, body } = req;
+    const { id } = params;
+
+    if (!id) {
+        const error = createError(404, 'Not Found', 'Group ID not set', '/api/:id/boxes');
+        res.status(404).send(error);
+        return;
+    }
+
+    if (!body || !body.name) {
+        const error = createError(400, 'Bad Request', 'Request body malformed', '/api/:id/boxes');
+        res.status(400).send(error);
+        return;
+    }
+
+    const entity = groups.find(e => e.id == id);
+
+    if (!entity) {
+        const error = createError(400, 'Bad Request', `Group with ID ${id} not found`, '/api/:id/boxes');
+        res.status(400).send(error);
+        return;
+    }
+
+    const entities = boxes.filter(e => e.name === body.name);
+
+    if (entities && entities.length > 0) {
+        const error = createError(
+            409,
+            'Conflict',
+            'Box with name body.name already exists for group',
+            '/api/:id/boxes');
+        res.status(409).send();
+        return;
+    }
+
+    const boxId = groups.length + 1;
+    const group = { ...body, id: boxId, group: entity };
+    groups.push(group);
+
+    res.send(group);
+});
+
+const createError = (status, error, message, path) => {
+    return {
+        timestamp: (new Date).toUTCString(),
+        status: status,
+        error: error,
+        message: message,
+        path: path
+    };
+}
 
 module.exports = router;

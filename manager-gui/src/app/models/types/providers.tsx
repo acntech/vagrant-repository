@@ -1,6 +1,20 @@
-import { ChecksumType, GetProviderActionType, FindProvidersActionType, ProviderType } from '../constants';
+import {
+    ChecksumType,
+    CreateProviderActionType,
+    GetProviderActionType,
+    FindProvidersActionType,
+    ProviderType,
+    UpdateProviderActionType
+} from '../constants';
 import { Error } from './globals';
 import { Version } from '../';
+
+export interface CreateProvider {
+    providerType: ProviderType;
+    size: number;
+    checksumType: ChecksumType;
+    checksum: string;
+}
 
 export interface Provider {
     id: number;
@@ -47,7 +61,39 @@ export interface FindProvidersErrorAction {
     error: Error
 }
 
+export interface CreateProviderLoadingAction {
+    type: CreateProviderActionType.LOADING,
+    loading: boolean
+}
+
+export interface CreateProviderSuccessAction {
+    type: CreateProviderActionType.SUCCESS,
+    payload: Provider
+}
+
+export interface CreateProviderErrorAction {
+    type: CreateProviderActionType.ERROR,
+    error: Error
+}
+
+export interface UpdateProviderLoadingAction {
+    type: UpdateProviderActionType.LOADING,
+    loading: boolean
+}
+
+export interface UpdateProviderSuccessAction {
+    type: UpdateProviderActionType.SUCCESS,
+    payload: Provider
+}
+
+export interface UpdateProviderErrorAction {
+    type: UpdateProviderActionType.ERROR,
+    error: Error
+}
+
 export type GetProviderAction = GetProviderLoadingAction | GetProviderSuccessAction | GetProviderErrorAction;
 export type FindProvidersAction = FindProvidersLoadingAction | FindProvidersSuccessAction | FindProvidersErrorAction;
+export type CreateProviderAction = CreateProviderLoadingAction | CreateProviderSuccessAction | CreateProviderErrorAction;
+export type UpdateProviderAction = UpdateProviderLoadingAction | UpdateProviderSuccessAction | UpdateProviderErrorAction;
 
-export type ProviderAction = GetProviderAction | FindProvidersAction;
+export type ProviderAction = GetProviderAction | FindProvidersAction | CreateProviderAction | UpdateProviderAction;

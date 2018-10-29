@@ -3,11 +3,11 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Message, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Header, Message, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState } from '../../models';
 import { findGroups, findGroupBoxes } from '../../state/actions';
-import { MainHeader } from '../../components';
+import { MainHeader, LoadingIndicator } from '../../components';
 
 interface RouteProps {
     match: any;
@@ -70,66 +70,96 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
         if (boxId) {
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />;
         } else if (loading) {
-            return <LoadingFragment />;
+            return <LoadingIndicator />;
         } else if (createBox) {
-            return <CreateBoxFragment />
+            return <Redirect to={`/group/${groupId}/create/box`} />;
         } else if (!group) {
             return <NoGroupFoundFragment groupId={groupId} />;
         } else {
-            return <GroupFragment group={group} boxes={boxes} onListItemClick={this.onListItemClick} />;
+            return <GroupFragment
+                group={group}
+                boxes={boxes}
+                onTableRowClick={this.onTableRowClick}
+                onCreateBoxButtonClick={this.onCreateBoxButtonClick} />;
         }
     }
 
-    private onListItemClick = (boxId: number) => {
+    private onTableRowClick = (boxId: number) => {
         this.setState({ boxId: boxId });
+    };
+
+    private onCreateBoxButtonClick = () => {
+        this.setState({ createBox: true });
     };
 }
 
 interface GroupFragmentProps {
     group?: Group;
     boxes: Box[];
-    onListItemClick: (boxId: number) => void;
+    onTableRowClick: (boxId: number) => void;
+    onCreateBoxButtonClick: () => void;
 }
 
 const GroupFragment: SFC<GroupFragmentProps> = (props) => {
-    const { group, boxes, onListItemClick } = props;
+    const { group, boxes, onTableRowClick, onCreateBoxButtonClick } = props;
 
     if (group) {
-        const { id, name, description } = group;
         return (
             <Container>
                 <MainHeader />
-                <Segment basic>
-                    <Header>
-                        <Link className="header-link" to={`/group/${id}`}>{name}</Link>
-                    </Header>
-                    <Header.Subheader>{description}</Header.Subheader>
-                </Segment>
-                <BoxesFragment boxes={boxes} onListItemClick={onListItemClick} />
+                <GroupHeaderFragment group={group} />
+                <BoxesFragment
+                    boxes={boxes}
+                    onTableRowClick={onTableRowClick}
+                    onCreateBoxButtonClick={onCreateBoxButtonClick} />
             </Container>
         );
     } else {
         return (
             <Container>
                 <MainHeader />
-                <BoxesFragment boxes={boxes} onListItemClick={onListItemClick} />
+                <BoxesFragment
+                    boxes={boxes}
+                    onTableRowClick={onTableRowClick}
+                    onCreateBoxButtonClick={onCreateBoxButtonClick} />
             </Container>
         );
     }
 };
 
+interface GroupHeaderFragmentProps {
+    group: Group;
+}
+
+const GroupHeaderFragment: SFC<GroupHeaderFragmentProps> = (props) => {
+    const { group } = props;
+    const { id, name, description } = group;
+
+    return (
+        <Segment basic>
+            <Header>
+                <Link className="header-link" to={`/group/${id}`}>{name}</Link>
+            </Header>
+            <Header.Subheader>{description}</Header.Subheader>
+        </Segment>
+    );
+}
+
 interface BoxesFragmentProps {
     boxes: Box[];
-    onListItemClick: (boxId: number) => void;
+    onTableRowClick: (boxId: number) => void;
+    onCreateBoxButtonClick: () => void;
 };
 
 const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
-    const { boxes, onListItemClick } = props;
+    const { boxes, onTableRowClick, onCreateBoxButtonClick } = props;
 
     return (
         <Segment basic>
             <Button.Group>
-                <Button primary size='tiny'>New Box</Button>
+                <Button primary size='tiny' onClick={onCreateBoxButtonClick}>
+                    <Icon name='cube' />New Box
+                </Button>
             </Button.Group>
             <Table celled selectable>
                 <Table.Header>
@@ -142,7 +172,7 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
                     {boxes.map((box, index) => {
                         const { id, name, description } = box;
                         return (
-                            <Table.Row key={index} className='clickable-table-row' onClick={() => onListItemClick(id)}>
+                            <Table.Row key={index} className='clickable-table-row' onClick={() => onTableRowClick(id)}>
                                 <Table.Cell>{name}</Table.Cell>
                                 <Table.Cell>{description}</Table.Cell>
                             </Table.Row>
@@ -151,27 +181,6 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
                 </Table.Body>
             </Table>
         </Segment>
-    );
-};
-
-interface CreateBoxFragmentProps {
-};
-
-const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
-    return (
-        <Container>
-            <MainHeader />
-            <Segment basic></Segment>
-        </Container>
-    );
-};
-
-const LoadingFragment: SFC<{}> = () => {
-    return (
-        <Container>
-            <MainHeader />
-            <Segment loading />
-        </Container>
     );
 };
 

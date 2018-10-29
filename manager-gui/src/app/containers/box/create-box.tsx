@@ -5,19 +5,24 @@ import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
 import { Button, Container, Form, Header, Icon, InputOnChangeData, Message, Segment } from 'semantic-ui-react';
 
-import { CreateGroup, GroupState, RootState } from '../../models';
-import { createGroup } from '../../state/actions';
+import { CreateBox, BoxState, RootState } from '../../models';
+import { createGroupBox, findGroupBoxes } from '../../state/actions';
 import { LoadingIndicator, MainHeader } from '../../components';
 
+interface RouteProps {
+    match: any;
+}
+
 interface ComponentStateProps {
-    groupState: GroupState;
+    boxState: BoxState;
 }
 
 interface ComponentDispatchProps {
-    createGroup: (createGroup: CreateGroup) => Promise<any>;
+    findGroupBoxes: (groupId: number) => Promise<any>;
+    createGroupBox: (groupId: number, box: CreateBox) => Promise<any>;
 }
 
-type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps;
+type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
 
 interface FormData {
     formError: boolean;
@@ -39,24 +44,30 @@ const initialState: ComponentState = {
     }
 };
 
-class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
+class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
         this.state = initialState;
     }
 
+    componentDidMount() {
+        const { groupId } = this.props.match.params;
+        this.props.findGroupBoxes(groupId);
+    }
+
     public render(): ReactNode {
+        const { groupId } = this.props.match.params;
         const { cancel, formData } = this.state;
-        const { groupState } = this.props;
-        const { loading } = groupState;
+        const { boxState } = this.props;
+        const { loading } = boxState;
 
         if (cancel) {
-            return <Redirect to='/' />;
+            return <Redirect to={`/group/${groupId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
         } else {
-            return <CreateGroupFragment
+            return <CreateBoxFragment
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onCreateGroupFormSubmit}
                 onFormInputChange={this.onFormInputChange}
@@ -65,12 +76,13 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
     }
 
     private onCreateGroupFormSubmit = () => {
+        const { groupId } = this.props.match.params;
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
         if (!formNameValue || formNameValue.length < 3) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Group name must be atleast 3 letters long' } });
+            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Box name must be atleast 3 letters long' } });
         } else {
-            this.props.createGroup({ name: formNameValue, description: formDescriptionValue });
+            this.props.createGroupBox(groupId, { name: formNameValue, description: formDescriptionValue });
         }
     };
 
@@ -85,14 +97,14 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
     };
 }
 
-interface CreateGroupFragmentProps {
+interface CreateBoxFragmentProps {
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
     formData: FormData;
 };
 
-const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
+const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
     const { onCancelButtonClick, onFormSubmit, onFormInputChange, formData } = props;
     const {
         formError,
@@ -105,7 +117,7 @@ const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
         <Container>
             <MainHeader />
             <Segment basic>
-                <Header>Create Group</Header>
+                <Header>Create Box</Header>
             </Segment>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
@@ -113,21 +125,21 @@ const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
                         <Form.Input
                             error={formError}
                             width={10}
-                            placeholder='Enter group name...'
-                            label='Group Name'
+                            placeholder='Enter box name...'
+                            label='Box Name'
                             value={formNameValue}
                             onChange={onFormInputChange} />
                     </Form.Group>
                     <Form.Group>
                         <Form.TextArea
                             width={10}
-                            placeholder='Enter group description...'
-                            label='Group Description'
+                            placeholder='Enter box description...'
+                            label='Box Description'
                             value={formDescriptionValue} />
                     </Form.Group>
                     <Form.Group>
                         <Form.Button
-                            primary size='tiny'><Icon name='group' />Create Group</Form.Button>
+                            primary size='tiny'><Icon name='cube' />Create Box</Form.Button>
                         <Button
                             secondary size='tiny'
                             onClick={onCancelButtonClick}><Icon name='cancel' />Cancel</Button>
@@ -140,13 +152,14 @@ const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
 };
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
-    groupState: state.groupState
+    boxState: state.boxState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
-    createGroup: (group: CreateGroup) => dispatch(createGroup(group))
+    findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
+    createGroupBox: (groupId: number, box: CreateBox) => dispatch(createGroupBox(groupId, box))
 });
 
-const ConnectedCreateGroupContainer = connect(mapStateToProps, mapDispatchToProps)(CreateGroupContainer);
+const ConnectedCreateBoxContainer = connect(mapStateToProps, mapDispatchToProps)(CreateBoxContainer);
 
-export { ConnectedCreateGroupContainer as CreateGroupContainer };
+export { ConnectedCreateBoxContainer as CreateBoxContainer };

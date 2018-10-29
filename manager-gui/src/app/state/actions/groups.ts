@@ -31,20 +31,6 @@ const createGroupError = (error: any): CreateGroupErrorAction => ({ type: Create
 
 const rootPath = '/api/groups';
 
-export function createGroup(group: CreateGroup) {
-    return (dispatch) => {
-        dispatch(createGroupLoading(true));
-        const url = `${rootPath}`;
-        return axios.post(url, group)
-            .then((response) => {
-                return dispatch(createGroupSuccess(response.data));
-            })
-            .catch((error) => {
-                return dispatch(createGroupError(error));
-            });
-    };
-}
-
 export function getGroup(groupId: number) {
     return (dispatch) => {
         dispatch(getGroupLoading(true));
@@ -69,6 +55,20 @@ export function findGroups(groupName?: string) {
             })
             .catch((error) => {
                 return dispatch(findGroupsError(error));
+            });
+    };
+}
+
+export function createGroup(group: CreateGroup) {
+    return (dispatch) => {
+        dispatch(createGroupLoading(true));
+        const url = `${rootPath}`;
+        return axios.post(url, group)
+            .then((response) => {
+                return dispatch(createGroupSuccess(response.data));
+            })
+            .catch((error) => {
+                return dispatch(createGroupError(error));
             });
     };
 }

@@ -1,7 +1,12 @@
 import axios from 'axios';
 
 import {
+    CreateBox,
     Box,
+    CreateBoxActionType,
+    CreateBoxErrorAction,
+    CreateBoxLoadingAction,
+    CreateBoxSuccessAction,
     GetBoxActionType,
     GetBoxErrorAction,
     GetBoxLoadingAction,
@@ -9,7 +14,7 @@ import {
     FindBoxesActionType,
     FindBoxesErrorAction,
     FindBoxesLoadingAction,
-    FindBoxesSuccessAction,
+    FindBoxesSuccessAction
 } from '../../models';
 
 const getBoxLoading = (loading: boolean): GetBoxLoadingAction => ({ type: GetBoxActionType.LOADING, loading });
@@ -19,6 +24,10 @@ const getBoxError = (error: any): GetBoxErrorAction => ({ type: GetBoxActionType
 const findBoxesLoading = (loading: boolean): FindBoxesLoadingAction => ({ type: FindBoxesActionType.LOADING, loading });
 const findBoxesSuccess = (payload: Box[]): FindBoxesSuccessAction => ({ type: FindBoxesActionType.SUCCESS, payload });
 const findBoxesError = (error: any): FindBoxesErrorAction => ({ type: FindBoxesActionType.ERROR, error });
+
+const createBoxLoading = (loading: boolean): CreateBoxLoadingAction => ({ type: CreateBoxActionType.LOADING, loading });
+const createBoxSuccess = (payload: Box): CreateBoxSuccessAction => ({ type: CreateBoxActionType.SUCCESS, payload });
+const createBoxError = (error: any): CreateBoxErrorAction => ({ type: CreateBoxActionType.ERROR, error });
 
 const boxesRootPath = '/api/boxes';
 const groupsRootPath = '/api/groups';
@@ -61,6 +70,20 @@ export function findGroupBoxes(groupId: number) {
             })
             .catch((error) => {
                 return dispatch(findBoxesError(error));
+            });
+    };
+}
+
+export function createGroupBox(groupId: number, box: CreateBox) {
+    return (dispatch) => {
+        dispatch(createBoxLoading(true));
+        const url = `${groupsRootPath}/${groupId}/boxes`;
+        return axios.post(url, box)
+            .then((response) => {
+                return dispatch(createBoxSuccess(response.data));
+            })
+            .catch((error) => {
+                return dispatch(createBoxError(error));
             });
     };
 }

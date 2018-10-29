@@ -1,7 +1,12 @@
 import axios from 'axios';
 
 import {
+    CreateProvider,
     Provider,
+    CreateProviderActionType,
+    CreateProviderErrorAction,
+    CreateProviderLoadingAction,
+    CreateProviderSuccessAction,
     GetProviderActionType,
     GetProviderErrorAction,
     GetProviderLoadingAction,
@@ -19,6 +24,10 @@ const getProviderError = (error: any): GetProviderErrorAction => ({ type: GetPro
 const findProvidersLoading = (loading: boolean): FindProvidersLoadingAction => ({ type: FindProvidersActionType.LOADING, loading });
 const findProvidersSuccess = (payload: Provider[]): FindProvidersSuccessAction => ({ type: FindProvidersActionType.SUCCESS, payload });
 const findProvidersError = (error: any): FindProvidersErrorAction => ({ type: FindProvidersActionType.ERROR, error });
+
+const createProviderLoading = (loading: boolean): CreateProviderLoadingAction => ({ type: CreateProviderActionType.LOADING, loading });
+const createProviderSuccess = (payload: Provider): CreateProviderSuccessAction => ({ type: CreateProviderActionType.SUCCESS, payload });
+const createProviderError = (error: any): CreateProviderErrorAction => ({ type: CreateProviderActionType.ERROR, error });
 
 const providersRootPath = '/api/providers';
 const versionsRootPath = '/api/versions';
@@ -61,6 +70,20 @@ export function findVersionProviders(versionId: number) {
             })
             .catch((error) => {
                 return dispatch(findProvidersError(error));
+            });
+    };
+}
+
+export function createVersionProvider(versionId: number, provider: CreateProvider) {
+    return (dispatch) => {
+        dispatch(createProviderLoading(true));
+        const url = `${versionsRootPath}/${versionId}/providers`;
+        return axios.post(url, provider)
+            .then((response) => {
+                return dispatch(createProviderSuccess(response.data));
+            })
+            .catch((error) => {
+                return dispatch(createProviderError(error));
             });
     };
 }

@@ -1,13 +1,26 @@
 import {
+    Box,
     BoxState,
     BoxAction,
+    CreateBoxAction,
+    CreateBoxActionType,
+    GetBoxAction,
+    GetBoxActionType,
     FindBoxesAction,
     FindBoxesActionType
 } from '../../models';
 import { initialBoxState } from '../store/initial-state';
 
-export function reducer(state: BoxState = initialBoxState, action: BoxAction): BoxState {
+export const reducer = (state: BoxState = initialBoxState, action: BoxAction): BoxState => {
     switch (action.type) {
+        case CreateBoxActionType.LOADING:
+        case CreateBoxActionType.SUCCESS:
+        case CreateBoxActionType.ERROR:
+            return create(state, action);
+        case GetBoxActionType.LOADING:
+        case GetBoxActionType.SUCCESS:
+        case GetBoxActionType.ERROR:
+            return get(state, action);
         case FindBoxesActionType.LOADING:
         case FindBoxesActionType.SUCCESS:
         case FindBoxesActionType.ERROR:
@@ -17,7 +30,65 @@ export function reducer(state: BoxState = initialBoxState, action: BoxAction): B
     }
 }
 
-export function find(state: BoxState = initialBoxState, action: FindBoxesAction): BoxState {
+export const create = (state: BoxState = initialBoxState, action: CreateBoxAction): BoxState => {
+    switch (action.type) {
+        case CreateBoxActionType.LOADING: {
+            const { loading } = action;
+            return { ...state, loading: loading };
+        }
+
+        case CreateBoxActionType.SUCCESS: {
+            const { payload } = action;
+            let { boxes } = state;
+
+            if (payload) {
+                boxes = replaceOrAppend(boxes, payload);
+            }
+
+            return { ...initialBoxState, boxes: boxes };
+        }
+
+        case CreateBoxActionType.ERROR: {
+            const { error } = action;
+            return { ...initialBoxState, error: error };
+        }
+
+        default: {
+            return state;
+        }
+    }
+}
+
+export const get = (state: BoxState = initialBoxState, action: GetBoxAction): BoxState => {
+    switch (action.type) {
+        case GetBoxActionType.LOADING: {
+            const { loading } = action;
+            return { ...state, loading: loading };
+        }
+
+        case GetBoxActionType.SUCCESS: {
+            const { payload } = action;
+            let { boxes } = state;
+
+            if (payload) {
+                boxes = replaceOrAppend(boxes, payload);
+            }
+
+            return { ...initialBoxState, boxes: boxes };
+        }
+
+        case GetBoxActionType.ERROR: {
+            const { error } = action;
+            return { ...initialBoxState, error: error };
+        }
+
+        default: {
+            return state;
+        }
+    }
+}
+
+export const find = (state: BoxState = initialBoxState, action: FindBoxesAction): BoxState => {
     switch (action.type) {
         case FindBoxesActionType.LOADING: {
             const { loading } = action;
@@ -29,12 +100,7 @@ export function find(state: BoxState = initialBoxState, action: FindBoxesAction)
             let { boxes } = state;
             if (payload) {
                 payload.forEach(box => {
-                    let index = boxes.indexOf(box);
-                    if (~index) {
-                        boxes[index] = box;
-                    } else {
-                        boxes = boxes.concat(payload);
-                    }
+                    boxes = replaceOrAppend(boxes, box);
                 });
             }
             return { ...initialBoxState, boxes: payload };
@@ -49,4 +115,16 @@ export function find(state: BoxState = initialBoxState, action: FindBoxesAction)
             return state;
         }
     }
+}
+
+const replaceOrAppend = (boxes: Box[], box: Box) => {
+    const index = boxes.map(box => box.id).indexOf(box.id);
+
+    if (~index) {
+        boxes[index] = box;
+    } else {
+        boxes = boxes.concat(box);
+    }
+
+    return boxes;
 }
