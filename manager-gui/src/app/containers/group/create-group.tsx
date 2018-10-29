@@ -58,13 +58,13 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
         } else {
             return <CreateGroupFragment
                 onCancelButtonClick={this.onCancelButtonClick}
-                onFormSubmit={this.onCreateGroupFormSubmit}
+                onFormSubmit={this.onFormSubmit}
                 onFormInputChange={this.onFormInputChange}
                 formData={formData} />
         }
     }
 
-    private onCreateGroupFormSubmit = () => {
+    private onFormSubmit = () => {
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
         if (!formNameValue || formNameValue.length < 3) {

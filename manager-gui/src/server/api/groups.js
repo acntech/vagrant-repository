@@ -57,6 +57,7 @@ router.post('/', (req, res) => {
     const groupId = groups.length + 1;
     const group = { ...body, id: groupId };
     groups.push(group);
+
     res.send(group);
 });
 
@@ -106,7 +107,7 @@ router.post('/:id/boxes', (req, res) => {
         const error = createError(
             409,
             'Conflict',
-            `Box with name ${body.name} already exists for group`,
+            `Box with name ${body.name} already exists for group ${entity.name}`,
             '/api/groups/:id/boxes');
         res.status(409).send(error);
     }
@@ -115,7 +116,7 @@ router.post('/:id/boxes', (req, res) => {
     const box = { ...body, id: boxId, group: entity };
     boxes.push(box);
 
-    res.send(boxes);
+    res.send(box);
 });
 
 const createError = (status, error, message, path) => {

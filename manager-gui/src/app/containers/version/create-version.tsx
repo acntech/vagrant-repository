@@ -5,8 +5,8 @@ import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
 import { Button, Container, Form, Header, Icon, InputOnChangeData, Message, Segment } from 'semantic-ui-react';
 
-import { CreateBox, BoxState, RootState } from '../../models';
-import { createGroupBox, findGroupBoxes } from '../../state/actions';
+import { CreateVersion, VersionState, RootState } from '../../models';
+import { createBoxVersion, findBoxVersions } from '../../state/actions';
 import { LoadingIndicator, MainHeader } from '../../components';
 
 interface RouteProps {
@@ -14,12 +14,12 @@ interface RouteProps {
 }
 
 interface ComponentStateProps {
-    boxState: BoxState;
+    versionState: VersionState;
 }
 
 interface ComponentDispatchProps {
-    findGroupBoxes: (groupId: number) => Promise<any>;
-    createGroupBox: (groupId: number, box: CreateBox) => Promise<any>;
+    findBoxVersions: (boxId: number) => Promise<any>;
+    createBoxVersion: (boxId: number, version: CreateVersion) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
@@ -44,7 +44,7 @@ const initialState: ComponentState = {
     }
 };
 
-class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
+class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
@@ -52,18 +52,18 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
     }
 
     componentDidMount() {
-        const { groupId } = this.props.match.params;
-        this.props.findGroupBoxes(groupId);
+        const { boxId } = this.props.match.params;
+        this.props.findBoxVersions(boxId);
     }
 
     public render(): ReactNode {
-        const { groupId } = this.props.match.params;
+        const { boxId, groupId } = this.props.match.params;
         const { cancel, formData } = this.state;
-        const { boxState } = this.props;
-        const { loading } = boxState;
+        const { versionState } = this.props;
+        const { loading } = versionState;
 
         if (cancel) {
-            return <Redirect to={`/group/${groupId}`} />;
+            return <Redirect to={`/group/${groupId}/box/${boxId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
         } else {
@@ -76,13 +76,13 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
     }
 
     private onFormSubmit = () => {
-        const { groupId } = this.props.match.params;
+        const { boxId } = this.props.match.params;
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
         if (!formNameValue || formNameValue.length < 3) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Box name must be atleast 3 letters long' } });
+            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Version name must be atleast 3 letters long' } });
         } else {
-            this.props.createGroupBox(groupId, { name: formNameValue, description: formDescriptionValue });
+            this.props.createBoxVersion(boxId, { name: formNameValue, description: formDescriptionValue });
         }
     };
 
@@ -117,7 +117,7 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
         <Container>
             <MainHeader />
             <Segment basic>
-                <Header>Create Box</Header>
+                <Header>Create Version</Header>
             </Segment>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
@@ -125,21 +125,21 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
                         <Form.Input
                             error={formError}
                             width={10}
-                            placeholder='Enter box name...'
-                            label='Box Name'
+                            placeholder='Enter version name...'
+                            label='Version Name'
                             value={formNameValue}
                             onChange={onFormInputChange} />
                     </Form.Group>
                     <Form.Group>
                         <Form.TextArea
                             width={10}
-                            placeholder='Enter box description...'
-                            label='Box Description'
+                            placeholder='Enter version description...'
+                            label='Version Description'
                             value={formDescriptionValue} />
                     </Form.Group>
                     <Form.Group>
                         <Form.Button
-                            primary size='tiny'><Icon name='cube' />Create Box</Form.Button>
+                            primary size='tiny'><Icon name='cube' />Create Version</Form.Button>
                         <Button
                             secondary size='tiny'
                             onClick={onCancelButtonClick}><Icon name='cancel' />Cancel</Button>
@@ -152,14 +152,14 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
 };
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
-    boxState: state.boxState
+    versionState: state.versionState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
-    findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
-    createGroupBox: (groupId: number, box: CreateBox) => dispatch(createGroupBox(groupId, box))
+    findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId)),
+    createBoxVersion: (boxId: number, version: CreateVersion) => dispatch(createBoxVersion(boxId, version))
 });
 
-const ConnectedCreateBoxContainer = connect(mapStateToProps, mapDispatchToProps)(CreateBoxContainer);
+const ConnectedCreateVersionContainer = connect(mapStateToProps, mapDispatchToProps)(CreateVersionContainer);
 
-export { ConnectedCreateBoxContainer as CreateBoxContainer };
+export { ConnectedCreateVersionContainer as CreateVersionContainer };

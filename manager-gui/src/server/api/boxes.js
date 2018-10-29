@@ -40,6 +40,45 @@ router.get('/:id/versions', (req, res) => {
     }
 });
 
+router.post('/:id/versions', (req, res) => {
+    const { params, body } = req;
+    const { id } = params;
+
+    if (!id) {
+        const error = createError(404, 'Not Found', 'Box ID not set', '/api/boxes/:id/versions');
+        res.status(404).send(error);
+    }
+
+    if (!body || !body.name) {
+        const error = createError(400, 'Bad Request', 'Request body is malformed', '/api/boxes/:id/versions');
+        res.status(400).send(error);
+    }
+
+    const entity = boxes.find(e => e.id == id);
+
+    if (!entity) {
+        const error = createError(400, 'Bad Request', `Box with ID ${id} not found`, '/api/boxes/:id/versions');
+        res.status(400).send(error);
+    }
+
+    const entities = versions.filter(e => e.name === body.name);
+
+    if (entities && entities.length > 0) {
+        const error = createError(
+            409,
+            'Conflict',
+            `Version with name ${body.name} already exists for box ${entity.name}`,
+            '/api/boxes/:id/versions');
+        res.status(409).send(error);
+    }
+
+    const versionId = versions.length + 1;
+    const version = { ...body, id: versionId, box: entity };
+    versions.push(version);
+
+    res.send(version);
+});
+
 const createError = (status, error, message, path) => {
     return {
         timestamp: (new Date).toUTCString(),

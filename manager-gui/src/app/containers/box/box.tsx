@@ -3,7 +3,7 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Header, Icon, Message, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState, Version, VersionState } from '../../models';
 import { findBoxVersions, findGroups, findGroupBoxes } from '../../state/actions';
@@ -31,9 +31,12 @@ interface ComponentState {
     group?: Group;
     box?: Box;
     versionId?: number;
+    createVersion: boolean;
 }
 
-const initialState: ComponentState = {};
+const initialState: ComponentState = {
+    createVersion: false
+};
 
 class BoxContainer extends Component<ComponentProps, ComponentState> {
 
@@ -72,7 +75,7 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId, boxId } = this.props.match.params;
-        const { versionId, group, box } = this.state;
+        const { versionId, group, box, createVersion } = this.state;
         const { versionState } = this.props;
         const { versions, loading } = versionState;
 
@@ -80,13 +83,28 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
+        } else if (createVersion) {
+            return <Redirect to={`/group/${groupId}/box/${boxId}/create/version`} />;
+        } else if (!group) {
+            return <NoGroupFoundFragment groupId={groupId} />;
+        } else if (!box) {
+            return <NoBoxFoundFragment boxId={boxId} />;
         } else {
-            return <BoxFragment group={group} box={box} versions={versions} onClick={this.onListItemClick} />;
+            return <BoxFragment
+                group={group}
+                box={box}
+                versions={versions}
+                onTableRowClick={this.onTableRowClick}
+                onCreateVersionButtonClick={this.onCreateVersionButtonClick} />;
         }
     }
 
-    private onListItemClick = (versionId: number) => {
+    private onTableRowClick = (versionId: number) => {
         this.setState({ versionId: versionId });
+    };
+
+    private onCreateVersionButtonClick = () => {
+        this.setState({ createVersion: true });
     };
 }
 
@@ -94,11 +112,12 @@ interface BoxFragmentProps {
     group?: Group;
     box?: Box;
     versions: Version[];
-    onClick: (versionId: number) => void;
+    onTableRowClick: (versionId: number) => void;
+    onCreateVersionButtonClick: () => void;
 }
 
 const BoxFragment: SFC<BoxFragmentProps> = (props) => {
-    const { group, box, versions, onClick } = props;
+    const { group, box, versions, onTableRowClick, onCreateVersionButtonClick } = props;
 
     if (group && box) {
         const { id: groupId, name: groupName } = group;
@@ -112,14 +131,20 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
                     </Header>
                     <Header.Subheader>{description}</Header.Subheader>
                 </Segment>
-                <VersionsFragment versions={versions} onClick={onClick} />
+                <VersionsFragment
+                    versions={versions}
+                    onTableRowClick={onTableRowClick}
+                    onCreateVersionButtonClick={onCreateVersionButtonClick} />
             </Container>
         );
     } else {
         return (
             <Container>
                 <MainHeader headerTitle='Vagrant Repository Manager' />
-                <VersionsFragment versions={versions} onClick={onClick} />
+                <VersionsFragment
+                    versions={versions}
+                    onTableRowClick={onTableRowClick}
+                    onCreateVersionButtonClick={onCreateVersionButtonClick} />
             </Container>
         );
     }
@@ -127,16 +152,19 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
 
 interface VersionsFragmentProps {
     versions: Version[];
-    onClick: (versionId: number) => void;
+    onTableRowClick: (versionId: number) => void;
+    onCreateVersionButtonClick: () => void;
 }
 
 const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
-    const { versions, onClick } = props;
+    const { versions, onTableRowClick, onCreateVersionButtonClick } = props;
 
     return (
         <Segment basic>
             <Button.Group>
-                <Button primary size='tiny'>New Version</Button>
+                <Button primary size='tiny' onClick={onCreateVersionButtonClick}>
+                    <Icon name='tag' />New Version
+                </Button>
             </Button.Group>
             <Table celled selectable>
                 <Table.Header>
@@ -149,7 +177,7 @@ const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
                     {versions.map((version, index) => {
                         const { id, name, description } = version;
                         return (
-                            <Table.Row key={index} className='clickable-table-row' onClick={() => onClick(id)}>
+                            <Table.Row key={index} className='clickable-table-row' onClick={() => onTableRowClick(id)}>
                                 <Table.Cell>{name}</Table.Cell>
                                 <Table.Cell>{description}</Table.Cell>
                             </Table.Row>
@@ -158,6 +186,48 @@ const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
                 </Table.Body>
             </Table>
         </Segment>
+    );
+};
+
+interface NoGroupFoundFragmentProps {
+    groupId: string;
+};
+
+const NoGroupFoundFragment: SFC<NoGroupFoundFragmentProps> = (props) => {
+    const { groupId } = props;
+
+    return (
+        <Container>
+            <MainHeader />
+            <Segment basic>
+                <Message
+                    negative
+                    icon='warning sign'
+                    header='No group found'
+                    content={`Could not find group for ID ${groupId}`} />
+            </Segment>
+        </Container>
+    );
+};
+
+interface NoBoxFoundFragmentProps {
+    boxId: string;
+};
+
+const NoBoxFoundFragment: SFC<NoBoxFoundFragmentProps> = (props) => {
+    const { boxId } = props;
+
+    return (
+        <Container>
+            <MainHeader />
+            <Segment basic>
+                <Message
+                    negative
+                    icon='warning sign'
+                    header='No box found'
+                    content={`Could not find box for ID ${boxId}`} />
+            </Segment>
+        </Container>
     );
 };
 

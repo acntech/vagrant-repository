@@ -9,7 +9,7 @@ import { Box } from '../';
 
 export interface CreateVersion {
     name: string;
-    description: string;
+    description?: string;
 }
 
 export interface Version {

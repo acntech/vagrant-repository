@@ -9,6 +9,7 @@ import { findGroups } from '../../state/actions';
 import {
     CreateBoxContainer,
     CreateGroupContainer,
+    CreateVersionContainer,
     HomeContainer,
     BoxContainer,
     GroupContainer,
@@ -37,6 +38,7 @@ class RootContainer extends Component<ComponentProps> {
             <BrowserRouter>
                 <Switch>
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?" component={VersionContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?/create/version" component={CreateVersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?" component={BoxContainer} />
                     <Route path="/group/:groupId?/create/box" component={CreateBoxContainer} />
                     <Route path="/group/:groupId?" component={GroupContainer} />
