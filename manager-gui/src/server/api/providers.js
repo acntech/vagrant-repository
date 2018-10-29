@@ -8,7 +8,8 @@ router.get('/:id', (req, res) => {
     const id = req.params.id;
 
     if (!id) {
-        res.status(400).send();
+        const error = createError(404, 'Not Found', 'Provider ID not set', '/api/providers/:id');
+        res.status(400).send(error);
     }
 
     const entity = providers.find(e => e.id === id);
@@ -19,5 +20,15 @@ router.get('/:id', (req, res) => {
         res.status(204).send();
     }
 });
+
+const createError = (status, error, message, path) => {
+    return {
+        timestamp: (new Date).toUTCString(),
+        status: status,
+        error: error,
+        message: message,
+        path: path
+    };
+}
 
 module.exports = router;

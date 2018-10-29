@@ -7,9 +7,6 @@ import store, { initializeLocales } from './state/store';
 import { ErrorHandlerProvider } from './providers';
 import { RootContainer } from './containers';
 
-import 'semantic-ui-css/semantic.min.css';
-import './index.css';
-
 class App extends Component {
 
     constructor(props) {

@@ -22,7 +22,8 @@ router.get('/:id', (req, res) => {
     const { id } = params;
 
     if (!id) {
-        res.status(404).send();
+        const error = createError(404, 'Not Found', 'Group ID not set', '/api/groups/:id');
+        res.status(404).send(error);
     }
 
     const entity = groups.find(e => e.id == id);
@@ -38,13 +39,19 @@ router.post('/', (req, res) => {
     const { body } = req;
 
     if (!body || !body.name) {
-        res.status(400).send();
+        const error = createError(400, 'Bad Request', 'Request body is malformed', '/api/groups');
+        res.status(400).send(error);
     }
 
     const entities = groups.filter(e => e.name === body.name);
 
     if (entities && entities.length > 0) {
-        res.status(409).send();
+        const error = createError(
+            409,
+            'Conflict',
+            `Group with name ${body.name} already exists for group`,
+            '/api/groups');
+        res.status(409).send(error);
     }
 
     const groupId = groups.length + 1;
@@ -59,7 +66,8 @@ router.get('/:id/boxes', (req, res) => {
     const { name } = query;
 
     if (!id) {
-        res.status(404).send();
+        const error = createError(404, 'Not Found', 'Group ID not set', '/api/groups/:id/boxes');
+        res.status(404).send(error);
     }
 
     if (name) {
@@ -76,23 +84,20 @@ router.post('/:id/boxes', (req, res) => {
     const { id } = params;
 
     if (!id) {
-        const error = createError(404, 'Not Found', 'Group ID not set', '/api/:id/boxes');
+        const error = createError(404, 'Not Found', 'Group ID not set', '/api/groups/:id/boxes');
         res.status(404).send(error);
-        return;
     }
 
     if (!body || !body.name) {
-        const error = createError(400, 'Bad Request', 'Request body malformed', '/api/:id/boxes');
+        const error = createError(400, 'Bad Request', 'Request body is malformed', '/api/groups/:id/boxes');
         res.status(400).send(error);
-        return;
     }
 
     const entity = groups.find(e => e.id == id);
 
     if (!entity) {
-        const error = createError(400, 'Bad Request', `Group with ID ${id} not found`, '/api/:id/boxes');
+        const error = createError(400, 'Bad Request', `Group with ID ${id} not found`, '/api/groups/:id/boxes');
         res.status(400).send(error);
-        return;
     }
 
     const entities = boxes.filter(e => e.name === body.name);
@@ -101,17 +106,16 @@ router.post('/:id/boxes', (req, res) => {
         const error = createError(
             409,
             'Conflict',
-            'Box with name body.name already exists for group',
-            '/api/:id/boxes');
-        res.status(409).send();
-        return;
+            `Box with name ${body.name} already exists for group`,
+            '/api/groups/:id/boxes');
+        res.status(409).send(error);
     }
 
-    const boxId = groups.length + 1;
-    const group = { ...body, id: boxId, group: entity };
-    groups.push(group);
+    const boxId = boxes.length + 1;
+    const box = { ...body, id: boxId, group: entity };
+    boxes.push(box);
 
-    res.send(group);
+    res.send(boxes);
 });
 
 const createError = (status, error, message, path) => {
