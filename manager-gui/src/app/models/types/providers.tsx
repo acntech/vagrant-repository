@@ -10,17 +10,17 @@ import { Error } from './globals';
 import { Version } from '../';
 
 export interface CreateProvider {
-    providerType: ProviderType;
+    provider_type: ProviderType;
     size: number;
-    checksumType: ChecksumType;
+    checksum_type: ChecksumType;
     checksum: string;
 }
 
 export interface Provider {
     id: number;
-    providerType: ProviderType;
+    provider_type: ProviderType;
     size: number;
-    checksumType: ChecksumType;
+    checksum_type: ChecksumType;
     checksum: string;
     version: Version;
 }

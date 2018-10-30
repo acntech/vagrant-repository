@@ -14,7 +14,8 @@ import {
     BoxContainer,
     GroupContainer,
     NotFoundContainer,
-    VersionContainer
+    VersionContainer,
+    CreateProviderContainer
 } from '../';
 
 interface ComponentStateProps {
@@ -37,6 +38,7 @@ class RootContainer extends Component<ComponentProps> {
         return (
             <BrowserRouter>
                 <Switch>
+                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/create/provider" component={CreateProviderContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?" component={VersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/create/version" component={CreateVersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?" component={BoxContainer} />
