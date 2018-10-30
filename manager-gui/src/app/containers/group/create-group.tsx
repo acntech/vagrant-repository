@@ -3,7 +3,7 @@ import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, Form, Header, Icon, InputOnChangeData, Message, Segment } from 'semantic-ui-react';
+import { Button, Container, Form, Header, Icon, InputOnChangeData, TextAreaProps, Message, Segment } from 'semantic-ui-react';
 
 import { CreateGroup, GroupState, RootState } from '../../models';
 import { createGroup } from '../../state/actions';
@@ -60,6 +60,7 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}
                 onFormInputChange={this.onFormInputChange}
+                onFormTextAreaChange={this.onFormTextAreaChange}
                 formData={formData} />
         }
     }
@@ -68,7 +69,9 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
         if (!formNameValue || formNameValue.length < 3) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Group name must be atleast 3 letters long' } });
+            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Group name must be at least 3 letters long' } });
+        } else if (/\s/.test(formNameValue)) {
+            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Group name cannot contain any spaces'}})
         } else {
             this.props.createGroup({ name: formNameValue, description: formDescriptionValue });
         }
@@ -80,6 +83,12 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
         this.setState({ formData: { ...formData, formError: false, formWarning: false, formNameValue: value } });
     }
 
+    private onFormTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
+        const { value } = event.currentTarget;
+        const { formData } = this.state;
+        this.setState({ formData: { ...formData, formError: false, formWarning: false, formDescriptionValue: value}})
+    }
+
     private onCancelButtonClick = () => {
         this.setState({ cancel: true });
     };
@@ -89,11 +98,12 @@ interface CreateGroupFragmentProps {
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
+    onFormTextAreaChange: (event: React.SyntheticEvent<HTMLTextAreaElement>, data: TextAreaProps) => void;
     formData: FormData;
 };
 
 const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
-    const { onCancelButtonClick, onFormSubmit, onFormInputChange, formData } = props;
+    const { onCancelButtonClick, onFormSubmit, onFormInputChange, onFormTextAreaChange, formData } = props;
     const {
         formError,
         formErrorMessage,
@@ -123,7 +133,8 @@ const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
                             width={10}
                             placeholder='Enter group description...'
                             label='Group Description'
-                            value={formDescriptionValue} />
+                            value={formDescriptionValue} 
+                            onChange={onFormTextAreaChange} />
                     </Form.Group>
                     <Form.Group>
                         <Form.Button
