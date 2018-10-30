@@ -11,6 +11,7 @@ router.get('/:id', (req, res) => {
     if (!id) {
         const error = createError(404, 'Not Found', 'Box ID not set', '/api/boxes/:id');
         res.status(404).send(error);
+        return;
     }
 
     const entity = boxes.find(e => e.id == id);
@@ -29,6 +30,7 @@ router.get('/:id/versions', (req, res) => {
     if (!id) {
         const error = createError(404, 'Not Found', 'Box ID not set', '/api/boxes/:id/versions');
         res.status(404).send(error);
+        return;
     }
 
     if (name) {
@@ -47,11 +49,13 @@ router.post('/:id/versions', (req, res) => {
     if (!id) {
         const error = createError(404, 'Not Found', 'Box ID not set', '/api/boxes/:id/versions');
         res.status(404).send(error);
+        return;
     }
 
     if (!body || !body.name) {
         const error = createError(400, 'Bad Request', 'Request body is malformed', '/api/boxes/:id/versions');
         res.status(400).send(error);
+        return;
     }
 
     const entity = boxes.find(e => e.id == id);
@@ -59,6 +63,7 @@ router.post('/:id/versions', (req, res) => {
     if (!entity) {
         const error = createError(400, 'Bad Request', `Box with ID ${id} not found`, '/api/boxes/:id/versions');
         res.status(400).send(error);
+        return;
     }
 
     const entities = versions.filter(e => e.name === body.name);
@@ -70,6 +75,7 @@ router.post('/:id/versions', (req, res) => {
             `Version with name ${body.name} already exists for box ${entity.name}`,
             '/api/boxes/:id/versions');
         res.status(409).send(error);
+        return;
     }
 
     const versionId = versions.length + 1;

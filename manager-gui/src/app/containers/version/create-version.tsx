@@ -135,17 +135,17 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
                         <Form.Input
                             error={formError}
                             width={10}
-                            placeholder='Enter version name...'
                             label='Version Name'
+                            placeholder='Enter version name...'
                             value={formNameValue}
                             onChange={onFormInputChange} />
                     </Form.Group>
                     <Form.Group>
                         <Form.TextArea
                             width={10}
-                            placeholder='Enter version description...'
                             label='Version Description'
-                            value={formDescriptionValue} 
+                            placeholder='Enter version description...'
+                            value={formDescriptionValue}
                             onChange={onFormTextAreaChange} />
                     </Form.Group>
                     <Form.Group>

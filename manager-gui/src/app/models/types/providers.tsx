@@ -11,9 +11,6 @@ import { Version } from '../';
 
 export interface CreateProvider {
     providerType: ProviderType;
-    size: number;
-    checksumType: ChecksumType;
-    checksum: string;
 }
 
 export interface Provider {

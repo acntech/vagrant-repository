@@ -83,7 +83,7 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
         if (!formNameValue || formNameValue.length < 3) {
             this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Box name must be at least 3 letters long' } });
         } else if (/\s/.test(formNameValue)) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Box name cannot contain any spaces'}}) 
+            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Box name cannot contain any spaces'}})
         } else {
             this.props.createGroupBox(groupId, { name: formNameValue, description: formDescriptionValue });
         }
@@ -135,17 +135,17 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
                         <Form.Input
                             error={formError}
                             width={10}
-                            placeholder='Enter box name...'
                             label='Box Name'
+                            placeholder='Enter box name...'
                             value={formNameValue}
                             onChange={onFormInputChange} />
                     </Form.Group>
                     <Form.Group>
                         <Form.TextArea
                             width={10}
-                            placeholder='Enter box description...'
                             label='Box Description'
-                            value={formDescriptionValue} 
+                            placeholder='Enter box description...'
+                            value={formDescriptionValue}
                             onChange={onFormTextAreaChange} />
                     </Form.Group>
                     <Form.Group>

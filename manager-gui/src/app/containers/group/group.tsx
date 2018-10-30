@@ -3,11 +3,12 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Message, Icon, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Header, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState } from '../../models';
 import { findGroups, findGroupBoxes } from '../../state/actions';
 import { MainHeader, LoadingIndicator } from '../../components';
+import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
     match: any;
@@ -74,7 +75,11 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
         } else if (createBox) {
             return <Redirect to={`/group/${groupId}/create/box`} />;
         } else if (!group) {
-            return <NoGroupFoundFragment groupId={groupId} />;
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No group found'
+                content={`Could not find group for ID ${groupId}`} />;
         } else {
             return <GroupFragment
                 group={group}
@@ -181,27 +186,6 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
                 </Table.Body>
             </Table>
         </Segment>
-    );
-};
-
-interface NoGroupFoundFragmentProps {
-    groupId: string;
-};
-
-const NoGroupFoundFragment: SFC<NoGroupFoundFragmentProps> = (props) => {
-    const { groupId } = props;
-
-    return (
-        <Container>
-            <MainHeader />
-            <Segment basic>
-                <Message
-                    negative
-                    icon='warning sign'
-                    header='No group found'
-                    content={`Could not find group for ID ${groupId}`} />
-            </Segment>
-        </Container>
     );
 };
 

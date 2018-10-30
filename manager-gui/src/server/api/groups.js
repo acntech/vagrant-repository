@@ -24,6 +24,7 @@ router.get('/:id', (req, res) => {
     if (!id) {
         const error = createError(404, 'Not Found', 'Group ID not set', '/api/groups/:id');
         res.status(404).send(error);
+        return;
     }
 
     const entity = groups.find(e => e.id == id);
@@ -41,6 +42,7 @@ router.post('/', (req, res) => {
     if (!body || !body.name) {
         const error = createError(400, 'Bad Request', 'Request body is malformed', '/api/groups');
         res.status(400).send(error);
+        return;
     }
 
     const entities = groups.filter(e => e.name === body.name);
@@ -52,6 +54,7 @@ router.post('/', (req, res) => {
             `Group with name ${body.name} already exists for group`,
             '/api/groups');
         res.status(409).send(error);
+        return;
     }
 
     const groupId = groups.length + 1;
@@ -69,6 +72,7 @@ router.get('/:id/boxes', (req, res) => {
     if (!id) {
         const error = createError(404, 'Not Found', 'Group ID not set', '/api/groups/:id/boxes');
         res.status(404).send(error);
+        return;
     }
 
     if (name) {
@@ -87,11 +91,13 @@ router.post('/:id/boxes', (req, res) => {
     if (!id) {
         const error = createError(404, 'Not Found', 'Group ID not set', '/api/groups/:id/boxes');
         res.status(404).send(error);
+        return;
     }
 
     if (!body || !body.name) {
         const error = createError(400, 'Bad Request', 'Request body is malformed', '/api/groups/:id/boxes');
         res.status(400).send(error);
+        return;
     }
 
     const entity = groups.find(e => e.id == id);
@@ -99,6 +105,7 @@ router.post('/:id/boxes', (req, res) => {
     if (!entity) {
         const error = createError(400, 'Bad Request', `Group with ID ${id} not found`, '/api/groups/:id/boxes');
         res.status(400).send(error);
+        return;
     }
 
     const entities = boxes.filter(e => e.name === body.name);
@@ -110,6 +117,7 @@ router.post('/:id/boxes', (req, res) => {
             `Box with name ${body.name} already exists for group ${entity.name}`,
             '/api/groups/:id/boxes');
         res.status(409).send(error);
+        return;
     }
 
     const boxId = boxes.length + 1;

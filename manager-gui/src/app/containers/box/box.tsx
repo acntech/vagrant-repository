@@ -3,11 +3,12 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Icon, Message, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Header, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState, Version, VersionState } from '../../models';
 import { findBoxVersions, findGroups, findGroupBoxes } from '../../state/actions';
 import { MainHeader, LoadingIndicator } from '../../components';
+import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
     match: any;
@@ -86,9 +87,17 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
         } else if (createVersion) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/create/version`} />;
         } else if (!group) {
-            return <NoGroupFoundFragment groupId={groupId} />;
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No group found'
+                content={`Could not find group for ID ${groupId}`} />;
         } else if (!box) {
-            return <NoBoxFoundFragment boxId={boxId} />;
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No box found'
+                content={`Could not find box for ID ${boxId}`} />;
         } else {
             return <BoxFragment
                 group={group}
@@ -186,48 +195,6 @@ const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
                 </Table.Body>
             </Table>
         </Segment>
-    );
-};
-
-interface NoGroupFoundFragmentProps {
-    groupId: string;
-};
-
-const NoGroupFoundFragment: SFC<NoGroupFoundFragmentProps> = (props) => {
-    const { groupId } = props;
-
-    return (
-        <Container>
-            <MainHeader />
-            <Segment basic>
-                <Message
-                    negative
-                    icon='warning sign'
-                    header='No group found'
-                    content={`Could not find group for ID ${groupId}`} />
-            </Segment>
-        </Container>
-    );
-};
-
-interface NoBoxFoundFragmentProps {
-    boxId: string;
-};
-
-const NoBoxFoundFragment: SFC<NoBoxFoundFragmentProps> = (props) => {
-    const { boxId } = props;
-
-    return (
-        <Container>
-            <MainHeader />
-            <Segment basic>
-                <Message
-                    negative
-                    icon='warning sign'
-                    header='No box found'
-                    content={`Could not find box for ID ${boxId}`} />
-            </Segment>
-        </Container>
     );
 };
 

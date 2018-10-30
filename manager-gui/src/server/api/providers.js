@@ -10,6 +10,7 @@ router.get('/:id', (req, res) => {
     if (!id) {
         const error = createError(404, 'Not Found', 'Provider ID not set', '/api/providers/:id');
         res.status(400).send(error);
+        return;
     }
 
     const entity = providers.find(e => e.id === id);

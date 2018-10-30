@@ -123,17 +123,17 @@ const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
                         <Form.Input
                             error={formError}
                             width={10}
-                            placeholder='Enter group name...'
                             label='Group Name'
+                            placeholder='Enter group name...'
                             value={formNameValue}
                             onChange={onFormInputChange} />
                     </Form.Group>
                     <Form.Group>
                         <Form.TextArea
                             width={10}
-                            placeholder='Enter group description...'
                             label='Group Description'
-                            value={formDescriptionValue} 
+                            placeholder='Enter group description...'
+                            value={formDescriptionValue}
                             onChange={onFormTextAreaChange} />
                     </Form.Group>
                     <Form.Group>

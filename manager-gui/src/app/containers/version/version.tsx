@@ -3,11 +3,12 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Header, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, Provider, ProviderState, RootState, Version, VersionState } from '../../models';
 import { findBoxVersions, findGroups, findGroupBoxes, findVersionProviders } from '../../state/actions';
 import { MainHeader, LoadingIndicator } from '../../components';
+import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
     match: any;
@@ -34,9 +35,12 @@ interface ComponentState {
     box?: Box;
     version?: Version;
     providerId?: number;
+    createProvider: boolean;
 }
 
-const initialState: ComponentState = {};
+const initialState: ComponentState = {
+    createProvider: false
+};
 
 class VersionContainer extends Component<ComponentProps, ComponentState> {
 
@@ -83,21 +87,51 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
     }
 
     public render(): ReactNode {
-        const { groupId, boxId } = this.props.match.params;
-        const { providerId, group, box, version } = this.state;
+        const { groupId, boxId, versionId } = this.props.match.params;
+        const { createProvider, group, box, providerId, version } = this.state;
         const { providerState } = this.props;
         const { providers, loading } = providerState;
 
         if (providerId) {
-            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${providerId}`} />;
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${versionId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
+        } else if (createProvider) {
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/create/provider`} />;
+        } else if (!group) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No group found'
+                content={`Could not find group for ID ${groupId}`} />;
+        } else if (!box) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No box found'
+                content={`Could not find box for ID ${boxId}`} />;
+        } else if (!version) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No version found'
+                content={`Could not find version for ID ${versionId}`} />;
         } else {
-            return <VersionFragment group={group} box={box} version={version} providers={providers} onClick={this.onListItemClick} />;
+            return <VersionFragment
+                group={group}
+                box={box}
+                version={version}
+                providers={providers}
+                onTableRowClick={this.onTableRowClick}
+                onCreateProviderButtonClick={this.onCreateProviderButtonClick} />;
         }
     }
 
-    private onListItemClick = (versionId: number) => {
+    private onTableRowClick = (versionId: number) => {
+    };
+
+    private onCreateProviderButtonClick = () => {
+        this.setState({ createProvider: true });
     };
 }
 
@@ -106,11 +140,12 @@ interface VersionFragmentProps {
     box?: Box;
     version?: Version;
     providers: Provider[];
-    onClick: (providerId: number) => void;
+    onTableRowClick: (providerId: number) => void;
+    onCreateProviderButtonClick: () => void;
 }
 
 const VersionFragment: SFC<VersionFragmentProps> = (props) => {
-    const { group, box, version, providers, onClick } = props;
+    const { group, box, version, providers, onTableRowClick, onCreateProviderButtonClick } = props;
 
     if (group && box && version) {
         const { id: groupId, name: groupName } = group;
@@ -125,14 +160,20 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
                     </Header>
                     <Header.Subheader>{description}</Header.Subheader>
                 </Segment>
-                <ProvidersFragment providers={providers} onClick={onClick} />
+                <ProvidersFragment
+                    providers={providers}
+                    onTableRowClick={onTableRowClick}
+                    onCreateProviderButtonClick={onCreateProviderButtonClick} />
             </Container>
         );
     } else {
         return (
             <Container>
                 <MainHeader />
-                <ProvidersFragment providers={providers} onClick={onClick} />
+                <ProvidersFragment
+                    providers={providers}
+                    onTableRowClick={onTableRowClick}
+                    onCreateProviderButtonClick={onCreateProviderButtonClick} />
             </Container>
         );
     }
@@ -140,16 +181,19 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
 
 interface ProvidersFragmentProps {
     providers: Provider[];
-    onClick: (providerId: number) => void;
+    onTableRowClick: (providerId: number) => void;
+    onCreateProviderButtonClick: () => void;
 }
 
 const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
-    const { providers, onClick } = props;
+    const { providers, onTableRowClick, onCreateProviderButtonClick } = props;
 
     return (
         <Segment basic>
             <Button.Group>
-                <Button primary size='tiny'>New Provider</Button>
+                <Button primary size='tiny' onClick={onCreateProviderButtonClick}>
+                    <Icon name='file' />New Provider
+                </Button>
             </Button.Group>
             <Table celled selectable>
                 <Table.Header>
@@ -164,7 +208,7 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
                     {providers.map((provider, index) => {
                         const { id, providerType, size, checksumType, checksum } = provider;
                         return (
-                            <Table.Row key={index} className='clickable-table-row' onClick={() => onClick(id)}>
+                            <Table.Row key={index} className='clickable-table-row' onClick={() => onTableRowClick(id)}>
                                 <Table.Cell>{providerType}</Table.Cell>
                                 <Table.Cell>{size}</Table.Cell>
                                 <Table.Cell>{checksumType}</Table.Cell>
