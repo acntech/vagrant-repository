@@ -22,11 +22,11 @@ public class Provider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JsonProperty("provider_type")
+    @JsonProperty("providerType")
     @NotNull
     private ProviderType providerType;
     private Long size;
-    @JsonProperty("checksum_type")
+    @JsonProperty("checksumType")
     private ChecksumType checksumType;
     private String checksum;
     @Transient

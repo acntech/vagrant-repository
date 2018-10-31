@@ -21,6 +21,7 @@ export interface GroupState {
     loading: boolean;
     groups: Group[];
     error?: any;
+    createSuccess: boolean;
 }
 
 export interface GetGroupLoadingAction {

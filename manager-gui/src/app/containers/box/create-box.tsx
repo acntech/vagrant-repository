@@ -60,13 +60,15 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
         const { groupId } = this.props.match.params;
         const { cancel, formData } = this.state;
         const { boxState } = this.props;
-        const { loading } = boxState;
+        const { loading, createSuccess } = boxState;
 
         if (cancel) {
             return <Redirect to={`/group/${groupId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
-        } else {
+        } else if (createSuccess) {
+            return <Redirect to={`/group/${groupId}`} />
+        }else {
             return <CreateBoxFragment
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}

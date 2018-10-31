@@ -45,7 +45,7 @@ export const create = (state: BoxState = initialBoxState, action: CreateBoxActio
                 boxes = replaceOrAppend(boxes, payload);
             }
 
-            return { ...initialBoxState, boxes: boxes };
+            return { ...initialBoxState, boxes: boxes, createSuccess: true };
         }
 
         case CreateBoxActionType.ERROR: {

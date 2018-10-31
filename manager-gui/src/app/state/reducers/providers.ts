@@ -45,7 +45,7 @@ export const create = (state: ProviderState = initialProviderState, action: Crea
                 providers = replaceOrAppend(providers, payload);
             }
 
-            return { ...initialProviderState, providers: providers };
+            return { ...initialProviderState, providers: providers, createSuccess: true };
         }
 
         case CreateProviderActionType.ERROR: {

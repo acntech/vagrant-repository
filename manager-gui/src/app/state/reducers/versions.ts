@@ -45,7 +45,7 @@ export const create = (state: VersionState = initialVersionState, action: Create
                 versions = replaceOrAppend(versions, payload);
             }
 
-            return { ...initialVersionState, versions: versions };
+            return { ...initialVersionState, versions: versions, createSuccess: true };
         }
 
         case CreateVersionActionType.ERROR: {
