@@ -3,11 +3,11 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Icon, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState, Version, VersionState } from '../../models';
 import { findBoxVersions, findGroups, findGroupBoxes } from '../../state/actions';
-import { MainHeader, LoadingIndicator } from '../../components';
+import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -133,13 +133,10 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
         const { id: boxId, name: boxName, description } = box;
         return (
             <Container>
-                <MainHeader />
-                <Segment basic>
-                    <Header>
-                        <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>
-                    </Header>
-                    <Header.Subheader>{description}</Header.Subheader>
-                </Segment>
+                <PrimaryHeader />
+                <SecondaryHeader subtitle={description}>
+                    <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>
+                </SecondaryHeader>
                 <VersionsFragment
                     versions={versions}
                     onTableRowClick={onTableRowClick}
@@ -149,7 +146,7 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
     } else {
         return (
             <Container>
-                <MainHeader headerTitle='Vagrant Repository Manager' />
+                <PrimaryHeader />
                 <VersionsFragment
                     versions={versions}
                     onTableRowClick={onTableRowClick}

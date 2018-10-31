@@ -1,18 +1,27 @@
 // Modules
+const fs = require('fs');
 const express = require('express');
 const multer = require('multer');
 // Variables
 const router = express.Router();
-var storage = multer.diskStorage({
+const providers = require('../data/providers.json');
+const rootDir = '/tmp/vagrant-repository-manager';
+const uploadDir = `${rootDir}/uploads`;
+const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, '/tmp/uploads/')
+        const dirs = [rootDir, uploadDir];
+        dirs.forEach(dir => {
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }
+        });
+        cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
-        cb(null, 'default.box')
+        cb(null, 'default.box');
     }
 })
 const upload = multer({ storage: storage });
-const providers = require('../data/providers.json');
 
 router.get('/:id', (req, res) => {
     const id = req.params.id;

@@ -3,11 +3,11 @@ import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, DropdownProps, Form, Header, Icon, Message, DropdownItemProps, Segment } from 'semantic-ui-react';
+import { Button, Container, DropdownProps, Form, Icon, Message, DropdownItemProps, Segment } from 'semantic-ui-react';
 
 import { CreateProvider, ProviderState, ProviderType, RootState } from '../../models';
 import { createVersionProvider, findVersionProviders } from '../../state/actions';
-import { LoadingIndicator, MainHeader } from '../../components';
+import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface RouteProps {
     match: any;
@@ -115,10 +115,8 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
 
     return (
         <Container>
-            <MainHeader />
-            <Segment basic>
-                <Header>Create Provider</Header>
-            </Segment>
+            <PrimaryHeader />
+            <SecondaryHeader>Create Provider</SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

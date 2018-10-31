@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
 interface ComponentProps {
-    headerTitle?: string;
-    headerSubtitle?: string;
+    title?: string;
+    subtitle?: string;
 }
 
-class MainHeaderComponent extends Component<ComponentProps> {
+class PrimaryHeaderComponent extends Component<ComponentProps> {
 
     public render(): ReactNode {
         const browserTitle = this.browserTitle();
@@ -29,24 +29,24 @@ class MainHeaderComponent extends Component<ComponentProps> {
     }
 
     private browserTitle() {
-        const { headerTitle, headerSubtitle } = this.props;
-        const formattedHeaderTitle = headerTitle ? headerTitle : 'Vagrant Repository Manager';
-        if (headerSubtitle) {
-            return `${formattedHeaderTitle} - ${headerTitle}`;
+        const { title, subtitle } = this.props;
+        const formattedHeaderTitle = title ? title : 'Vagrant Repository Manager';
+        if (subtitle) {
+            return `${subtitle} - ${formattedHeaderTitle}`;
         } else {
             return formattedHeaderTitle;
         }
     }
 
     private headerTitle() {
-        const { headerTitle, headerSubtitle } = this.props;
-        const formattedHeaderTitle = headerTitle ? headerTitle : <FormattedMessage id='mainTitle' defaultMessage='Vagrant Repository Manager' />;
-        if (headerSubtitle) {
-            return `${formattedHeaderTitle} - ${headerSubtitle}`;
+        const { title, subtitle } = this.props;
+        const formattedHeaderTitle = title ? title : <FormattedMessage id='mainTitle' defaultMessage='Vagrant Repository Manager' />;
+        if (subtitle) {
+            return `${formattedHeaderTitle} - ${subtitle}`;
         } else {
             return formattedHeaderTitle;
         }
     }
 }
 
-export { MainHeaderComponent as MainHeader };
+export { PrimaryHeaderComponent as PrimaryHeader };

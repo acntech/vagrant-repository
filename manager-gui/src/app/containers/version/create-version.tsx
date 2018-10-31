@@ -3,11 +3,11 @@ import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, Form, Header, Icon, InputOnChangeData, TextAreaProps, Message, Segment } from 'semantic-ui-react';
+import { Button, Container, Form, Icon, InputOnChangeData, TextAreaProps, Message, Segment } from 'semantic-ui-react';
 
 import { CreateVersion, VersionState, RootState } from '../../models';
 import { createBoxVersion, findBoxVersions } from '../../state/actions';
-import { LoadingIndicator, MainHeader } from '../../components';
+import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface RouteProps {
     match: any;
@@ -83,7 +83,7 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
         if (!formNameValue || formNameValue.length < 3) {
             this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Version name must be at least 3 letters long' } });
         } else if (/\s/.test(formNameValue)) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Version name cannot contain any spaces'}})
+            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Version name cannot contain any spaces' } })
         } else {
             this.props.createBoxVersion(boxId, { name: formNameValue, description: formDescriptionValue });
         }
@@ -125,10 +125,8 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
 
     return (
         <Container>
-            <MainHeader />
-            <Segment basic>
-                <Header>Create Version</Header>
-            </Segment>
+            <PrimaryHeader />
+            <SecondaryHeader>Create Version</SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

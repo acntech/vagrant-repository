@@ -1,2 +1,2 @@
-export * from './main-header';
+export * from './headers';
 export * from './loading-indicator';

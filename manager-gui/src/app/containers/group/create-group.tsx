@@ -3,11 +3,11 @@ import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, Form, Header, Icon, InputOnChangeData, TextAreaProps, Message, Segment } from 'semantic-ui-react';
+import { Button, Container, Form, Icon, InputOnChangeData, TextAreaProps, Message, Segment } from 'semantic-ui-react';
 
 import { CreateGroup, GroupState, RootState } from '../../models';
 import { createGroup } from '../../state/actions';
-import { LoadingIndicator, MainHeader } from '../../components';
+import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface ComponentStateProps {
     groupState: GroupState;
@@ -71,7 +71,7 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
         if (!formNameValue || formNameValue.length < 3) {
             this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Group name must be at least 3 letters long' } });
         } else if (/\s/.test(formNameValue)) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Group name cannot contain any spaces'}})
+            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Group name cannot contain any spaces' } })
         } else {
             this.props.createGroup({ name: formNameValue, description: formDescriptionValue });
         }
@@ -86,7 +86,7 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
     private onFormTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
         const { value } = event.currentTarget;
         const { formData } = this.state;
-        this.setState({ formData: { ...formData, formError: false, formWarning: false, formDescriptionValue: value}})
+        this.setState({ formData: { ...formData, formError: false, formWarning: false, formDescriptionValue: value } })
     }
 
     private onCancelButtonClick = () => {
@@ -113,10 +113,8 @@ const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
 
     return (
         <Container>
-            <MainHeader />
-            <Segment basic>
-                <Header>Create Group</Header>
-            </Segment>
+            <PrimaryHeader />
+            <SecondaryHeader>Create Group</SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

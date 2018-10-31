@@ -3,11 +3,11 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Icon, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, RootState } from '../../models';
 import { findGroups, findGroupBoxes } from '../../state/actions';
-import { MainHeader, LoadingIndicator } from '../../components';
+import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -109,10 +109,14 @@ const GroupFragment: SFC<GroupFragmentProps> = (props) => {
     const { group, boxes, onTableRowClick, onCreateBoxButtonClick } = props;
 
     if (group) {
+        const { id, name, description } = group;
+
         return (
             <Container>
-                <MainHeader />
-                <GroupHeaderFragment group={group} />
+                <PrimaryHeader />
+                <SecondaryHeader subtitle={description}>
+                    <Link className="header-link" to={`/group/${id}`}>{name}</Link>
+                </SecondaryHeader>
                 <BoxesFragment
                     boxes={boxes}
                     onTableRowClick={onTableRowClick}
@@ -122,7 +126,7 @@ const GroupFragment: SFC<GroupFragmentProps> = (props) => {
     } else {
         return (
             <Container>
-                <MainHeader />
+                <PrimaryHeader />
                 <BoxesFragment
                     boxes={boxes}
                     onTableRowClick={onTableRowClick}
@@ -131,24 +135,6 @@ const GroupFragment: SFC<GroupFragmentProps> = (props) => {
         );
     }
 };
-
-interface GroupHeaderFragmentProps {
-    group: Group;
-}
-
-const GroupHeaderFragment: SFC<GroupHeaderFragmentProps> = (props) => {
-    const { group } = props;
-    const { id, name, description } = group;
-
-    return (
-        <Segment basic>
-            <Header>
-                <Link className="header-link" to={`/group/${id}`}>{name}</Link>
-            </Header>
-            <Header.Subheader>{description}</Header.Subheader>
-        </Segment>
-    );
-}
 
 interface BoxesFragmentProps {
     boxes: Box[];

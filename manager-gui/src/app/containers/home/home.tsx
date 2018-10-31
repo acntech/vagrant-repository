@@ -6,7 +6,7 @@ import { InjectedIntlProps } from 'react-intl';
 import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Group, GroupState, RootState } from '../../models';
-import { MainHeader, LoadingIndicator } from '../../components';
+import { LoadingIndicator, PrimaryHeader } from '../../components';
 
 interface ComponentStateProps {
     groupState: GroupState;
@@ -76,7 +76,7 @@ const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
 
     return (
         <Container>
-            <MainHeader />
+            <PrimaryHeader />
             <Segment basic>
                 <Button.Group>
                     <Button primary size='tiny' onClick={onCreateGroupButtonClick}>

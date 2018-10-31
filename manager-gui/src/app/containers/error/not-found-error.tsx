@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component, ReactNode } from 'react';
 import { Container, Message, Segment } from 'semantic-ui-react';
 
-import { MainHeader } from '../../components';
+import { PrimaryHeader } from '../../components';
 
 interface ComponentProps {
     header?: boolean;
@@ -19,7 +19,7 @@ class NotFoundErrorContainer extends Component<ComponentProps> {
 
         return (
             <Container className="error error-not-found">
-                {header ? <MainHeader /> : null}
+                {header ? <PrimaryHeader /> : null}
                 <Segment basic>
                     <Message
                         negative

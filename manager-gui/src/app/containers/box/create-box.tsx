@@ -3,11 +3,11 @@ import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, Form, Header, Icon, InputOnChangeData, TextAreaProps, Message, Segment } from 'semantic-ui-react';
+import { Button, Container, Form, Icon, InputOnChangeData, TextAreaProps, Message, Segment } from 'semantic-ui-react';
 
 import { CreateBox, BoxState, RootState } from '../../models';
 import { createGroupBox, findGroupBoxes } from '../../state/actions';
-import { LoadingIndicator, MainHeader } from '../../components';
+import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface RouteProps {
     match: any;
@@ -83,7 +83,7 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
         if (!formNameValue || formNameValue.length < 3) {
             this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Box name must be at least 3 letters long' } });
         } else if (/\s/.test(formNameValue)) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Box name cannot contain any spaces'}})
+            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Box name cannot contain any spaces' } })
         } else {
             this.props.createGroupBox(groupId, { name: formNameValue, description: formDescriptionValue });
         }
@@ -98,7 +98,7 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
     private onFormTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
         const { value } = event.currentTarget;
         const { formData } = this.state;
-        this.setState({ formData: { ...formData, formError: false, formWarning: false, formDescriptionValue: value}})
+        this.setState({ formData: { ...formData, formError: false, formWarning: false, formDescriptionValue: value } })
     }
 
     private onCancelButtonClick = () => {
@@ -125,10 +125,8 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
 
     return (
         <Container>
-            <MainHeader />
-            <Segment basic>
-                <Header>Create Box</Header>
-            </Segment>
+            <PrimaryHeader />
+            <SecondaryHeader>Create Box</SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

@@ -3,11 +3,11 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Icon, Segment, Table } from 'semantic-ui-react';
+import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Box, BoxState, Group, GroupState, Provider, ProviderState, RootState, Version, VersionState } from '../../models';
 import { findBoxVersions, findGroups, findGroupBoxes, findVersionProviders } from '../../state/actions';
-import { MainHeader, LoadingIndicator } from '../../components';
+import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -153,13 +153,10 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
         const { id: versionId, name: versionName, description } = version;
         return (
             <Container>
-                <MainHeader />
-                <Segment basic>
-                    <Header>
-                        <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>
-                    </Header>
-                    <Header.Subheader>{description}</Header.Subheader>
-                </Segment>
+                <PrimaryHeader />
+                <SecondaryHeader subtitle={description}>
+                    <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>
+                </SecondaryHeader>
                 <ProvidersFragment
                     providers={providers}
                     onTableRowClick={onTableRowClick}
@@ -169,7 +166,7 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
     } else {
         return (
             <Container>
-                <MainHeader />
+                <PrimaryHeader />
                 <ProvidersFragment
                     providers={providers}
                     onTableRowClick={onTableRowClick}
