@@ -5,22 +5,26 @@ import { BoxState, GroupState, VersionState, ProviderState, RootState } from '..
 
 export const initialGroupState: GroupState = {
     loading: false,
-    groups: []
+    groups: [],
+    createSuccess: false
 };
 
 export const initialBoxState: BoxState = {
     loading: false,
-    boxes: []
+    boxes: [],
+    createSuccess: false
 };
 
 export const initialVersionState: VersionState = {
     loading: false,
-    versions: []
+    versions: [],
+    createSuccess: false
 };
 
 export const initialProviderState: ProviderState = {
     loading: false,
-    providers: []
+    providers: [],
+    createSuccess: false
 };
 
 const INITIAL_STATE_MESSAGES = {

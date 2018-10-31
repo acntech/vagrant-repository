@@ -23,6 +23,7 @@ export interface VersionState {
     loading: boolean;
     versions: Version[];
     error?: any;
+    createSuccess: boolean;
 }
 
 export interface GetVersionLoadingAction {

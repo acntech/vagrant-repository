@@ -59,13 +59,15 @@ class CreateProviderContainer extends Component<ComponentProps, ComponentState> 
         const { boxId, groupId, versionId } = this.props.match.params;
         const { cancel, formData } = this.state;
         const { providerState } = this.props;
-        const { loading } = providerState;
+        const { loading, createSuccess } = providerState;
 
         if (cancel) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
-        } else {
+        } else if(createSuccess){
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
+        }else {
             return <CreateBoxFragment
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}

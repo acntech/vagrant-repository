@@ -26,6 +26,7 @@ export interface ProviderState {
     loading: boolean;
     providers: Provider[];
     error?: any;
+    createSuccess: boolean;
 }
 
 export interface GetProviderLoadingAction {

@@ -23,6 +23,7 @@ export interface BoxState {
     loading: boolean;
     boxes: Box[];
     error?: any;
+    createSuccess: boolean;
 }
 
 export interface GetBoxLoadingAction {

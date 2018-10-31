@@ -60,12 +60,14 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
         const { boxId, groupId } = this.props.match.params;
         const { cancel, formData } = this.state;
         const { versionState } = this.props;
-        const { loading } = versionState;
+        const { loading, createSuccess } = versionState;
 
         if (cancel) {
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
+        } else if (createSuccess) {
+            return <Redirect to={`/group/${groupId}/box/${boxId}`} />
         } else {
             return <CreateBoxFragment
                 onCancelButtonClick={this.onCancelButtonClick}

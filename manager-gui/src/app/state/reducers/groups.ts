@@ -45,7 +45,7 @@ export const create = (state: GroupState = initialGroupState, action: CreateGrou
                 groups = replaceOrAppend(groups, payload);
             }
 
-            return { ...initialGroupState, groups: groups };
+            return { ...initialGroupState, groups: groups, createSuccess: true };
         }
 
         case CreateGroupActionType.ERROR: {
