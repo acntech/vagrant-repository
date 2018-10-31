@@ -89,7 +89,7 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
         } else {
             this.props.createBoxVersion(boxId, { name: formNameValue, description: formDescriptionValue });
         }
-    };
+    }
 
     private onFormInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         const { value } = event.currentTarget;
@@ -105,7 +105,7 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
 
     private onCancelButtonClick = () => {
         this.setState({ cancel: true });
-    };
+    }
 }
 
 interface CreateBoxFragmentProps {
@@ -160,7 +160,7 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
             </Segment>
         </Container>
     );
-};
+}
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     versionState: state.versionState

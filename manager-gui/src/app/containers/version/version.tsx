@@ -217,7 +217,7 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
             </Table>
         </Segment>
     );
-};
+}
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     groupState: state.groupState,

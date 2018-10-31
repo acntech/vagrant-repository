@@ -71,29 +71,58 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
         if (!formNameValue || formNameValue.length < 3) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Group name must be at least 3 letters long' } });
+            this.setState({
+                formData: {
+                    ...formData,
+                    formError: true,
+                    formErrorMessage: 'Group name must be at least 3 letters long'
+                }
+            });
         } else if (/\s/.test(formNameValue)) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Group name cannot contain any spaces' } })
+            this.setState({
+                formData: {
+                    ...formData,
+                    formError: true,
+                    formErrorMessage: 'Group name cannot contain any spaces'
+                }
+            })
         } else {
-            this.props.createGroup({ name: formNameValue, description: formDescriptionValue });
+            this.props.createGroup({
+                name: formNameValue,
+                description: formDescriptionValue
+            });
         }
-    };
+    }
 
     private onFormInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         const { value } = event.currentTarget;
         const { formData } = this.state;
-        this.setState({ formData: { ...formData, formError: false, formWarning: false, formNameValue: value } });
+        this.setState({
+            formData: {
+                ...formData,
+                formError: false,
+                formWarning: false,
+                formNameValue: value
+            }
+        });
     }
 
     private onFormTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
         const { value } = event.currentTarget;
         const { formData } = this.state;
-        this.setState({ formData: { ...formData, formError: false, formWarning: false, formDescriptionValue: value } })
+        this.setState({
+            formData: {
+                ...formData,
+                formError: false,
+                formWarning: false,
+                formDescriptionValue: value
+            }
+        });
     }
 
     private onCancelButtonClick = () => {
         this.setState({ cancel: true });
-    };
+    }
 }
 
 interface CreateGroupFragmentProps {
@@ -105,7 +134,13 @@ interface CreateGroupFragmentProps {
 };
 
 const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
-    const { onCancelButtonClick, onFormSubmit, onFormInputChange, onFormTextAreaChange, formData } = props;
+    const {
+        onCancelButtonClick,
+        onFormSubmit,
+        onFormInputChange,
+        onFormTextAreaChange,
+        formData
+    } = props;
     const {
         formError,
         formErrorMessage,

@@ -110,11 +110,11 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
 
     private onTableRowClick = (versionId: number) => {
         this.setState({ versionId: versionId });
-    };
+    }
 
     private onCreateVersionButtonClick = () => {
         this.setState({ createVersion: true });
-    };
+    }
 }
 
 interface BoxFragmentProps {
