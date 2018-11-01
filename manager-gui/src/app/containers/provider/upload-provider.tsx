@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
+import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, DropdownProps, Form, Icon, Message, DropdownItemProps, Segment } from 'semantic-ui-react';
+import { Button, Container, Form, Icon, Message, DropdownItemProps, Segment } from 'semantic-ui-react';
 
-import { CreateProvider, ProviderState, ProviderType, RootState } from '../../models';
-import { createVersionProvider, findVersionProviders } from '../../state/actions';
+import { ProviderState, ProviderType, RootState } from '../../models';
+import { uploadVersionProvider, findVersionProviders } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface RouteProps {
@@ -19,7 +19,7 @@ interface ComponentStateProps {
 
 interface ComponentDispatchProps {
     findVersionProviders: (versionId: number) => Promise<any>;
-    createVersionProvider: (versionId: number, provider: CreateProvider) => Promise<any>;
+    uploadVersionProvider: (versionId: number) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
@@ -27,7 +27,6 @@ type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedInt
 interface FormData {
     formError: boolean;
     formErrorMessage?: string;
-    providerType: ProviderType;
 }
 
 interface ComponentState {
@@ -38,12 +37,11 @@ interface ComponentState {
 const initialState: ComponentState = {
     cancel: false,
     formData: {
-        formError: false,
-        providerType: ProviderType.VIRTUALBOX
+        formError: false
     }
 };
 
-class CreateProviderContainer extends Component<ComponentProps, ComponentState> {
+class UploadProviderContainer extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
@@ -68,26 +66,16 @@ class CreateProviderContainer extends Component<ComponentProps, ComponentState> 
         } else if (createSuccess) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
         } else {
-            return <CreateBoxFragment
+            return <UploadBoxFragment
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}
-                onFormSelectChange={this.onFormSelectChange}
                 formData={formData} />
         }
     }
 
     private onFormSubmit = () => {
         const { versionId } = this.props.match.params;
-        const { formData } = this.state;
-        const { providerType } = formData;
-        this.props.createVersionProvider(versionId, { providerType: providerType });
-    }
-
-    private onFormSelectChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-        const { value } = event.currentTarget;
-        const providerType = ProviderType[value];
-        const { formData } = this.state;
-        this.setState({ formData: { ...formData, formError: false, formWarning: false, providerType: providerType } });
+        this.props.uploadVersionProvider(versionId);
     }
 
     private onCancelButtonClick = () => {
@@ -98,16 +86,14 @@ class CreateProviderContainer extends Component<ComponentProps, ComponentState> 
 interface CreateBoxFragmentProps {
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
-    onFormSelectChange: (event: React.SyntheticEvent<HTMLInputElement>, data: DropdownProps) => void;
     formData: FormData;
 };
 
-const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
-    const { onCancelButtonClick, onFormSubmit, onFormSelectChange, formData } = props;
+const UploadBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
+    const { onCancelButtonClick, onFormSubmit, formData } = props;
     const {
         formError,
         formErrorMessage,
-        providerType
     } = formData;
     const providerTypeOptions: DropdownItemProps[] = [];
     Object.keys(ProviderType)
@@ -118,21 +104,12 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Create Provider</SecondaryHeader>
+            <SecondaryHeader>Upload Provider</SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>
-                        <Form.Select
-                            error={formError}
-                            width={10}
-                            label='Provider Type'
-                            options={providerTypeOptions}
-                            value={providerType}
-                            onChange={onFormSelectChange} />
-                    </Form.Group>
-                    <Form.Group>
                         <Form.Button
-                            primary size='tiny'><Icon name='file' />Create Provider</Form.Button>
+                            primary size='tiny'><Icon name='file' />Upload Provider</Form.Button>
                         <Button
                             secondary size='tiny'
                             onClick={onCancelButtonClick}><Icon name='cancel' />Cancel</Button>
@@ -150,9 +127,9 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     findVersionProviders: (versionId: number) => dispatch(findVersionProviders(versionId)),
-    createVersionProvider: (versionId: number, provider: CreateProvider) => dispatch(createVersionProvider(versionId, provider))
+    uploadVersionProvider: (versionId: number) => dispatch(uploadVersionProvider(versionId))
 });
 
-const ConnectedCreateProviderContainer = connect(mapStateToProps, mapDispatchToProps)(CreateProviderContainer);
+const ConnectedUploadProviderContainer = connect(mapStateToProps, mapDispatchToProps)(UploadProviderContainer);
 
-export { ConnectedCreateProviderContainer as CreateProviderContainer };
+export { ConnectedUploadProviderContainer as UploadProviderContainer };

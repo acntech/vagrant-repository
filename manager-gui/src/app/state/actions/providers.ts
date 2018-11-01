@@ -87,3 +87,17 @@ export function createVersionProvider(versionId: number, provider: CreateProvide
             });
     };
 }
+
+export function uploadVersionProvider(versionId: number) {
+    return (dispatch) => {
+        dispatch(createProviderLoading(true));
+        const url = `${versionsRootPath}/${versionId}/providers`;
+        return axios.post(url, {})
+            .then((response) => {
+                return dispatch(createProviderSuccess(response.data));
+            })
+            .catch((error) => {
+                return dispatch(createProviderError(error));
+            });
+    };
+}

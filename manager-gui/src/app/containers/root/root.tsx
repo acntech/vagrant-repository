@@ -15,6 +15,7 @@ import {
     BoxContainer,
     GroupContainer,
     PageNotFoundErrorContainer,
+    UploadProviderContainer,
     VersionContainer
 } from '../';
 
@@ -38,13 +39,14 @@ class RootContainer extends Component<ComponentProps> {
         return (
             <BrowserRouter>
                 <Switch>
-                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/create/provider" component={CreateProviderContainer} />
-                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?" component={VersionContainer} />
-                    <Route path="/group/:groupId?/box/:boxId?/create/version" component={CreateVersionContainer} />
-                    <Route path="/group/:groupId?/box/:boxId?" component={BoxContainer} />
-                    <Route path="/group/:groupId?/create/box" component={CreateBoxContainer} />
-                    <Route path="/group/:groupId?" component={GroupContainer} />
-                    <Route path="/create/group" component={CreateGroupContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/upload" exact component={UploadProviderContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/create" exact component={CreateProviderContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?" exact component={VersionContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?/create" exact component={CreateVersionContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?" exact component={BoxContainer} />
+                    <Route path="/group/:groupId?/create" exact component={CreateBoxContainer} />
+                    <Route path="/group/:groupId?" exact component={GroupContainer} />
+                    <Route path="/create" exact component={CreateGroupContainer} />
                     <Route path="/" exact component={HomeContainer} />
                     <Route component={PageNotFoundErrorContainer} />
                 </Switch>

@@ -85,7 +85,7 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
         } else if (loading) {
             return <LoadingIndicator />;
         } else if (createVersion) {
-            return <Redirect to={`/group/${groupId}/box/${boxId}/create/version`} />;
+            return <Redirect to={`/group/${groupId}/box/${boxId}/create`} />;
         } else if (!group) {
             return <NotFoundErrorContainer
                 header

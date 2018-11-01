@@ -73,7 +73,7 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
         } else if (loading) {
             return <LoadingIndicator />;
         } else if (createBox) {
-            return <Redirect to={`/group/${groupId}/create/box`} />;
+            return <Redirect to={`/group/${groupId}/create`} />;
         } else if (!group) {
             return <NotFoundErrorContainer
                 header

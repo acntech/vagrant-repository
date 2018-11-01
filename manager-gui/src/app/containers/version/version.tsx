@@ -97,7 +97,7 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
         } else if (loading) {
             return <LoadingIndicator />;
         } else if (createProvider) {
-            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/create/provider`} />;
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/create`} />;
         } else if (!group) {
             return <NotFoundErrorContainer
                 header

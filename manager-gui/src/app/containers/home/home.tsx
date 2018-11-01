@@ -45,7 +45,7 @@ class HomeContainer extends Component<ComponentProps, ComponentState> {
         } else if (loading) {
             return <LoadingIndicator />;
         } else if (createGroup) {
-            return <Redirect to='/create/group' />;
+            return <Redirect to='/create' />;
         } else {
             return (
                 <GroupsFragment
