@@ -66,7 +66,7 @@ router.post('/:id/providers', (req, res) => {
         return;
     }
 
-    const entities = providers.filter(e => e.providerType === body.providerType);
+    const entities = providers.filter(e => e.providerType === body.providerType && e.version.id == id);
 
     if (entities && entities.length > 0) {
         const error = createError(

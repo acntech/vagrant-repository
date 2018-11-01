@@ -93,7 +93,7 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
         const { providers, loading } = providerState;
 
         if (providerId) {
-            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${versionId}`} />;
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
         } else if (createProvider) {
@@ -127,7 +127,8 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
         }
     }
 
-    private onTableRowClick = (versionId: number) => {
+    private onTableRowClick = (providerId: number) => {
+        this.setState({ providerId: providerId });
     };
 
     private onCreateProviderButtonClick = () => {

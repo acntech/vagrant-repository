@@ -41,7 +41,7 @@ const initialState: ComponentState = {
     }
 };
 
-class UploadProviderContainer extends Component<ComponentProps, ComponentState> {
+class ProviderContainer extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
@@ -57,14 +57,12 @@ class UploadProviderContainer extends Component<ComponentProps, ComponentState> 
         const { boxId, groupId, versionId } = this.props.match.params;
         const { cancel, formData } = this.state;
         const { providerState } = this.props;
-        const { loading, createSuccess } = providerState;
+        const { loading } = providerState;
 
         if (cancel) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
-        } else if (createSuccess) {
-            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
         } else {
             return <UploadBoxFragment
                 onCancelButtonClick={this.onCancelButtonClick}
@@ -130,6 +128,6 @@ const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     uploadVersionProvider: (versionId: number) => dispatch(uploadVersionProvider(versionId))
 });
 
-const ConnectedUploadProviderContainer = connect(mapStateToProps, mapDispatchToProps)(UploadProviderContainer);
+const ConnectedProviderContainer = connect(mapStateToProps, mapDispatchToProps)(ProviderContainer);
 
-export { ConnectedUploadProviderContainer as UploadProviderContainer };
+export { ConnectedProviderContainer as ProviderContainer };

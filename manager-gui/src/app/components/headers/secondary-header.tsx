@@ -27,46 +27,56 @@ class SecondaryHeaderComponent extends Component<ComponentProps> {
         const { title, subtitle, children, notices } = this.props;
 
         return (
-            <Segment basic>
-                <Header>{children ? children : title}</Header>
-                {subtitle ? <Header.Subheader>{subtitle}</Header.Subheader> : null}
+            <div>
+                <HeaderFragment title={title} subtitle={subtitle} children={children} notices={notices} />
                 <MessagesFragment notices={notices} />
-            </Segment>
+            </div>
         );
     }
 }
 
-interface MessagesProps {
-    notices: Notice[];
-}
-
-const MessagesFragment: React.SFC<MessagesProps> = (props) => {
-    const { notices } = props;
+const HeaderFragment: React.SFC<ComponentProps> = (props) => {
+    const { title, subtitle, children } = props;
 
     return (
-        <div>
-            {notices.map((notice, index) => {
-                const { severity, header, content } = notice;
-                const info = severity === 'info';
-                const warning = severity === 'warning';
-                const error = severity === 'error';
-                let icon = 'info circle';
-                if (error) {
-                    icon = 'times circle';
-                } else if (warning) {
-                    icon = 'warning circle';
-                }
-                return <Message
-                    key={index}
-                    info={info}
-                    warning={warning}
-                    error={error}
-                    icon={icon}
-                    header={header}
-                    content={content} />;
-            })}
-        </div>
+        <Segment basic>
+            <Header>{children ? children : title}</Header>
+            {subtitle ? <Header.Subheader>{subtitle}</Header.Subheader> : null}
+        </Segment>
     );
+}
+
+const MessagesFragment: React.SFC<ComponentProps> = (props) => {
+    const { notices } = props;
+
+    if (notices && notices.length > 0) {
+        return (
+            <Segment basic>
+                {notices.map((notice, index) => {
+                    const { severity, header, content } = notice;
+                    const info = severity === 'info';
+                    const warning = severity === 'warning';
+                    const error = severity === 'error';
+                    let icon = 'info circle';
+                    if (error) {
+                        icon = 'times circle';
+                    } else if (warning) {
+                        icon = 'warning circle';
+                    }
+                    return <Message
+                        key={index}
+                        info={info}
+                        warning={warning}
+                        error={error}
+                        icon={icon}
+                        header={header}
+                        content={content} />;
+                })}
+            </Segment>
+        );
+    } else {
+        return null;
+    }
 }
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({

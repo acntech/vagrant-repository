@@ -34,23 +34,25 @@ export const create = (state: GroupState = initialGroupState, action: CreateGrou
     switch (action.type) {
         case CreateGroupActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading };
+            return { ...state, loading: loading, modified: undefined };
         }
 
         case CreateGroupActionType.SUCCESS: {
             const { payload } = action;
             let { groups } = state;
+            let modified;
 
             if (payload) {
                 groups = replaceOrAppend(groups, payload);
+                modified = { id: payload.id };
             }
 
-            return { ...initialGroupState, groups: groups, createSuccess: true };
+            return { ...initialGroupState, groups: groups, modified: modified };
         }
 
         case CreateGroupActionType.ERROR: {
             const { error } = action;
-            return { ...initialGroupState, error: error };
+            return { ...initialGroupState, error: error, modified: undefined };
         }
 
         default: {
@@ -63,7 +65,7 @@ export const get = (state: GroupState = initialGroupState, action: GetGroupActio
     switch (action.type) {
         case GetGroupActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading };
+            return { ...state, loading: loading, modified: undefined };
         }
 
         case GetGroupActionType.SUCCESS: {
@@ -74,12 +76,12 @@ export const get = (state: GroupState = initialGroupState, action: GetGroupActio
                 groups = replaceOrAppend(groups, payload);
             }
 
-            return { ...initialGroupState, groups: groups };
+            return { ...initialGroupState, groups: groups, modified: undefined };
         }
 
         case GetGroupActionType.ERROR: {
             const { error } = action;
-            return { ...initialGroupState, error: error };
+            return { ...initialGroupState, error: error, modified: undefined };
         }
 
         default: {
@@ -92,7 +94,7 @@ export const find = (state: GroupState = initialGroupState, action: FindGroupsAc
     switch (action.type) {
         case FindGroupsActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading };
+            return { ...state, loading: loading, modified: undefined };
         }
 
         case FindGroupsActionType.SUCCESS: {
@@ -103,12 +105,12 @@ export const find = (state: GroupState = initialGroupState, action: FindGroupsAc
                     groups = replaceOrAppend(groups, group);
                 });
             }
-            return { ...initialGroupState, groups: payload };
+            return { ...initialGroupState, groups: payload, modified: undefined };
         }
 
         case FindGroupsActionType.ERROR: {
             const { error } = action;
-            return { ...initialGroupState, error: error };
+            return { ...initialGroupState, error: error, modified: undefined };
         }
 
         default: {

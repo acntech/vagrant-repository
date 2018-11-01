@@ -24,3 +24,7 @@ export interface Notice {
     header: string;
     content?: string | ReactNode;
 }
+
+export interface Modified {
+    id: number;
+}

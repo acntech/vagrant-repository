@@ -34,23 +34,25 @@ export const create = (state: BoxState = initialBoxState, action: CreateBoxActio
     switch (action.type) {
         case CreateBoxActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading };
+            return { ...state, loading: loading, modified: undefined };
         }
 
         case CreateBoxActionType.SUCCESS: {
             const { payload } = action;
             let { boxes } = state;
+            let modified;
 
             if (payload) {
                 boxes = replaceOrAppend(boxes, payload);
+                modified = { id: payload.id };
             }
 
-            return { ...initialBoxState, boxes: boxes, createSuccess: true };
+            return { ...initialBoxState, boxes: boxes, modified: modified };
         }
 
         case CreateBoxActionType.ERROR: {
             const { error } = action;
-            return { ...initialBoxState, error: error };
+            return { ...initialBoxState, error: error, modified: undefined };
         }
 
         default: {
@@ -63,7 +65,7 @@ export const get = (state: BoxState = initialBoxState, action: GetBoxAction): Bo
     switch (action.type) {
         case GetBoxActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading };
+            return { ...state, loading: loading, modified: undefined };
         }
 
         case GetBoxActionType.SUCCESS: {
@@ -74,12 +76,12 @@ export const get = (state: BoxState = initialBoxState, action: GetBoxAction): Bo
                 boxes = replaceOrAppend(boxes, payload);
             }
 
-            return { ...initialBoxState, boxes: boxes };
+            return { ...initialBoxState, boxes: boxes, modified: undefined };
         }
 
         case GetBoxActionType.ERROR: {
             const { error } = action;
-            return { ...initialBoxState, error: error };
+            return { ...initialBoxState, error: error, modified: undefined };
         }
 
         default: {
@@ -92,7 +94,7 @@ export const find = (state: BoxState = initialBoxState, action: FindBoxesAction)
     switch (action.type) {
         case FindBoxesActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading };
+            return { ...state, loading: loading, modified: undefined };
         }
 
         case FindBoxesActionType.SUCCESS: {
@@ -103,12 +105,12 @@ export const find = (state: BoxState = initialBoxState, action: FindBoxesAction)
                     boxes = replaceOrAppend(boxes, box);
                 });
             }
-            return { ...initialBoxState, boxes: payload };
+            return { ...initialBoxState, boxes: payload, modified: undefined };
         }
 
         case FindBoxesActionType.ERROR: {
             const { error } = action;
-            return { ...initialBoxState, error: error };
+            return { ...initialBoxState, error: error, modified: undefined };
         }
 
         default: {

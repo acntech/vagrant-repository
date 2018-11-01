@@ -15,7 +15,7 @@ import {
     BoxContainer,
     GroupContainer,
     PageNotFoundErrorContainer,
-    UploadProviderContainer,
+    ProviderContainer,
     VersionContainer
 } from '../';
 
@@ -39,7 +39,7 @@ class RootContainer extends Component<ComponentProps> {
         return (
             <BrowserRouter>
                 <Switch>
-                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/upload" exact component={UploadProviderContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/provider/:providerId?" exact component={ProviderContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/create" exact component={CreateProviderContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?" exact component={VersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/create" exact component={CreateVersionContainer} />

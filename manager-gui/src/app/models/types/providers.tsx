@@ -4,10 +4,11 @@ import {
     GetProviderActionType,
     FindProvidersActionType,
     ProviderType,
-    UpdateProviderActionType
-} from '../constants';
-import { Error } from './globals';
-import { Version } from '../';
+    UpdateProviderActionType,
+    Error,
+    Modified,
+    Version
+} from '../';
 
 export interface CreateProvider {
     providerType: ProviderType;
@@ -26,7 +27,7 @@ export interface ProviderState {
     loading: boolean;
     providers: Provider[];
     error?: any;
-    createSuccess: boolean;
+    modified?: Modified;
 }
 
 export interface GetProviderLoadingAction {

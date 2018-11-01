@@ -49,14 +49,15 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
     public render(): ReactNode {
         const { cancel, formData } = this.state;
         const { groupState } = this.props;
-        const { loading, createSuccess } = groupState;
+        const { loading, modified } = groupState;
 
         if (cancel) {
             return <Redirect to='/' />;
         } else if (loading) {
             return <LoadingIndicator />;
-        } else if (createSuccess){
-            return <Redirect to='/' />
+        } else if (modified) {
+            const { id: groupId } = modified;
+            return <Redirect to={`/group/${groupId}`} />
         } else {
             return <CreateGroupFragment
                 onCancelButtonClick={this.onCancelButtonClick}

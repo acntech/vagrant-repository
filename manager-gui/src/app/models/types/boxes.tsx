@@ -2,10 +2,11 @@ import {
     CreateBoxActionType,
     GetBoxActionType,
     FindBoxesActionType,
-    UpdateBoxActionType
-} from '../constants';
-import { Error } from './globals';
-import { Group } from '../';
+    UpdateBoxActionType,
+    Error,
+    Group,
+    Modified
+} from '../';
 
 export interface CreateBox {
     name: string;
@@ -23,7 +24,7 @@ export interface BoxState {
     loading: boolean;
     boxes: Box[];
     error?: any;
-    createSuccess: boolean;
+    modified?: Modified;
 }
 
 export interface GetBoxLoadingAction {

@@ -34,23 +34,25 @@ export const create = (state: ProviderState = initialProviderState, action: Crea
     switch (action.type) {
         case CreateProviderActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading };
+            return { ...state, loading: loading, modified: undefined };
         }
 
         case CreateProviderActionType.SUCCESS: {
             const { payload } = action;
             let { providers } = state;
+            let modified;
 
             if (payload) {
                 providers = replaceOrAppend(providers, payload);
+                modified = { id: payload.id };
             }
 
-            return { ...initialProviderState, providers: providers, createSuccess: true };
+            return { ...initialProviderState, providers: providers, modified: modified };
         }
 
         case CreateProviderActionType.ERROR: {
             const { error } = action;
-            return { ...initialProviderState, error: error };
+            return { ...initialProviderState, error: error, modified: undefined };
         }
 
         default: {
@@ -63,7 +65,7 @@ export const get = (state: ProviderState = initialProviderState, action: GetProv
     switch (action.type) {
         case GetProviderActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading };
+            return { ...state, loading: loading, modified: undefined };
         }
 
         case GetProviderActionType.SUCCESS: {
@@ -74,12 +76,12 @@ export const get = (state: ProviderState = initialProviderState, action: GetProv
                 providers = replaceOrAppend(providers, payload);
             }
 
-            return { ...initialProviderState, providers: providers };
+            return { ...initialProviderState, providers: providers, modified: undefined };
         }
 
         case GetProviderActionType.ERROR: {
             const { error } = action;
-            return { ...initialProviderState, error: error };
+            return { ...initialProviderState, error: error, modified: undefined };
         }
 
         default: {
@@ -92,7 +94,7 @@ export function find(state: ProviderState = initialProviderState, action: FindPr
     switch (action.type) {
         case FindProvidersActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading };
+            return { ...state, loading: loading, modified: undefined };
         }
 
         case FindProvidersActionType.SUCCESS: {
@@ -108,12 +110,12 @@ export function find(state: ProviderState = initialProviderState, action: FindPr
                     }
                 });
             }
-            return { ...initialProviderState, providers: payload };
+            return { ...initialProviderState, providers: payload, modified: undefined };
         }
 
         case FindProvidersActionType.ERROR: {
             const { error } = action;
-            return { ...initialProviderState, error: error };
+            return { ...initialProviderState, error: error, modified: undefined };
         }
 
         default: {

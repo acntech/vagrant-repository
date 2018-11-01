@@ -66,7 +66,7 @@ router.post('/:id/versions', (req, res) => {
         return;
     }
 
-    const entities = versions.filter(e => e.name === body.name);
+    const entities = versions.filter(e => e.name === body.name && e.box.id == id);
 
     if (entities && entities.length > 0) {
         const error = createError(

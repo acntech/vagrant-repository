@@ -2,9 +2,10 @@ import {
     CreateGroupActionType,
     FindGroupsActionType,
     GetGroupActionType,
-    UpdateGroupActionType
-} from '../constants';
-import { Error } from './globals';
+    UpdateGroupActionType,
+    Error,
+    Modified
+} from '../';
 
 export interface CreateGroup {
     name: string;
@@ -21,7 +22,7 @@ export interface GroupState {
     loading: boolean;
     groups: Group[];
     error?: any;
-    createSuccess: boolean;
+    modified?: Modified;
 }
 
 export interface GetGroupLoadingAction {

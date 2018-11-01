@@ -2,10 +2,11 @@ import {
     CreateVersionActionType,
     GetVersionActionType,
     FindVersionsActionType,
-    UpdateVersionActionType
-} from '../constants';
-import { Error } from './globals';
-import { Box } from '../';
+    UpdateVersionActionType,
+    Box,
+    Error,
+    Modified
+} from '../';
 
 export interface CreateVersion {
     name: string;
@@ -23,7 +24,7 @@ export interface VersionState {
     loading: boolean;
     versions: Version[];
     error?: any;
-    createSuccess: boolean;
+    modified?: Modified;
 }
 
 export interface GetVersionLoadingAction {
