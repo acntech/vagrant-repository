@@ -7,7 +7,9 @@ import {
     GetProviderAction,
     GetProviderActionType,
     FindProvidersAction,
-    FindProvidersActionType
+    FindProvidersActionType,
+    UpdateProviderAction,
+    UpdateProviderActionType,
 } from '../../models';
 import { initialProviderState } from '../store/initial-state';
 
@@ -25,6 +27,10 @@ export function reducer(state: ProviderState = initialProviderState, action: Pro
         case FindProvidersActionType.SUCCESS:
         case FindProvidersActionType.ERROR:
             return find(state, action);
+        case UpdateProviderActionType.LOADING:
+        case UpdateProviderActionType.SUCCESS:
+        case UpdateProviderActionType.ERROR:
+            return update(state, action);
         default:
             return state;
     }
@@ -34,7 +40,8 @@ export const create = (state: ProviderState = initialProviderState, action: Crea
     switch (action.type) {
         case CreateProviderActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading, modified: undefined };
+            const { providers } = state;
+            return { ...initialProviderState, loading: loading, providers: providers };
         }
 
         case CreateProviderActionType.SUCCESS: {
@@ -52,7 +59,8 @@ export const create = (state: ProviderState = initialProviderState, action: Crea
 
         case CreateProviderActionType.ERROR: {
             const { error } = action;
-            return { ...initialProviderState, error: error, modified: undefined };
+            const { providers } = state;
+            return { ...initialProviderState, error: error, providers: providers };
         }
 
         default: {
@@ -65,7 +73,8 @@ export const get = (state: ProviderState = initialProviderState, action: GetProv
     switch (action.type) {
         case GetProviderActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading, modified: undefined };
+            const { providers } = state;
+            return { ...initialProviderState, loading: loading, providers: providers };
         }
 
         case GetProviderActionType.SUCCESS: {
@@ -76,12 +85,13 @@ export const get = (state: ProviderState = initialProviderState, action: GetProv
                 providers = replaceOrAppend(providers, payload);
             }
 
-            return { ...initialProviderState, providers: providers, modified: undefined };
+            return { ...initialProviderState, providers: providers };
         }
 
         case GetProviderActionType.ERROR: {
             const { error } = action;
-            return { ...initialProviderState, error: error, modified: undefined };
+            const { providers } = state;
+            return { ...initialProviderState, error: error, providers: providers };
         }
 
         default: {
@@ -94,7 +104,8 @@ export function find(state: ProviderState = initialProviderState, action: FindPr
     switch (action.type) {
         case FindProvidersActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading, modified: undefined };
+            const { providers } = state;
+            return { ...initialProviderState, loading: loading, providers: providers };
         }
 
         case FindProvidersActionType.SUCCESS: {
@@ -110,12 +121,46 @@ export function find(state: ProviderState = initialProviderState, action: FindPr
                     }
                 });
             }
-            return { ...initialProviderState, providers: payload, modified: undefined };
+            return { ...initialProviderState, providers: providers };
         }
 
         case FindProvidersActionType.ERROR: {
             const { error } = action;
-            return { ...initialProviderState, error: error, modified: undefined };
+            const { providers } = state;
+            return { ...initialProviderState, error: error, providers: providers };
+        }
+
+        default: {
+            return state;
+        }
+    }
+}
+
+export const update = (state: ProviderState = initialProviderState, action: UpdateProviderAction): ProviderState => {
+    switch (action.type) {
+        case UpdateProviderActionType.LOADING: {
+            const { loading } = action;
+            const { providers } = state;
+            return { ...initialProviderState, loading: loading, providers: providers };
+        }
+
+        case UpdateProviderActionType.SUCCESS: {
+            const { payload } = action;
+            let { providers } = state;
+            let modified;
+
+            if (payload) {
+                providers = replaceOrAppend(providers, payload);
+                modified = { id: payload.id };
+            }
+
+            return { ...initialProviderState, providers: providers, modified: modified };
+        }
+
+        case UpdateProviderActionType.ERROR: {
+            const { error } = action;
+            const { providers } = state;
+            return { ...initialProviderState, error: error, providers: providers };
         }
 
         default: {

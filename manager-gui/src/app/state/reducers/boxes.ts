@@ -34,7 +34,8 @@ export const create = (state: BoxState = initialBoxState, action: CreateBoxActio
     switch (action.type) {
         case CreateBoxActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading, modified: undefined };
+            const { boxes } = state;
+            return { ...initialBoxState, loading: loading, boxes: boxes };
         }
 
         case CreateBoxActionType.SUCCESS: {
@@ -52,7 +53,8 @@ export const create = (state: BoxState = initialBoxState, action: CreateBoxActio
 
         case CreateBoxActionType.ERROR: {
             const { error } = action;
-            return { ...initialBoxState, error: error, modified: undefined };
+            const { boxes } = state;
+            return { ...initialBoxState, error: error, boxes: boxes };
         }
 
         default: {
@@ -65,7 +67,8 @@ export const get = (state: BoxState = initialBoxState, action: GetBoxAction): Bo
     switch (action.type) {
         case GetBoxActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading, modified: undefined };
+            const { boxes } = state;
+            return { ...initialBoxState, loading: loading, boxes: boxes };
         }
 
         case GetBoxActionType.SUCCESS: {
@@ -76,12 +79,13 @@ export const get = (state: BoxState = initialBoxState, action: GetBoxAction): Bo
                 boxes = replaceOrAppend(boxes, payload);
             }
 
-            return { ...initialBoxState, boxes: boxes, modified: undefined };
+            return { ...initialBoxState, boxes: boxes };
         }
 
         case GetBoxActionType.ERROR: {
             const { error } = action;
-            return { ...initialBoxState, error: error, modified: undefined };
+            const { boxes } = state;
+            return { ...initialBoxState, error: error, boxes: boxes };
         }
 
         default: {
@@ -94,7 +98,8 @@ export const find = (state: BoxState = initialBoxState, action: FindBoxesAction)
     switch (action.type) {
         case FindBoxesActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading, modified: undefined };
+            const { boxes } = state;
+            return { ...initialBoxState, loading: loading, boxes: boxes };
         }
 
         case FindBoxesActionType.SUCCESS: {
@@ -105,12 +110,13 @@ export const find = (state: BoxState = initialBoxState, action: FindBoxesAction)
                     boxes = replaceOrAppend(boxes, box);
                 });
             }
-            return { ...initialBoxState, boxes: payload, modified: undefined };
+            return { ...initialBoxState, boxes: boxes, modified: undefined };
         }
 
         case FindBoxesActionType.ERROR: {
             const { error } = action;
-            return { ...initialBoxState, error: error, modified: undefined };
+            const { boxes } = state;
+            return { ...initialBoxState, error: error, boxes: boxes };
         }
 
         default: {

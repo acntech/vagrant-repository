@@ -34,7 +34,8 @@ export const create = (state: VersionState = initialVersionState, action: Create
     switch (action.type) {
         case CreateVersionActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading, modified: undefined };
+            const { versions } = state;
+            return { ...initialVersionState, loading: loading, versions: versions };
         }
 
         case CreateVersionActionType.SUCCESS: {
@@ -52,7 +53,8 @@ export const create = (state: VersionState = initialVersionState, action: Create
 
         case CreateVersionActionType.ERROR: {
             const { error } = action;
-            return { ...initialVersionState, error: error, modified: undefined };
+            const { versions } = state;
+            return { ...initialVersionState, error: error, versions: versions };
         }
 
         default: {
@@ -65,7 +67,8 @@ export const get = (state: VersionState = initialVersionState, action: GetVersio
     switch (action.type) {
         case GetVersionActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading, modified: undefined };
+            const { versions } = state;
+            return { ...initialVersionState, loading: loading, versions: versions };
         }
 
         case GetVersionActionType.SUCCESS: {
@@ -76,12 +79,13 @@ export const get = (state: VersionState = initialVersionState, action: GetVersio
                 versions = replaceOrAppend(versions, payload);
             }
 
-            return { ...initialVersionState, versions: versions, modified: undefined };
+            return { ...initialVersionState, versions: versions };
         }
 
         case GetVersionActionType.ERROR: {
             const { error } = action;
-            return { ...initialVersionState, error: error, modified: undefined };
+            const { versions } = state;
+            return { ...initialVersionState, error: error, versions: versions };
         }
 
         default: {
@@ -94,7 +98,8 @@ export function find(state: VersionState = initialVersionState, action: FindVers
     switch (action.type) {
         case FindVersionsActionType.LOADING: {
             const { loading } = action;
-            return { ...state, loading: loading, modified: undefined };
+            const { versions } = state;
+            return { ...initialVersionState, loading: loading, versions: versions };
         }
 
         case FindVersionsActionType.SUCCESS: {
@@ -110,12 +115,13 @@ export function find(state: VersionState = initialVersionState, action: FindVers
                     }
                 });
             }
-            return { ...initialVersionState, versions: payload, modified: undefined };
+            return { ...initialVersionState, versions: versions };
         }
 
         case FindVersionsActionType.ERROR: {
             const { error } = action;
-            return { ...initialVersionState, error: error, modified: undefined };
+            const { versions } = state;
+            return { ...initialVersionState, error: error, versions: versions };
         }
 
         default: {

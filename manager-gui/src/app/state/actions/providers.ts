@@ -15,6 +15,10 @@ import {
     FindProvidersErrorAction,
     FindProvidersLoadingAction,
     FindProvidersSuccessAction,
+    UpdateProviderActionType,
+    UpdateProviderErrorAction,
+    UpdateProviderLoadingAction,
+    UpdateProviderSuccessAction,
 } from '../../models';
 
 const getProviderLoading = (loading: boolean): GetProviderLoadingAction => ({ type: GetProviderActionType.LOADING, loading });
@@ -28,6 +32,10 @@ const findProvidersError = (error: any): FindProvidersErrorAction => ({ type: Fi
 const createProviderLoading = (loading: boolean): CreateProviderLoadingAction => ({ type: CreateProviderActionType.LOADING, loading });
 const createProviderSuccess = (payload: Provider): CreateProviderSuccessAction => ({ type: CreateProviderActionType.SUCCESS, payload });
 const createProviderError = (error: any): CreateProviderErrorAction => ({ type: CreateProviderActionType.ERROR, error });
+
+const updateProviderLoading = (loading: boolean): UpdateProviderLoadingAction => ({ type: UpdateProviderActionType.LOADING, loading });
+const updateProviderSuccess = (payload: Provider): UpdateProviderSuccessAction => ({ type: UpdateProviderActionType.SUCCESS, payload });
+const updateProviderError = (error: any): UpdateProviderErrorAction => ({ type: UpdateProviderActionType.ERROR, error });
 
 const providersRootPath = '/api/providers';
 const versionsRootPath = '/api/versions';
@@ -88,16 +96,23 @@ export function createVersionProvider(versionId: number, provider: CreateProvide
     };
 }
 
-export function uploadVersionProvider(versionId: number) {
+export function updateVersionProvider(providerId: number, file: any) {
     return (dispatch) => {
-        dispatch(createProviderLoading(true));
-        const url = `${versionsRootPath}/${versionId}/providers`;
-        return axios.post(url, {})
+        dispatch(updateProviderLoading(true));
+        const url = `${providersRootPath}/${providerId}`;
+        const formData = new FormData();
+        formData.append('file', file);
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }
+        return axios.post(url, formData, config)
             .then((response) => {
-                return dispatch(createProviderSuccess(response.data));
+                return dispatch(updateProviderSuccess(response.data));
             })
             .catch((error) => {
-                return dispatch(createProviderError(error));
+                return dispatch(updateProviderError(error));
             });
     };
 }

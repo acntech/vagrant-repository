@@ -84,24 +84,53 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
         if (!formNameValue || formNameValue.length < 3) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Version name must be at least 3 letters long' } });
+            this.setState({
+                formData: {
+                    ...formData,
+                    formError: true,
+                    formErrorMessage: 'Version name must be at least 3 letters long'
+                }
+            });
         } else if (/\s/.test(formNameValue)) {
-            this.setState({ formData: { ...formData, formError: true, formErrorMessage: 'Version name cannot contain any spaces' } })
+            this.setState({
+                formData: {
+                    ...formData,
+                    formError: true,
+                    formErrorMessage: 'Version name cannot contain any spaces'
+                }
+            })
         } else {
-            this.props.createBoxVersion(boxId, { name: formNameValue, description: formDescriptionValue });
+            this.props.createBoxVersion(boxId, {
+                name: formNameValue,
+                description: formDescriptionValue
+            });
         }
     }
 
     private onFormInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         const { value } = event.currentTarget;
         const { formData } = this.state;
-        this.setState({ formData: { ...formData, formError: false, formWarning: false, formNameValue: value } });
+        this.setState({
+            formData: {
+                ...formData,
+                formError: false,
+                formWarning: false,
+                formNameValue: value
+            }
+        });
     }
 
     private onFormTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
         const { value } = event.currentTarget;
         const { formData } = this.state;
-        this.setState({ formData: { ...formData, formError: false, formWarning: false, formDescriptionValue: value } });
+        this.setState({
+            formData: {
+                ...formData,
+                formError: false,
+                formWarning: false,
+                formDescriptionValue: value
+            }
+        });
     }
 
     private onCancelButtonClick = () => {
@@ -118,7 +147,13 @@ interface CreateBoxFragmentProps {
 };
 
 const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
-    const { onCancelButtonClick, onFormSubmit, onFormInputChange, onFormTextAreaChange, formData } = props;
+    const {
+        onCancelButtonClick,
+        onFormSubmit,
+        onFormInputChange,
+        onFormTextAreaChange,
+        formData
+    } = props;
     const {
         formError,
         formErrorMessage,
