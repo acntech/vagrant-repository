@@ -118,11 +118,13 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
                 heading='No version found'
                 content={`Could not find version for ID ${versionId}`} />;
         } else {
+            const versionProviders = providers.filter(provider => provider.version.id == versionId);
+
             return <VersionFragment
                 group={group}
                 box={box}
                 version={version}
-                providers={providers}
+                providers={versionProviders}
                 onTableRowClick={this.onTableRowClick}
                 onCreateProviderButtonClick={this.onCreateProviderButtonClick} />;
         }
@@ -138,9 +140,9 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
 }
 
 interface VersionFragmentProps {
-    group?: Group;
-    box?: Box;
-    version?: Version;
+    group: Group;
+    box: Box;
+    version: Version;
     providers: Provider[];
     onTableRowClick: (providerId: number) => void;
     onCreateProviderButtonClick: () => void;
@@ -148,34 +150,22 @@ interface VersionFragmentProps {
 
 const VersionFragment: SFC<VersionFragmentProps> = (props) => {
     const { group, box, version, providers, onTableRowClick, onCreateProviderButtonClick } = props;
+    const { id: groupId, name: groupName } = group;
+    const { id: boxId, name: boxName } = box;
+    const { id: versionId, name: versionName, description } = version;
 
-    if (group && box && version) {
-        const { id: groupId, name: groupName } = group;
-        const { id: boxId, name: boxName } = box;
-        const { id: versionId, name: versionName, description } = version;
-        return (
-            <Container>
-                <PrimaryHeader />
-                <SecondaryHeader subtitle={description}>
-                    <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>
-                </SecondaryHeader>
-                <ProvidersFragment
-                    providers={providers}
-                    onTableRowClick={onTableRowClick}
-                    onCreateProviderButtonClick={onCreateProviderButtonClick} />
-            </Container>
-        );
-    } else {
-        return (
-            <Container>
-                <PrimaryHeader />
-                <ProvidersFragment
-                    providers={providers}
-                    onTableRowClick={onTableRowClick}
-                    onCreateProviderButtonClick={onCreateProviderButtonClick} />
-            </Container>
-        );
-    }
+    return (
+        <Container>
+            <PrimaryHeader />
+            <SecondaryHeader subtitle={description}>
+                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>
+            </SecondaryHeader>
+            <ProvidersFragment
+                providers={providers}
+                onTableRowClick={onTableRowClick}
+                onCreateProviderButtonClick={onCreateProviderButtonClick} />
+        </Container>
+    );
 }
 
 interface ProvidersFragmentProps {

@@ -64,9 +64,8 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId } = this.props.match.params;
+        const { boxes, loading } = this.props.boxState;
         const { boxId, group, createBox } = this.state;
-        const { boxState } = this.props;
-        const { boxes, loading } = boxState;
 
         if (boxId) {
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />;
@@ -81,9 +80,11 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
                 heading='No group found'
                 content={`Could not find group for ID ${groupId}`} />;
         } else {
+            const groupBoxes = boxes.filter(box => box.group.id == groupId);
+
             return <GroupFragment
                 group={group}
-                boxes={boxes}
+                boxes={groupBoxes}
                 onTableRowClick={this.onTableRowClick}
                 onCreateBoxButtonClick={this.onCreateBoxButtonClick} />;
         }
@@ -99,7 +100,7 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
 }
 
 interface GroupFragmentProps {
-    group?: Group;
+    group: Group;
     boxes: Box[];
     onTableRowClick: (boxId: number) => void;
     onCreateBoxButtonClick: () => void;
@@ -107,33 +108,20 @@ interface GroupFragmentProps {
 
 const GroupFragment: SFC<GroupFragmentProps> = (props) => {
     const { group, boxes, onTableRowClick, onCreateBoxButtonClick } = props;
+    const { id, name, description } = group;
 
-    if (group) {
-        const { id, name, description } = group;
-
-        return (
-            <Container>
-                <PrimaryHeader />
-                <SecondaryHeader subtitle={description}>
-                    <Link className="header-link" to={`/group/${id}`}>{name}</Link>
-                </SecondaryHeader>
-                <BoxesFragment
-                    boxes={boxes}
-                    onTableRowClick={onTableRowClick}
-                    onCreateBoxButtonClick={onCreateBoxButtonClick} />
-            </Container>
-        );
-    } else {
-        return (
-            <Container>
-                <PrimaryHeader />
-                <BoxesFragment
-                    boxes={boxes}
-                    onTableRowClick={onTableRowClick}
-                    onCreateBoxButtonClick={onCreateBoxButtonClick} />
-            </Container>
-        );
-    }
+    return (
+        <Container>
+            <PrimaryHeader />
+            <SecondaryHeader subtitle={description}>
+                <Link className="header-link" to={`/group/${id}`}>{name}</Link>
+            </SecondaryHeader>
+            <BoxesFragment
+                boxes={boxes}
+                onTableRowClick={onTableRowClick}
+                onCreateBoxButtonClick={onCreateBoxButtonClick} />
+        </Container>
+    );
 };
 
 interface BoxesFragmentProps {
@@ -161,11 +149,17 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
                 </Table.Header>
                 <Table.Body>
                     {boxes.map((box, index) => {
-                        const { id, name, description } = box;
+                        const {
+                            id: boxId,
+                            name: boxName,
+                            description: boxDescription } = box;
                         return (
-                            <Table.Row key={index} className='clickable-table-row' onClick={() => onTableRowClick(id)}>
-                                <Table.Cell>{name}</Table.Cell>
-                                <Table.Cell>{description}</Table.Cell>
+                            <Table.Row
+                                key={index}
+                                className='clickable-table-row'
+                                onClick={() => onTableRowClick(boxId)}>
+                                <Table.Cell>{boxName}</Table.Cell>
+                                <Table.Cell>{boxDescription}</Table.Cell>
                             </Table.Row>
                         );
                     })}

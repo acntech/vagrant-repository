@@ -99,10 +99,12 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
                 heading='No box found'
                 content={`Could not find box for ID ${boxId}`} />;
         } else {
+            const boxVersions = versions.filter(version => version.box.id == boxId);
+
             return <BoxFragment
                 group={group}
                 box={box}
-                versions={versions}
+                versions={boxVersions}
                 onTableRowClick={this.onTableRowClick}
                 onCreateVersionButtonClick={this.onCreateVersionButtonClick} />;
         }
@@ -118,8 +120,8 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
 }
 
 interface BoxFragmentProps {
-    group?: Group;
-    box?: Box;
+    group: Group;
+    box: Box;
     versions: Version[];
     onTableRowClick: (versionId: number) => void;
     onCreateVersionButtonClick: () => void;
@@ -127,33 +129,21 @@ interface BoxFragmentProps {
 
 const BoxFragment: SFC<BoxFragmentProps> = (props) => {
     const { group, box, versions, onTableRowClick, onCreateVersionButtonClick } = props;
+    const { id: groupId, name: groupName } = group;
+    const { id: boxId, name: boxName, description } = box;
 
-    if (group && box) {
-        const { id: groupId, name: groupName } = group;
-        const { id: boxId, name: boxName, description } = box;
-        return (
-            <Container>
-                <PrimaryHeader />
-                <SecondaryHeader subtitle={description}>
-                    <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>
-                </SecondaryHeader>
-                <VersionsFragment
-                    versions={versions}
-                    onTableRowClick={onTableRowClick}
-                    onCreateVersionButtonClick={onCreateVersionButtonClick} />
-            </Container>
-        );
-    } else {
-        return (
-            <Container>
-                <PrimaryHeader />
-                <VersionsFragment
-                    versions={versions}
-                    onTableRowClick={onTableRowClick}
-                    onCreateVersionButtonClick={onCreateVersionButtonClick} />
-            </Container>
-        );
-    }
+    return (
+        <Container>
+            <PrimaryHeader />
+            <SecondaryHeader subtitle={description}>
+                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>
+            </SecondaryHeader>
+            <VersionsFragment
+                versions={versions}
+                onTableRowClick={onTableRowClick}
+                onCreateVersionButtonClick={onCreateVersionButtonClick} />
+        </Container>
+    );
 }
 
 interface VersionsFragmentProps {

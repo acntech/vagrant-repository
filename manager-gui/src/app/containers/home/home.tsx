@@ -6,6 +6,7 @@ import { InjectedIntlProps } from 'react-intl';
 import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Group, GroupState, RootState } from '../../models';
+import { findGroups } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader } from '../../components';
 
 interface ComponentStateProps {
@@ -13,6 +14,7 @@ interface ComponentStateProps {
 }
 
 interface ComponentDispatchProps {
+    findGroups: (name?: string) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps;
@@ -31,6 +33,10 @@ class HomeContainer extends Component<ComponentProps, ComponentState> {
     constructor(props: ComponentProps) {
         super(props);
         this.state = initialState;
+    }
+
+    componentDidMount() {
+        this.props.findGroups();
     }
 
     public render(): ReactNode {
@@ -112,6 +118,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
+    findGroups: (name?: string) => dispatch(findGroups(name))
 });
 
 const ConnectedHomeContainer = connect(mapStateToProps, mapDispatchToProps)(HomeContainer);

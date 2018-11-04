@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 
-import { GroupState, RootState } from '../../models';
-import { findGroups } from '../../state/actions';
+import { RootState } from '../../models';
 import {
     CreateBoxContainer,
     CreateGroupContainer,
@@ -20,20 +19,14 @@ import {
 } from '../';
 
 interface ComponentStateProps {
-    groupState: GroupState;
 }
 
 interface ComponentDispatchProps {
-    findGroups: (name?: string) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps;
 
 class RootContainer extends Component<ComponentProps> {
-
-    componentDidMount() {
-        this.props.findGroups();
-    }
 
     public render(): ReactNode {
         return (
@@ -56,11 +49,9 @@ class RootContainer extends Component<ComponentProps> {
 }
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
-    groupState: state.groupState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
-    findGroups: (name?: string) => dispatch(findGroups(name))
 });
 
 const ConnectedRootContainer = connect(mapStateToProps, mapDispatchToProps)(RootContainer);
