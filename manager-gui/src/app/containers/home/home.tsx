@@ -44,8 +44,6 @@ class HomeContainer extends Component<ComponentProps, ComponentState> {
         const { groupState } = this.props;
         const { groups, loading } = groupState;
 
-        console.log(this.props.intl);
-
         if (groupId) {
             return <Redirect to={`/group/${groupId}`} />;
         } else if (loading) {

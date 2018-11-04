@@ -1,0 +1,34 @@
+version: '3.5'
+
+services:
+  gui:
+    build: manager-gui
+    image: vagrant-repository-manager-gui:latest
+    container_name: vagrant-repository-manager-gui
+    hostname: gui
+    domainname: manager.local
+    environment:
+      - NODE_ENV=production
+      - NODE_PUBLIC_HOST=localhost:3000
+      - API_URL=http://api:8080
+    command: [ "npm", "run", "start" ]
+    ports:
+      - 3000:3000
+    networks:
+      - vagrant_repository_manager
+
+  api:
+    build: manager-api
+    image: vagrant-repository-manager-api:latest
+    container_name: vagrant-repository-manager-api
+    hostname: api
+    domainname: manager.local
+    command: [ "java", "-jar", "api.war" ]
+    ports:
+      - 8080:8080
+    networks:
+      - vagrant_repository_manager
+
+networks:
+  vagrant_repository_manager:
+    name: vagrant-repository-manager

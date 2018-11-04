@@ -158,7 +158,10 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
         <Container>
             <PrimaryHeader />
             <SecondaryHeader subtitle={description}>
-                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <Link to={`/group/${groupId}`}>{groupName}</Link>{' / '}
+                <Link to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{' / '}
+                <Link to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>
             </SecondaryHeader>
             <ProvidersFragment
                 providers={providers}

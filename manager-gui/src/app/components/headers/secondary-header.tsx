@@ -39,7 +39,7 @@ const HeaderFragment: React.SFC<ComponentProps> = (props) => {
     const { title, subtitle, children } = props;
 
     return (
-        <Segment basic>
+        <Segment basic className="secondary-header">
             <Header>{children ? children : title}</Header>
             {subtitle ? <Header.Subheader>{subtitle}</Header.Subheader> : null}
         </Segment>
@@ -51,7 +51,7 @@ const MessagesFragment: React.SFC<ComponentProps> = (props) => {
 
     if (notices && notices.length > 0) {
         return (
-            <Segment basic>
+            <Segment basic className="secondary-header">
                 {notices.map((notice, index) => {
                     const { severity, header, content } = notice;
                     const info = severity === 'info';

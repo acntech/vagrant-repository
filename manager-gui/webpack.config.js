@@ -11,13 +11,14 @@ const outputDir = 'dist';
 const publicDir = 'public';
 const outputPath = path.resolve(__dirname, outputDir);
 const indexFile = path.resolve(__dirname, publicDir, 'index.html');
-const publicHost = process.env.NODE_PUBLIC_HOST || 'localhost:3000';
+const devServerHost = process.env.NODE_PUBLIC_HOST || 'localhost:3000';
+const apiServerUrl = process.env.API_URL || 'http://localhost:8080';
 const mode = process.env.NODE_ENV || 'development';
 
 module.exports = {
     entry: {
-        app: [ './src/app/index.tsx' ],
-        vendor: [ 'react', 'react-dom', 'react-router', 'redux', 'react-redux', 'redux-thunk' ]
+        app: ['./src/app/index.tsx'],
+        vendor: ['react', 'react-dom', 'react-router', 'redux', 'react-redux', 'redux-thunk']
     },
     output: {
         filename: 'main.bundle.js',
@@ -25,8 +26,8 @@ module.exports = {
         publicPath: '/'
     },
     resolve: {
-        extensions: [ '.js', '.jsx', '.json', '.ts', '.tsx' ],
-        modules: [ 'node_modules' ]
+        extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+        modules: ['node_modules']
     },
     module: {
         rules: [
@@ -91,9 +92,9 @@ module.exports = {
     devServer: {
         port: 3000,
         historyApiFallback: true,
-        public: publicHost,
+        public: devServerHost,
         proxy: {
-            '/api': 'http://localhost:8080'
+            '/api': apiServerUrl
         },
         open: false
     },

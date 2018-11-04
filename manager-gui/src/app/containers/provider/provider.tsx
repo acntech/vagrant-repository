@@ -256,9 +256,10 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
         <Container>
             <PrimaryHeader />
             <SecondaryHeader>
-                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link>{" / "}
-                <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{" / "}
-                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>{" / "}
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link>{' / '}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{' / '}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>{' / '}
                 <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`}>{ProviderType[providerType]}</Link>
             </SecondaryHeader>
             <Segment basic>
@@ -326,10 +327,11 @@ const UpdateProviderFragment: SFC<UpdateProviderFragmentProps> = (props) => {
         <Container>
             <PrimaryHeader />
             <SecondaryHeader>
-                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link>{" / "}
-                <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{" / "}
-                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>{" / "}
-                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`}>{ProviderType[providerType]}</Link>{" / "}
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link>{' / '}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{' / '}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>{' / '}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`}>{ProviderType[providerType]}</Link>{' / '}
                 Upload File
                 </SecondaryHeader>
             <Segment basic>

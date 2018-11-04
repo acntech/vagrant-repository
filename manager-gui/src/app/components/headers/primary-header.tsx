@@ -18,9 +18,9 @@ class PrimaryHeaderComponent extends Component<ComponentProps> {
         document.title = browserTitle;
 
         return (
-            <Segment basic>
+            <Segment basic className="primary-header">
                 <Header as='h1'>
-                    <Link className="header-link" to="/">
+                    <Link to="/">
                         <Icon name='cubes' />{headerTitle}
                     </Link>
                 </Header>

@@ -136,7 +136,9 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
         <Container>
             <PrimaryHeader />
             <SecondaryHeader subtitle={description}>
-                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link> / <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <Link to={`/group/${groupId}`}>{groupName}</Link>{' / '}
+                <Link to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>
             </SecondaryHeader>
             <VersionsFragment
                 versions={versions}

@@ -114,7 +114,8 @@ const GroupFragment: SFC<GroupFragmentProps> = (props) => {
         <Container>
             <PrimaryHeader />
             <SecondaryHeader subtitle={description}>
-                <Link className="header-link" to={`/group/${id}`}>{name}</Link>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <Link to={`/group/${id}`}>{name}</Link>
             </SecondaryHeader>
             <BoxesFragment
                 boxes={boxes}
