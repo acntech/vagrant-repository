@@ -5,6 +5,7 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
 
+import { formatBytes } from '../../core/utils';
 import { Box, BoxState, Group, GroupState, Provider, ProviderState, RootState, Version, VersionState } from '../../models';
 import { findBoxVersions, findGroups, findGroupBoxes, findVersionProviders } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
@@ -208,7 +209,7 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
                         return (
                             <Table.Row key={index} className='clickable-table-row' onClick={() => onTableRowClick(id)}>
                                 <Table.Cell>{providerType}</Table.Cell>
-                                <Table.Cell>{size}</Table.Cell>
+                                <Table.Cell>{formatBytes(size, 0)}</Table.Cell>
                                 <Table.Cell>{checksumType}</Table.Cell>
                                 <Table.Cell>{checksum}</Table.Cell>
                             </Table.Row>

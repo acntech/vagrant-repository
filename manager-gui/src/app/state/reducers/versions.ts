@@ -106,13 +106,8 @@ export function find(state: VersionState = initialVersionState, action: FindVers
             const { payload } = action;
             let { versions } = state;
             if (payload) {
-                payload.forEach(box => {
-                    let index = versions.indexOf(box);
-                    if (~index) {
-                        versions[index] = box;
-                    } else {
-                        versions = versions.concat(payload);
-                    }
+                payload.forEach(version => {
+                    versions = replaceOrAppend(versions, version);
                 });
             }
             return { ...initialVersionState, versions: versions };
@@ -131,7 +126,7 @@ export function find(state: VersionState = initialVersionState, action: FindVers
 }
 
 const replaceOrAppend = (versions: Version[], version: Version) => {
-    const index = versions.map(box => box.id).indexOf(version.id);
+    const index = versions.map(version => version.id).indexOf(version.id);
 
     if (~index) {
         versions[index] = version;

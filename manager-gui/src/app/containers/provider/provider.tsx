@@ -10,9 +10,11 @@ import {
     Icon,
     Message,
     DropdownItemProps,
-    Segment
+    Segment,
+    Table
 } from 'semantic-ui-react';
 
+import { formatBytes } from '../../core/utils';
 import {
     Box,
     BoxState,
@@ -27,6 +29,8 @@ import {
 } from '../../models';
 import { getBox, getGroup, getProvider, getVersion, updateVersionProvider } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { Link } from 'react-router-dom';
+import { NotFoundErrorContainer } from '../error';
 
 interface RouteProps {
     match: any;
@@ -83,10 +87,10 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
 
     componentDidMount() {
         const { groupId, boxId, versionId, providerId } = this.props.match.params;
-        this.props.getGroup(groupId);
-        this.props.getBox(boxId);
-        this.props.getVersion(versionId);
-        this.props.getProvider(providerId);
+        groupId && this.props.getGroup(groupId);
+        boxId && this.props.getBox(boxId);
+        versionId && this.props.getVersion(versionId);
+        providerId && this.props.getProvider(providerId);
     }
 
     componentDidUpdate() {
@@ -127,7 +131,7 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
     }
 
     public render(): ReactNode {
-        const { groupId, boxId, versionId } = this.props.match.params;
+        const { groupId, boxId, versionId, providerId } = this.props.match.params;
         const { group, box, version, provider, cancel, formData } = this.state;
         const { groupState, boxState, versionState, providerState } = this.props;
         const { loading: groupLoading } = groupState;
@@ -139,8 +143,38 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
         } else if (groupLoading || boxLoading || versionLoading || providerLoading) {
             return <LoadingIndicator />;
+        } else if (!group) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No group found'
+                content={`Could not find group for ID ${groupId}`} />;
+        } else if (!box) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No box found'
+                content={`Could not find box for ID ${boxId}`} />;
+        } else if (!version) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No version found'
+                content={`Could not find version for ID ${versionId}`} />;
+        } else if (!provider) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No provider found'
+                content={`Could not find provider for ID ${providerId}`} />;
+        } else if (provider.size && provider.checksum) {
+            return <ViewProviderFragment
+                group={group}
+                box={box}
+                version={version}
+                provider={provider} />
         } else {
-            return <UploadBoxFragment
+            return <UpdateProviderFragment
                 group={group}
                 box={box}
                 version={version}
@@ -199,19 +233,73 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
     }
 }
 
-interface CreateBoxFragmentProps {
-    group?: Group;
-    box?: Box;
-    version?: Version;
-    provider?: Provider;
+interface ViewProviderFragmentProps {
+    group: Group;
+    box: Box;
+    version: Version;
+    provider: Provider;
+};
+
+const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
+    const {
+        group,
+        box,
+        version,
+        provider,
+    } = props;
+    const { id: groupId, name: groupName } = group;
+    const { id: boxId, name: boxName } = box;
+    const { id: versionId, name: versionName } = version;
+    const { id: providerId, providerType, size, checksumType, checksum } = provider;
+
+    return (
+        <Container>
+            <PrimaryHeader />
+            <SecondaryHeader>
+                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link>{" / "}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{" / "}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>{" / "}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`}>{ProviderType[providerType]}</Link>
+            </SecondaryHeader>
+            <Segment basic>
+                <Table celled>
+                    <Table.Body>
+                        <Table.Row>
+                            <Table.Cell><h3>Provider Type</h3></Table.Cell>
+                            <Table.Cell>{providerType}</Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell><h3>Size</h3></Table.Cell>
+                            <Table.Cell>{formatBytes(size, 0)}</Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell><h3>Checksum</h3></Table.Cell>
+                            <Table.Cell>{checksumType}: {checksum}</Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+                </Table>
+            </Segment>
+        </Container>
+    );
+}
+
+interface UpdateProviderFragmentProps {
+    group: Group;
+    box: Box;
+    version: Version;
+    provider: Provider;
     onFormInputChange: (event: any) => void;
     onCancelButtonClick: () => void;
     onFormSubmit: (event: any) => void
     formData: FormData;
 };
 
-const UploadBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
+const UpdateProviderFragment: SFC<UpdateProviderFragmentProps> = (props) => {
     const {
+        group,
+        box,
+        version,
+        provider,
         onFormInputChange,
         onCancelButtonClick,
         onFormSubmit,
@@ -223,6 +311,10 @@ const UploadBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
         formWarning,
         formWarningMessage
     } = formData;
+    const { id: groupId, name: groupName } = group;
+    const { id: boxId, name: boxName } = box;
+    const { id: versionId, name: versionName } = version;
+    const { id: providerId, providerType } = provider;
 
     const providerTypeOptions: DropdownItemProps[] = [];
     Object.keys(ProviderType)
@@ -234,7 +326,11 @@ const UploadBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
         <Container>
             <PrimaryHeader />
             <SecondaryHeader>
-                Upload Provider File
+                <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link>{" / "}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{" / "}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>{" / "}
+                <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`}>{ProviderType[providerType]}</Link>{" / "}
+                Upload File
                 </SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError} warning={formWarning}>

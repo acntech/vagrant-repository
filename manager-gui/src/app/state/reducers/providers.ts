@@ -112,13 +112,8 @@ export function find(state: ProviderState = initialProviderState, action: FindPr
             const { payload } = action;
             let { providers } = state;
             if (payload) {
-                payload.forEach(box => {
-                    let index = providers.indexOf(box);
-                    if (~index) {
-                        providers[index] = box;
-                    } else {
-                        providers = providers.concat(payload);
-                    }
+                payload.forEach(provider => {
+                    providers = replaceOrAppend(providers, provider);
                 });
             }
             return { ...initialProviderState, providers: providers };
@@ -170,13 +165,17 @@ export const update = (state: ProviderState = initialProviderState, action: Upda
 }
 
 const replaceOrAppend = (providers: Provider[], provider: Provider) => {
-    const index = providers.map(box => box.id).indexOf(provider.id);
+    const index = providers.map(p => p.id).indexOf(provider.id);
+    console.log('before', providers);
+
+    console.log('index', index);
 
     if (~index) {
         providers[index] = provider;
     } else {
         providers = providers.concat(provider);
     }
+    console.log('after', providers);
 
     return providers;
 }
