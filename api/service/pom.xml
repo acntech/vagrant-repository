@@ -7,17 +7,20 @@
     <!-- PROJECT -->
     <parent>
         <groupId>no.acntech</groupId>
-        <artifactId>vagrant-repository-manager</artifactId>
+        <artifactId>vagrant-repository</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>vagrant-repository-manager-service</artifactId>
+    <artifactId>vagrant-repository-service</artifactId>
+
+    <name>${project.artifactId}</name>
+    <description>Vagrant Repository Service</description>
 
     <!-- DEPENDENCIES -->
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>vagrant-repository-manager-common</artifactId>
+            <artifactId>vagrant-repository-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

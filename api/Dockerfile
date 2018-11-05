@@ -8,7 +8,7 @@ WORKDIR /tmp
 COPY . .
 
 RUN ./mvnw clean package --quiet -DskipTests \
- && cp ./api/target/vagrant-repository-manager-api.war ./api.war
+ && cp ./web/target/vagrant-repository-web.war ./api.war
 
 #
 # Runtime
@@ -16,7 +16,7 @@ RUN ./mvnw clean package --quiet -DskipTests \
 FROM openjdk:8-jre
 
 ARG SERVER_PORT=8080
-ARG APP_DIR=/opt/vagrant-repository-manager
+ARG APP_DIR=/opt/vagrant-repository
 
 RUN mkdir -p ${APP_DIR}
 

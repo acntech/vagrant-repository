@@ -12,12 +12,12 @@
     </parent>
 
     <groupId>no.acntech</groupId>
-    <artifactId>vagrant-repository-manager</artifactId>
+    <artifactId>vagrant-repository</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
-    <description>Vagrant Repository Manager API</description>
+    <description>Vagrant Repository</description>
 
     <developers>
         <developer>
@@ -50,7 +50,7 @@
     <modules>
         <module>common</module>
         <module>service</module>
-        <module>api</module>
+        <module>web</module>
     </modules>
 
     <!-- DEPENDENCIES -->
@@ -104,12 +104,12 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>vagrant-repository-manager-common</artifactId>
+                <artifactId>vagrant-repository-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>vagrant-repository-manager-service</artifactId>
+                <artifactId>vagrant-repository-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

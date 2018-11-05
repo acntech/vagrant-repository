@@ -7,11 +7,14 @@
     <!-- PROJECT -->
     <parent>
         <groupId>no.acntech</groupId>
-        <artifactId>vagrant-repository-manager</artifactId>
+        <artifactId>vagrant-repository</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>vagrant-repository-manager-common</artifactId>
+    <artifactId>vagrant-repository-common</artifactId>
+
+    <name>${project.artifactId}</name>
+    <description>Vagrant Repository Common</description>
 
     <!-- DEPENDENCIES -->
     <dependencies>
