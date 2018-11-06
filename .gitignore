@@ -1,3 +1,4 @@
+# General
 **/build-details.properties
 classes/
 eclipse-classes/
@@ -19,7 +20,7 @@ bin/
 
 sql.log.*
 
-#Intellij
+# Intellij
 .idea/
 *.swp
 *.iml
@@ -27,26 +28,19 @@ sql.log.*
 *.ipr
 atlassian-ide-plugin.xml
 
+# VS Code
+*.code-workspace
+
 data.json
 json2html.pyc
 stats.html
 jsconfig.json
 
-#node
+# Node
 node_modules/
 build/
 dist/
 yarn.lock
-
-# .xml filer generert av PINT #
-dependency-reduced-pom.xml
-
-# ant target filer
-.ant-targets-build.xml
-
-# frontendbygg
-*built.jsp
-react-built
 
 Session.vim
 .DS_Store

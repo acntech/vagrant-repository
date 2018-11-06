@@ -1,0 +1,11 @@
+.primary-header a {
+    color: #000;
+}
+
+.primary-header a:hover {
+    color: #000;
+}
+
+.clickable-table-row {
+    cursor: pointer;
+}

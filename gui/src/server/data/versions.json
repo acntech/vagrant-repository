@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "name": "1.0.0",
+        "description": "Description of 1.0.0",
+        "box": {
+            "id": 1,
+            "name": "mybox",
+            "description": "Description of mybox",
+            "group": {
+                "id": 1,
+                "name": "mygroup",
+                "description": "Description of mygroup"
+            }
+        }
+    }
+]
