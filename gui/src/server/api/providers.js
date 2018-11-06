@@ -1,12 +1,14 @@
 // Modules
 const fs = require('fs');
 const express = require('express');
+const crypto = require('crypto')
 const multer = require('multer');
 // Variables
 const router = express.Router();
 const providers = require('../data/providers.json');
 const rootDir = '/tmp/vagrant-repository-manager';
 const uploadDir = `${rootDir}/uploads`;
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const dirs = [rootDir, uploadDir];
@@ -21,6 +23,7 @@ const storage = multer.diskStorage({
         cb(null, 'default.box');
     }
 })
+
 const upload = multer({ storage: storage });
 
 router.get('/:id', (req, res) => {
@@ -67,8 +70,13 @@ router.post('/:id', upload.single('file'), (req, res) => {
 
     const index = providers.indexOf(entity);
     if (~index) {
-        const { size } = file;
-        const provider = { ...entity, size: size };
+        const { size, path } = file;
+        const data = fs.readFileSync(path, { encoding: 'utf8' });
+        const checksum = crypto
+            .createHash('sha1')
+            .update(data, 'utf8')
+            .digest('hex');
+        const provider = { ...entity, size: size, checksumType: 'SHA1', checksum: checksum };
         providers[index] = provider;
         res.send(provider);
     } else {

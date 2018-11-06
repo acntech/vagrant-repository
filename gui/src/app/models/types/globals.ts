@@ -27,4 +27,21 @@ export interface Notice {
 
 export interface Modified {
     id: number;
+    entityType: EntityType;
+    actionType: ActionType;
+}
+
+export enum EntityType {
+    GROUPS = 'groups',
+    BOXES = 'boxes',
+    VERSIONS = 'versions',
+    PROVIDERS = 'providers'
+}
+
+export enum ActionType {
+    GET = 'get',
+    FIND = 'find',
+    CREATE = 'create',
+    UPDATE = 'update',
+    DELETE = 'delete'
 }

@@ -10,6 +10,8 @@ import {
     FindProvidersActionType,
     UpdateProviderAction,
     UpdateProviderActionType,
+    EntityType,
+    ActionType,
 } from '../../models';
 import { initialProviderState } from '../store/initial-state';
 
@@ -51,7 +53,7 @@ export const create = (state: ProviderState = initialProviderState, action: Crea
 
             if (payload) {
                 providers = replaceOrAppend(providers, payload);
-                modified = { id: payload.id };
+                modified = { id: payload.id, entityType: EntityType.PROVIDERS, actionType: ActionType.CREATE };
             }
 
             return { ...initialProviderState, providers: providers, modified: modified };
@@ -146,7 +148,7 @@ export const update = (state: ProviderState = initialProviderState, action: Upda
 
             if (payload) {
                 providers = replaceOrAppend(providers, payload);
-                modified = { id: payload.id };
+                modified = { id: payload.id, entityType: EntityType.PROVIDERS, actionType: ActionType.UPDATE };
             }
 
             return { ...initialProviderState, providers: providers, modified: modified };

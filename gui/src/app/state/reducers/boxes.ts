@@ -7,7 +7,9 @@ import {
     GetBoxAction,
     GetBoxActionType,
     FindBoxesAction,
-    FindBoxesActionType
+    FindBoxesActionType,
+    EntityType,
+    ActionType
 } from '../../models';
 import { initialBoxState } from '../store/initial-state';
 
@@ -45,7 +47,7 @@ export const create = (state: BoxState = initialBoxState, action: CreateBoxActio
 
             if (payload) {
                 boxes = replaceOrAppend(boxes, payload);
-                modified = { id: payload.id };
+                modified = { id: payload.id, entityType: EntityType.BOXES, actionType: ActionType.CREATE };
             }
 
             return { ...initialBoxState, boxes: boxes, modified: modified };

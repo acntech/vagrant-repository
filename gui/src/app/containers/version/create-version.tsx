@@ -83,12 +83,12 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
         const { boxId } = this.props.match.params;
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
-        if (!formNameValue || formNameValue.length < 3) {
+        if (!formNameValue || formNameValue.length < 1) {
             this.setState({
                 formData: {
                     ...formData,
                     formError: true,
-                    formErrorMessage: 'Version name must be at least 3 letters long'
+                    formErrorMessage: 'Version name must be at least 1 letter long'
                 }
             });
         } else if (/\s/.test(formNameValue)) {

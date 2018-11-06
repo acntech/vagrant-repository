@@ -83,12 +83,12 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
         const { groupId } = this.props.match.params;
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
-        if (!formNameValue || formNameValue.length < 3) {
+        if (!formNameValue || formNameValue.length < 2) {
             this.setState({
                 formData: {
                     ...formData,
                     formError: true,
-                    formErrorMessage: 'Box name must be at least 3 letters long'
+                    formErrorMessage: 'Box name must be at least 2 letters long'
                 }
             });
         } else if (/\s/.test(formNameValue)) {

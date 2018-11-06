@@ -7,7 +7,9 @@ import {
     GetVersionAction,
     GetVersionActionType,
     FindVersionsAction,
-    FindVersionsActionType
+    FindVersionsActionType,
+    EntityType,
+    ActionType
 } from '../../models';
 import { initialVersionState } from '../store/initial-state';
 
@@ -45,7 +47,7 @@ export const create = (state: VersionState = initialVersionState, action: Create
 
             if (payload) {
                 versions = replaceOrAppend(versions, payload);
-                modified = { id: payload.id };
+                modified = { id: payload.id, entityType: EntityType.VERSIONS, actionType: ActionType.CREATE };
             }
 
             return { ...initialVersionState, versions: versions, modified: modified };

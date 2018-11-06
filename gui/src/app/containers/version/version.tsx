@@ -192,19 +192,22 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
                     <Table.Row>
                         <Table.HeaderCell width={4}>Provider</Table.HeaderCell>
                         <Table.HeaderCell width={4}>Size</Table.HeaderCell>
-                        <Table.HeaderCell width={4}>Checksum type</Table.HeaderCell>
-                        <Table.HeaderCell width={4}>Checksum</Table.HeaderCell>
+                        <Table.HeaderCell width={8}>Checksum</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
                     {providers.map((provider, index) => {
                         const { id, providerType, size, checksumType, checksum } = provider;
+                        const formattedBytes = formatBytes(size, 0);
+                        const formattedChecksum = checksum ? `${checksumType}: ${checksum}` : undefined;
+                        console.log(checksumType);
+                        console.log(checksum);
+                        console.log(formattedChecksum);
                         return (
                             <Table.Row key={index} className='clickable-table-row' onClick={() => onTableRowClick(id)}>
                                 <Table.Cell>{providerType}</Table.Cell>
-                                <Table.Cell>{formatBytes(size, 0)}</Table.Cell>
-                                <Table.Cell>{checksumType}</Table.Cell>
-                                <Table.Cell>{checksum}</Table.Cell>
+                                <Table.Cell>{formattedBytes}</Table.Cell>
+                                <Table.Cell>{formattedChecksum}</Table.Cell>
                             </Table.Row>
                         );
                     })}

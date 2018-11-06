@@ -5,7 +5,7 @@ import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
 import { Button, Container, DropdownProps, Form, Icon, Message, DropdownItemProps, Segment } from 'semantic-ui-react';
 
-import { CreateProvider, ProviderState, ProviderType, RootState } from '../../models';
+import { CreateProvider, ProviderState, ProviderType, RootState, ActionType } from '../../models';
 import { createVersionProvider, findVersionProviders } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
@@ -65,9 +65,9 @@ class CreateProviderContainer extends Component<ComponentProps, ComponentState> 
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
-        } else if (modified) {
+        } else if (modified && modified.actionType == ActionType.CREATE) {
             const { id: providerId } = modified;
-            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`} />;
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}/update`} />;
         } else {
             return <CreateBoxFragment
                 onCancelButtonClick={this.onCancelButtonClick}

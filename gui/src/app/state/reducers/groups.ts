@@ -7,7 +7,9 @@ import {
     GetGroupAction,
     GetGroupActionType,
     FindGroupsAction,
-    FindGroupsActionType
+    FindGroupsActionType,
+    EntityType,
+    ActionType
 } from '../../models';
 import { initialGroupState } from '../store/initial-state';
 
@@ -45,7 +47,7 @@ export const create = (state: GroupState = initialGroupState, action: CreateGrou
 
             if (payload) {
                 groups = replaceOrAppend(groups, payload);
-                modified = { id: payload.id };
+                modified = { id: payload.id, entityType: EntityType.GROUPS, actionType: ActionType.CREATE };
             }
 
             return { ...initialGroupState, groups: groups, modified: modified };

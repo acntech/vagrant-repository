@@ -71,12 +71,12 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
     private onFormSubmit = () => {
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
-        if (!formNameValue || formNameValue.length < 3) {
+        if (!formNameValue || formNameValue.length < 2) {
             this.setState({
                 formData: {
                     ...formData,
                     formError: true,
-                    formErrorMessage: 'Group name must be at least 3 letters long'
+                    formErrorMessage: 'Group name must be at least 2 letters long'
                 }
             });
         } else if (/\s/.test(formNameValue)) {
