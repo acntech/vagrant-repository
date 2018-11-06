@@ -29,6 +29,7 @@ atlassian-ide-plugin.xml
 
 # VS Code
 *.code-workspace
+.factorypath
 
 data.json
 json2html.pyc
