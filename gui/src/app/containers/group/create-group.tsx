@@ -3,9 +3,18 @@ import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, Form, Icon, InputOnChangeData, TextAreaProps, Message, Segment } from 'semantic-ui-react';
+import {
+    Button,
+    Container,
+    Form,
+    Icon,
+    InputOnChangeData,
+    TextAreaProps,
+    Message,
+    Segment
+} from 'semantic-ui-react';
 
-import { CreateGroup, GroupState, RootState } from '../../models';
+import { CreateGroup, GroupState, RootState, ActionType } from '../../models';
 import { createGroup } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
@@ -55,7 +64,7 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
             return <Redirect to='/' />;
         } else if (loading) {
             return <LoadingIndicator />;
-        } else if (modified) {
+        } else if (modified && modified.actionType == ActionType.CREATE) {
             const { id: groupId } = modified;
             return <Redirect to={`/group/${groupId}`} />
         } else {

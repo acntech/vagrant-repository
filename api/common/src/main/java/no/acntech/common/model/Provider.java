@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Table(name = "PROVIDERS")
 @Entity

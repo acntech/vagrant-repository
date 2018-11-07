@@ -57,17 +57,21 @@ const MessagesFragment: React.SFC<ComponentProps> = (props) => {
                     const info = severity === 'info';
                     const warning = severity === 'warning';
                     const error = severity === 'error';
+                    const success = severity === 'success';
                     let icon = 'info circle';
                     if (error) {
                         icon = 'ban';
                     } else if (warning) {
                         icon = 'warning circle';
+                    } else if (success) {
+                        icon = 'check circle';
                     }
                     return <Message
                         key={index}
                         info={info}
                         warning={warning}
                         error={error}
+                        success={success}
                         icon={icon}
                         header={header}
                         content={content} />;

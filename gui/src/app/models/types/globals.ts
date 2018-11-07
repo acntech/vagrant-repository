@@ -11,7 +11,8 @@ export interface RootState {
 }
 
 export interface Error {
-    domain: string;
+    entityType: EntityType;
+    actionType: ActionType;
     timestamp: string;
     status: number;
     error: string;
@@ -20,7 +21,7 @@ export interface Error {
 }
 
 export interface Notice {
-    severity: 'info' | 'warning' | 'error';
+    severity: 'info' | 'warning' | 'error' | 'success';
     header: string;
     content?: string | ReactNode;
 }
@@ -32,10 +33,10 @@ export interface Modified {
 }
 
 export enum EntityType {
-    GROUPS = 'groups',
-    BOXES = 'boxes',
-    VERSIONS = 'versions',
-    PROVIDERS = 'providers'
+    GROUP = 'group',
+    BOX = 'box',
+    VERSION = 'version',
+    PROVIDER = 'provider'
 }
 
 export enum ActionType {

@@ -1,4 +1,4 @@
-import { Error, Notice, RootState } from "../../models";
+import { Error, Notice, RootState, EntityType } from "../../models";
 
 export const noticesSelector = (state: RootState) => {
     const notices: Notice[] = [];
@@ -20,23 +20,23 @@ export const noticesSelector = (state: RootState) => {
 const mapErrors = (state: RootState): Error[] => {
     const errors: Error[] = [];
     if (state.groupState.error) {
-        const { data: error } = state.groupState.error.response;
-        errors.push({ ...error, domain: 'group' });
+        const { error } = state.groupState;
+        errors.push({ ...error, entityType: EntityType.GROUP });
     }
 
     if (state.boxState.error) {
-        const { data: error } = state.boxState.error.response;
-        errors.push({ ...error, domain: 'box' });
+        const { error } = state.boxState;
+        errors.push({ ...error, entityType: EntityType.BOX });
     }
 
     if (state.versionState.error) {
-        const { data: error } = state.versionState.error.response;
-        errors.push({ ...error, domain: 'version' });
+        const { error } = state.versionState;
+        errors.push({ ...error, entityType: EntityType.VERSION });
     }
 
     if (state.providerState.error) {
-        const { data: error } = state.providerState.error.response;
-        errors.push({ ...error, domain: 'provider' });
+        const { error } = state.providerState;
+        errors.push({ ...error, entityType: EntityType.PROVIDER });
     }
     return errors;
 }

@@ -21,7 +21,7 @@ export interface Group {
 export interface GroupState {
     loading: boolean;
     groups: Group[];
-    error?: any;
+    error?: Error;
     modified?: Modified;
 }
 
@@ -37,7 +37,7 @@ export interface GetGroupSuccessAction {
 
 export interface GetGroupErrorAction {
     type: GetGroupActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface FindGroupsLoadingAction {
@@ -52,7 +52,7 @@ export interface FindGroupsSuccessAction {
 
 export interface FindGroupsErrorAction {
     type: FindGroupsActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface CreateGroupLoadingAction {
@@ -67,7 +67,7 @@ export interface CreateGroupSuccessAction {
 
 export interface CreateGroupErrorAction {
     type: CreateGroupActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface UpdateGroupLoadingAction {
@@ -82,7 +82,7 @@ export interface UpdateGroupSuccessAction {
 
 export interface UpdateGroupErrorAction {
     type: UpdateGroupActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export type GetGroupAction = GetGroupLoadingAction | GetGroupSuccessAction | GetGroupErrorAction;

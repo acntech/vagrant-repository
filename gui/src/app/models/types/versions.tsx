@@ -23,7 +23,7 @@ export interface Version {
 export interface VersionState {
     loading: boolean;
     versions: Version[];
-    error?: any;
+    error?: Error;
     modified?: Modified;
 }
 
@@ -39,7 +39,7 @@ export interface GetVersionSuccessAction {
 
 export interface GetVersionErrorAction {
     type: GetVersionActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface FindVersionsLoadingAction {
@@ -54,7 +54,7 @@ export interface FindVersionsSuccessAction {
 
 export interface FindVersionsErrorAction {
     type: FindVersionsActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface CreateVersionLoadingAction {
@@ -69,7 +69,7 @@ export interface CreateVersionSuccessAction {
 
 export interface CreateVersionErrorAction {
     type: CreateVersionActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface UpdateVersionLoadingAction {
@@ -84,7 +84,7 @@ export interface UpdateVersionSuccessAction {
 
 export interface UpdateVersionErrorAction {
     type: UpdateVersionActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export type GetVersionAction = GetVersionLoadingAction | GetVersionSuccessAction | GetVersionErrorAction;

@@ -35,28 +35,29 @@ export const reducer = (state: BoxState = initialBoxState, action: BoxAction): B
 export const create = (state: BoxState = initialBoxState, action: CreateBoxAction): BoxState => {
     switch (action.type) {
         case CreateBoxActionType.LOADING: {
-            const { loading } = action;
             const { boxes } = state;
-            return { ...initialBoxState, loading: loading, boxes: boxes };
+            const { loading } = action;
+            return { ...initialBoxState, boxes: boxes, loading: loading };
         }
 
         case CreateBoxActionType.SUCCESS: {
-            const { payload } = action;
             let { boxes } = state;
+            const { payload } = action;
             let modified;
 
             if (payload) {
                 boxes = replaceOrAppend(boxes, payload);
-                modified = { id: payload.id, entityType: EntityType.BOXES, actionType: ActionType.CREATE };
+                modified = { id: payload.id, entityType: EntityType.BOX, actionType: ActionType.CREATE };
             }
 
             return { ...initialBoxState, boxes: boxes, modified: modified };
         }
 
         case CreateBoxActionType.ERROR: {
-            const { error } = action;
             const { boxes } = state;
-            return { ...initialBoxState, error: error, boxes: boxes };
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.CREATE };
+            return { ...initialBoxState, boxes: boxes, error: error };
         }
 
         default: {
@@ -68,14 +69,14 @@ export const create = (state: BoxState = initialBoxState, action: CreateBoxActio
 export const get = (state: BoxState = initialBoxState, action: GetBoxAction): BoxState => {
     switch (action.type) {
         case GetBoxActionType.LOADING: {
-            const { loading } = action;
             const { boxes } = state;
-            return { ...initialBoxState, loading: loading, boxes: boxes };
+            const { loading } = action;
+            return { ...initialBoxState, boxes: boxes, loading: loading };
         }
 
         case GetBoxActionType.SUCCESS: {
-            const { payload } = action;
             let { boxes } = state;
+            const { payload } = action;
 
             if (payload) {
                 boxes = replaceOrAppend(boxes, payload);
@@ -85,9 +86,10 @@ export const get = (state: BoxState = initialBoxState, action: GetBoxAction): Bo
         }
 
         case GetBoxActionType.ERROR: {
-            const { error } = action;
             const { boxes } = state;
-            return { ...initialBoxState, error: error, boxes: boxes };
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.GET };
+            return { ...initialBoxState, boxes: boxes, error: error };
         }
 
         default: {
@@ -99,26 +101,29 @@ export const get = (state: BoxState = initialBoxState, action: GetBoxAction): Bo
 export const find = (state: BoxState = initialBoxState, action: FindBoxesAction): BoxState => {
     switch (action.type) {
         case FindBoxesActionType.LOADING: {
-            const { loading } = action;
             const { boxes } = state;
-            return { ...initialBoxState, loading: loading, boxes: boxes };
+            const { loading } = action;
+            return { ...initialBoxState, boxes: boxes, loading: loading };
         }
 
         case FindBoxesActionType.SUCCESS: {
-            const { payload } = action;
             let { boxes } = state;
+            const { payload } = action;
+
             if (payload) {
                 payload.forEach(box => {
                     boxes = replaceOrAppend(boxes, box);
                 });
             }
+
             return { ...initialBoxState, boxes: boxes, modified: undefined };
         }
 
         case FindBoxesActionType.ERROR: {
-            const { error } = action;
             const { boxes } = state;
-            return { ...initialBoxState, error: error, boxes: boxes };
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.GET };
+            return { ...initialBoxState, boxes: boxes, error: error };
         }
 
         default: {

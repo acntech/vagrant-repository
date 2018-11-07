@@ -61,7 +61,7 @@ Vagrant boxes are organized into groups. A box can exist as one or more version.
 
 To use a hosted box like e.g. ```acntech/ubuntu``` in Vagrant then define a ```Vagrantfile``` similar to the example below:
 
-```vagrantfile
+```ruby
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 

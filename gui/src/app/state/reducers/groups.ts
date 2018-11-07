@@ -35,28 +35,29 @@ export const reducer = (state: GroupState = initialGroupState, action: GroupActi
 export const create = (state: GroupState = initialGroupState, action: CreateGroupAction): GroupState => {
     switch (action.type) {
         case CreateGroupActionType.LOADING: {
-            const { loading } = action;
             const { groups } = state;
-            return { ...initialGroupState, loading: loading, groups: groups };
+            const { loading } = action;
+            return { ...initialGroupState, groups: groups, loading: loading };
         }
 
         case CreateGroupActionType.SUCCESS: {
-            const { payload } = action;
             let { groups } = state;
+            const { payload } = action;
             let modified;
 
             if (payload) {
                 groups = replaceOrAppend(groups, payload);
-                modified = { id: payload.id, entityType: EntityType.GROUPS, actionType: ActionType.CREATE };
+                modified = { id: payload.id, entityType: EntityType.GROUP, actionType: ActionType.CREATE };
             }
 
             return { ...initialGroupState, groups: groups, modified: modified };
         }
 
         case CreateGroupActionType.ERROR: {
-            const { error } = action;
             const { groups } = state;
-            return { ...initialGroupState, error: error, groups: groups };
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.GROUP, actionType: ActionType.CREATE };
+            return { ...initialGroupState, groups: groups, error: error };
         }
 
         default: {
@@ -68,14 +69,14 @@ export const create = (state: GroupState = initialGroupState, action: CreateGrou
 export const get = (state: GroupState = initialGroupState, action: GetGroupAction): GroupState => {
     switch (action.type) {
         case GetGroupActionType.LOADING: {
-            const { loading } = action;
             const { groups } = state;
-            return { ...initialGroupState, loading: loading, groups: groups };
+            const { loading } = action;
+            return { ...initialGroupState, groups: groups, loading: loading };
         }
 
         case GetGroupActionType.SUCCESS: {
-            const { payload } = action;
             let { groups } = state;
+            const { payload } = action;
 
             if (payload) {
                 groups = replaceOrAppend(groups, payload);
@@ -85,9 +86,10 @@ export const get = (state: GroupState = initialGroupState, action: GetGroupActio
         }
 
         case GetGroupActionType.ERROR: {
-            const { error } = action;
             const { groups } = state;
-            return { ...initialGroupState, error: error, groups: groups };
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.GROUP, actionType: ActionType.GET };
+            return { ...initialGroupState, groups: groups, error: error };
         }
 
         default: {
@@ -99,26 +101,29 @@ export const get = (state: GroupState = initialGroupState, action: GetGroupActio
 export const find = (state: GroupState = initialGroupState, action: FindGroupsAction): GroupState => {
     switch (action.type) {
         case FindGroupsActionType.LOADING: {
-            const { loading } = action;
             const { groups } = state;
-            return { ...initialGroupState, loading: loading, groups: groups };
+            const { loading } = action;
+            return { ...initialGroupState, groups: groups, loading: loading };
         }
 
         case FindGroupsActionType.SUCCESS: {
-            const { payload } = action;
             let { groups } = state;
+            const { payload } = action;
+
             if (payload) {
                 payload.forEach(group => {
                     groups = replaceOrAppend(groups, group);
                 });
             }
+
             return { ...initialGroupState, groups: groups };
         }
 
         case FindGroupsActionType.ERROR: {
-            const { error } = action;
             const { groups } = state;
-            return { ...initialGroupState, error: error, groups: groups };
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.GROUP, actionType: ActionType.GET };
+            return { ...initialGroupState, groups: groups, error: error };
         }
 
         default: {
