@@ -12,6 +12,7 @@ import {
     ActionType
 } from '../../models';
 import { initialGroupState } from '../store/initial-state';
+import { showError } from '../actions';
 
 export const reducer = (state: GroupState = initialGroupState, action: GroupAction): GroupState => {
     switch (action.type) {
@@ -57,6 +58,7 @@ export const create = (state: GroupState = initialGroupState, action: CreateGrou
             const { groups } = state;
             const { data } = action.error.response;
             const error = { ...data, entityType: EntityType.GROUP, actionType: ActionType.CREATE };
+            showError('Error', error.message);
             return { ...initialGroupState, groups: groups, error: error };
         }
 

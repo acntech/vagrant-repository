@@ -1,9 +1,15 @@
-import { ReactNode } from 'react';
 import { IntlState } from 'react-intl-redux';
-import { BoxState, GroupState, ProviderState, VersionState } from './';
+import {
+    BoxState,
+    GroupState,
+    NotificationState,
+    ProviderState,
+    VersionState
+} from './';
 
 export interface RootState {
     intl: IntlState;
+    notificationState: NotificationState;
     groupState: GroupState;
     boxState: BoxState;
     versionState: VersionState;
@@ -18,12 +24,6 @@ export interface Error {
     error: string;
     message: string;
     path: string;
-}
-
-export interface Notice {
-    severity: 'info' | 'warning' | 'error' | 'success';
-    header: string;
-    content?: string | ReactNode;
 }
 
 export interface Modified {

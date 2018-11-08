@@ -1,3 +1,9 @@
+export enum NotificationActionType {
+    SHOW = '[notifications] SHOW',
+    DISMISS = '[notifications] DISMISS',
+    CLEAR = '[notifications] CLEAR'
+}
+
 export enum GetGroupActionType {
     LOADING = '[groups] GET LOADING',
     SUCCESS = '[groups] GET SUCCESS',

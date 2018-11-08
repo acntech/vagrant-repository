@@ -1,7 +1,18 @@
 import { addLocaleData } from "react-intl";
 import * as enLocaleData from 'react-intl/locale-data/en';
 import { IntlState } from 'react-intl-redux';
-import { BoxState, GroupState, VersionState, ProviderState, RootState } from '../../models';
+import {
+    BoxState,
+    GroupState,
+    NotificationState,
+    ProviderState,
+    VersionState,
+    RootState
+} from '../../models';
+
+export const initialNotificationState: NotificationState = {
+    notifications: []
+};
 
 export const initialGroupState: GroupState = {
     loading: false,
@@ -38,6 +49,7 @@ export const initializeLocales = () => {
 
 export const initialRootState: RootState = {
     intl: intitialIntlState,
+    notificationState: initialNotificationState,
     groupState: initialGroupState,
     boxState: initialBoxState,
     versionState: initialVersionState,

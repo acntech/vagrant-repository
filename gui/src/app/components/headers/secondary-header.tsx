@@ -3,11 +3,10 @@ import { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Header, Segment, Message } from 'semantic-ui-react'
 
-import { Notice, RootState } from '../../models';
-import { noticesSelector } from '../../state/selectors';
+import { Notification, NotificationState, RootState } from '../../models';
 
 interface ComponentStateProps {
-    notices: Notice[];
+    notificationState: NotificationState;
 }
 
 interface ComponentDispatchProps {
@@ -24,18 +23,19 @@ type ComponentProps = ComponentFieldProps & ComponentDispatchProps & ComponentSt
 class SecondaryHeaderComponent extends Component<ComponentProps> {
 
     public render(): ReactNode {
-        const { title, subtitle, children, notices } = this.props;
+        const { title, subtitle, children } = this.props;
+        const { notifications } = this.props.notificationState;
 
         return (
             <div>
-                <HeaderFragment title={title} subtitle={subtitle} children={children} notices={notices} />
-                <MessagesFragment notices={notices} />
+                <HeaderFragment title={title} subtitle={subtitle} children={children} />
+                <MessagesFragment notifications={notifications} />
             </div>
         );
     }
 }
 
-const HeaderFragment: React.SFC<ComponentProps> = (props) => {
+const HeaderFragment: React.SFC<ComponentFieldProps> = (props) => {
     const { title, subtitle, children } = props;
 
     return (
@@ -46,14 +46,18 @@ const HeaderFragment: React.SFC<ComponentProps> = (props) => {
     );
 }
 
-const MessagesFragment: React.SFC<ComponentProps> = (props) => {
-    const { notices } = props;
+interface MessagesFragmentProps {
+    notifications: Notification[];
+}
 
-    if (notices && notices.length > 0) {
+const MessagesFragment: React.SFC<MessagesFragmentProps> = (props) => {
+    const { notifications } = props;
+
+    if (notifications && notifications.length > 0) {
         return (
             <Segment basic className="secondary-header">
-                {notices.map((notice, index) => {
-                    const { severity, header, content } = notice;
+                {notifications.map((notice, index) => {
+                    const { severity, title, content } = notice;
                     const info = severity === 'info';
                     const warning = severity === 'warning';
                     const error = severity === 'error';
@@ -73,7 +77,7 @@ const MessagesFragment: React.SFC<ComponentProps> = (props) => {
                         error={error}
                         success={success}
                         icon={icon}
-                        header={header}
+                        header={title}
                         content={content} />;
                 })}
             </Segment>
@@ -84,7 +88,7 @@ const MessagesFragment: React.SFC<ComponentProps> = (props) => {
 }
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
-    notices: noticesSelector(state)
+    notificationState: state.notificationState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
