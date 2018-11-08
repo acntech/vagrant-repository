@@ -20,6 +20,7 @@ import {
     UpdateProviderLoadingAction,
     UpdateProviderSuccessAction,
 } from '../../models';
+import { showError, showSuccess } from '../actions';
 
 const getProviderLoading = (loading: boolean): GetProviderLoadingAction => ({ type: GetProviderActionType.LOADING, loading });
 const getProviderSuccess = (payload: Provider): GetProviderSuccessAction => ({ type: GetProviderActionType.SUCCESS, payload });
@@ -88,9 +89,12 @@ export function createVersionProvider(versionId: number, provider: CreateProvide
         const url = `${versionsRootPath}/${versionId}/providers`;
         return axios.post(url, provider)
             .then((response) => {
+                dispatch(showSuccess('Provider created successfully'));
                 return dispatch(createProviderSuccess(response.data));
             })
             .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error creating provider', message));
                 return dispatch(createProviderError(error));
             });
     };
@@ -109,9 +113,12 @@ export function updateVersionProvider(providerId: number, file: any) {
         }
         return axios.post(url, formData, config)
             .then((response) => {
+                dispatch(showSuccess('Provider updated successfully'));
                 return dispatch(updateProviderSuccess(response.data));
             })
             .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error updating provider', message));
                 return dispatch(updateProviderError(error));
             });
     };

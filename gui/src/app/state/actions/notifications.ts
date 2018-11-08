@@ -19,7 +19,6 @@ export function showWarning(title: string, message?: string) {
 }
 
 export function showError(title: string, message?: string) {
-    console.log('Error', message);
     return showNotification({ severity: 'error', title: title, content: message });
 }
 
@@ -29,7 +28,6 @@ export function showSuccess(title: string, message?: string) {
 
 export function showNotification(notification: ShowNotification) {
     return (dispatch) => {
-        console.log('Notification', notification);
         dispatch(showNotificationAction(notification));
     };
 }

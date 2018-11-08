@@ -4,12 +4,14 @@ import { connect } from 'react-redux';
 import { Header, Segment, Message } from 'semantic-ui-react'
 
 import { Notification, NotificationState, RootState } from '../../models';
+import { dismissNotification } from '../../state/actions';
 
 interface ComponentStateProps {
     notificationState: NotificationState;
 }
 
 interface ComponentDispatchProps {
+    dismissNotification: (uuid: string) => Promise<any>;
 }
 
 interface ComponentFieldProps {
@@ -29,9 +31,13 @@ class SecondaryHeaderComponent extends Component<ComponentProps> {
         return (
             <div>
                 <HeaderFragment title={title} subtitle={subtitle} children={children} />
-                <MessagesFragment notifications={notifications} />
+                <MessagesFragment notifications={notifications} onDismissMessage={this.onDismissMessage} />
             </div>
         );
+    }
+
+    private onDismissMessage = (uuid: string) => {
+        this.props.dismissNotification(uuid);
     }
 }
 
@@ -48,16 +54,17 @@ const HeaderFragment: React.SFC<ComponentFieldProps> = (props) => {
 
 interface MessagesFragmentProps {
     notifications: Notification[];
+    onDismissMessage: (uuid: string) => void;
 }
 
 const MessagesFragment: React.SFC<MessagesFragmentProps> = (props) => {
-    const { notifications } = props;
+    const { notifications, onDismissMessage } = props;
 
     if (notifications && notifications.length > 0) {
         return (
             <Segment basic className="secondary-header">
-                {notifications.map((notice, index) => {
-                    const { severity, title, content } = notice;
+                {notifications.map((notification, index) => {
+                    const { uuid, severity, title, content } = notification;
                     const info = severity === 'info';
                     const warning = severity === 'warning';
                     const error = severity === 'error';
@@ -78,7 +85,8 @@ const MessagesFragment: React.SFC<MessagesFragmentProps> = (props) => {
                         success={success}
                         icon={icon}
                         header={title}
-                        content={content} />;
+                        content={content}
+                        onDismiss={() => onDismissMessage(uuid)} />;
                 })}
             </Segment>
         );
@@ -92,6 +100,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
+    dismissNotification: (uuid: string) => dispatch(dismissNotification(uuid))
 });
 
 const ConnectedSecondaryHeaderComponent = connect(mapStateToProps, mapDispatchToProps)(SecondaryHeaderComponent);

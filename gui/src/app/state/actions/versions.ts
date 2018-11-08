@@ -16,6 +16,7 @@ import {
     FindVersionsLoadingAction,
     FindVersionsSuccessAction,
 } from '../../models';
+import { showError, showSuccess } from '../actions';
 
 const getVersionLoading = (loading: boolean): GetVersionLoadingAction => ({ type: GetVersionActionType.LOADING, loading });
 const getVersionSuccess = (payload: Version): GetVersionSuccessAction => ({ type: GetVersionActionType.SUCCESS, payload });
@@ -80,9 +81,12 @@ export function createBoxVersion(boxId: number, version: CreateVersion) {
         const url = `${boxesRootPath}/${boxId}/versions`;
         return axios.post(url, version)
             .then((response) => {
+                dispatch(showSuccess('Version created successfully'));
                 return dispatch(createVersionSuccess(response.data));
             })
             .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error creating version', message));
                 return dispatch(createVersionError(error));
             });
     };

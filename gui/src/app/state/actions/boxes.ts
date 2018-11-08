@@ -16,6 +16,7 @@ import {
     FindBoxesLoadingAction,
     FindBoxesSuccessAction
 } from '../../models';
+import { showError, showSuccess } from '../actions';
 
 const getBoxLoading = (loading: boolean): GetBoxLoadingAction => ({ type: GetBoxActionType.LOADING, loading });
 const getBoxSuccess = (payload: Box): GetBoxSuccessAction => ({ type: GetBoxActionType.SUCCESS, payload });
@@ -80,9 +81,12 @@ export function createGroupBox(groupId: number, box: CreateBox) {
         const url = `${groupsRootPath}/${groupId}/boxes`;
         return axios.post(url, box)
             .then((response) => {
+                dispatch(showSuccess('Box created successfully'));
                 return dispatch(createBoxSuccess(response.data));
             })
             .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error creating group', message));
                 return dispatch(createBoxError(error));
             });
     };

@@ -200,9 +200,6 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
                         const { id, providerType, size, checksumType, checksum } = provider;
                         const formattedBytes = formatBytes(size, 0);
                         const formattedChecksum = checksum ? `${checksumType}: ${checksum}` : undefined;
-                        console.log(checksumType);
-                        console.log(checksum);
-                        console.log(formattedChecksum);
                         return (
                             <Table.Row key={index} className='clickable-table-row' onClick={() => onTableRowClick(id)}>
                                 <Table.Cell>{providerType}</Table.Cell>
