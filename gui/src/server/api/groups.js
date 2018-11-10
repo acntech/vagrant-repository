@@ -51,7 +51,7 @@ router.post('/', (req, res) => {
         const error = createError(
             409,
             'Conflict',
-            `Group with name ${body.name} already exists for group`,
+            `Group with name ${body.name} already exists`,
             '/api/groups');
         res.status(409).send(error);
         return;

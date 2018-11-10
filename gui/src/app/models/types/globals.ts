@@ -1,9 +1,15 @@
-import { ReactNode } from 'react';
 import { IntlState } from 'react-intl-redux';
-import { BoxState, GroupState, ProviderState, VersionState } from './';
+import {
+    BoxState,
+    GroupState,
+    NotificationState,
+    ProviderState,
+    VersionState
+} from './';
 
 export interface RootState {
     intl: IntlState;
+    notificationState: NotificationState;
     groupState: GroupState;
     boxState: BoxState;
     versionState: VersionState;
@@ -11,18 +17,13 @@ export interface RootState {
 }
 
 export interface Error {
-    domain: string;
+    entityType: EntityType;
+    actionType: ActionType;
     timestamp: string;
     status: number;
     error: string;
     message: string;
     path: string;
-}
-
-export interface Notice {
-    severity: 'info' | 'warning' | 'error';
-    header: string;
-    content?: string | ReactNode;
 }
 
 export interface Modified {
@@ -32,10 +33,10 @@ export interface Modified {
 }
 
 export enum EntityType {
-    GROUPS = 'groups',
-    BOXES = 'boxes',
-    VERSIONS = 'versions',
-    PROVIDERS = 'providers'
+    GROUP = 'group',
+    BOX = 'box',
+    VERSION = 'version',
+    PROVIDER = 'provider'
 }
 
 export enum ActionType {

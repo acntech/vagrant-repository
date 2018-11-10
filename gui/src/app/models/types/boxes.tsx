@@ -23,7 +23,7 @@ export interface Box {
 export interface BoxState {
     loading: boolean;
     boxes: Box[];
-    error?: any;
+    error?: Error;
     modified?: Modified;
 }
 
@@ -39,7 +39,7 @@ export interface GetBoxSuccessAction {
 
 export interface GetBoxErrorAction {
     type: GetBoxActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface FindBoxesLoadingAction {
@@ -54,7 +54,7 @@ export interface FindBoxesSuccessAction {
 
 export interface FindBoxesErrorAction {
     type: FindBoxesActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface CreateBoxLoadingAction {
@@ -69,7 +69,7 @@ export interface CreateBoxSuccessAction {
 
 export interface CreateBoxErrorAction {
     type: CreateBoxActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface UpdateBoxLoadingAction {
@@ -84,7 +84,7 @@ export interface UpdateBoxSuccessAction {
 
 export interface UpdateBoxErrorAction {
     type: UpdateBoxActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export type GetBoxAction = GetBoxLoadingAction | GetBoxSuccessAction | GetBoxErrorAction;

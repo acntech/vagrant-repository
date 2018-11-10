@@ -16,6 +16,7 @@ import {
     GetGroupLoadingAction,
     GetGroupSuccessAction
 } from '../../models';
+import { showError, showSuccess } from '../actions';
 
 const getGroupLoading = (loading: boolean): GetGroupLoadingAction => ({ type: GetGroupActionType.LOADING, loading });
 const getGroupSuccess = (payload: Group): GetGroupSuccessAction => ({ type: GetGroupActionType.SUCCESS, payload });
@@ -65,9 +66,12 @@ export function createGroup(group: CreateGroup) {
         const url = `${rootPath}`;
         return axios.post(url, group)
             .then((response) => {
+                dispatch(showSuccess('Group created successfully'));
                 return dispatch(createGroupSuccess(response.data));
             })
             .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error creating group', message));
                 return dispatch(createGroupError(error));
             });
     };

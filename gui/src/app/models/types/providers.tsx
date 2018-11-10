@@ -26,7 +26,7 @@ export interface Provider {
 export interface ProviderState {
     loading: boolean;
     providers: Provider[];
-    error?: any;
+    error?: Error;
     modified?: Modified;
 }
 
@@ -42,7 +42,7 @@ export interface GetProviderSuccessAction {
 
 export interface GetProviderErrorAction {
     type: GetProviderActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface FindProvidersLoadingAction {
@@ -57,7 +57,7 @@ export interface FindProvidersSuccessAction {
 
 export interface FindProvidersErrorAction {
     type: FindProvidersActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface CreateProviderLoadingAction {
@@ -72,7 +72,7 @@ export interface CreateProviderSuccessAction {
 
 export interface CreateProviderErrorAction {
     type: CreateProviderActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export interface UpdateProviderLoadingAction {
@@ -87,7 +87,7 @@ export interface UpdateProviderSuccessAction {
 
 export interface UpdateProviderErrorAction {
     type: UpdateProviderActionType.ERROR,
-    error: Error
+    error: any
 }
 
 export type GetProviderAction = GetProviderLoadingAction | GetProviderSuccessAction | GetProviderErrorAction;

@@ -1,6 +1,6 @@
 {
     "name": "vagrant-repository-manager-gui",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Vagrant Repository Manager GUI",
     "author": "Thomas Johansen <thomas.johansen@accenture.com>",
     "license": "Apache-2.0",
@@ -39,7 +39,8 @@
         "redux-thunk": "^2.3.0",
         "reselect": "^3.0.1",
         "semantic-ui-css": "^2.3.3",
-        "semantic-ui-react": "^0.82.3"
+        "semantic-ui-react": "^0.82.3",
+        "uuid": "^3.3.2"
     },
     "devDependencies": {
         "@types/node": "^10.9.4",

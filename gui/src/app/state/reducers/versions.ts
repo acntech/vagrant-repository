@@ -35,28 +35,29 @@ export function reducer(state: VersionState = initialVersionState, action: Versi
 export const create = (state: VersionState = initialVersionState, action: CreateVersionAction): VersionState => {
     switch (action.type) {
         case CreateVersionActionType.LOADING: {
-            const { loading } = action;
             const { versions } = state;
-            return { ...initialVersionState, loading: loading, versions: versions };
+            const { loading } = action;
+            return { ...initialVersionState, versions: versions, loading: loading };
         }
 
         case CreateVersionActionType.SUCCESS: {
-            const { payload } = action;
             let { versions } = state;
+            const { payload } = action;
             let modified;
 
             if (payload) {
                 versions = replaceOrAppend(versions, payload);
-                modified = { id: payload.id, entityType: EntityType.VERSIONS, actionType: ActionType.CREATE };
+                modified = { id: payload.id, entityType: EntityType.VERSION, actionType: ActionType.CREATE };
             }
 
             return { ...initialVersionState, versions: versions, modified: modified };
         }
 
         case CreateVersionActionType.ERROR: {
-            const { error } = action;
             const { versions } = state;
-            return { ...initialVersionState, error: error, versions: versions };
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.CREATE };
+            return { ...initialVersionState, versions: versions, error: error };
         }
 
         default: {
@@ -68,14 +69,14 @@ export const create = (state: VersionState = initialVersionState, action: Create
 export const get = (state: VersionState = initialVersionState, action: GetVersionAction): VersionState => {
     switch (action.type) {
         case GetVersionActionType.LOADING: {
-            const { loading } = action;
             const { versions } = state;
-            return { ...initialVersionState, loading: loading, versions: versions };
+            const { loading } = action;
+            return { ...initialVersionState, versions: versions, loading: loading };
         }
 
         case GetVersionActionType.SUCCESS: {
-            const { payload } = action;
             let { versions } = state;
+            const { payload } = action;
 
             if (payload) {
                 versions = replaceOrAppend(versions, payload);
@@ -85,9 +86,10 @@ export const get = (state: VersionState = initialVersionState, action: GetVersio
         }
 
         case GetVersionActionType.ERROR: {
-            const { error } = action;
             const { versions } = state;
-            return { ...initialVersionState, error: error, versions: versions };
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.GET };
+            return { ...initialVersionState, versions: versions, error: error };
         }
 
         default: {
@@ -99,14 +101,14 @@ export const get = (state: VersionState = initialVersionState, action: GetVersio
 export function find(state: VersionState = initialVersionState, action: FindVersionsAction): VersionState {
     switch (action.type) {
         case FindVersionsActionType.LOADING: {
-            const { loading } = action;
             const { versions } = state;
-            return { ...initialVersionState, loading: loading, versions: versions };
+            const { loading } = action;
+            return { ...initialVersionState, versions: versions, loading: loading };
         }
 
         case FindVersionsActionType.SUCCESS: {
-            const { payload } = action;
             let { versions } = state;
+            const { payload } = action;
             if (payload) {
                 payload.forEach(version => {
                     versions = replaceOrAppend(versions, version);
@@ -116,9 +118,10 @@ export function find(state: VersionState = initialVersionState, action: FindVers
         }
 
         case FindVersionsActionType.ERROR: {
-            const { error } = action;
             const { versions } = state;
-            return { ...initialVersionState, error: error, versions: versions };
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.GET };
+            return { ...initialVersionState, versions: versions, error: error };
         }
 
         default: {

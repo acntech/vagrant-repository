@@ -3,9 +3,24 @@ import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, DropdownProps, Form, Icon, Message, DropdownItemProps, Segment } from 'semantic-ui-react';
+import {
+    Button,
+    Container,
+    DropdownProps,
+    Form,
+    Icon,
+    Message,
+    DropdownItemProps,
+    Segment
+} from 'semantic-ui-react';
 
-import { CreateProvider, ProviderState, ProviderType, RootState, ActionType } from '../../models';
+import {
+    CreateProvider,
+    ProviderState,
+    ProviderType,
+    RootState,
+    ActionType
+} from '../../models';
 import { createVersionProvider, findVersionProviders } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 

@@ -2,6 +2,8 @@ package no.acntech.common.exception;
 
 public class FileStorageException extends RuntimeException {
 
+    private static final long serialVersionUID = -4693648788099206984L;
+
     public FileStorageException(String message) {
         super(message);
     }

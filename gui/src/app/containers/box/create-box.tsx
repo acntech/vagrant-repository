@@ -3,9 +3,18 @@ import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
-import { Button, Container, Form, Icon, InputOnChangeData, TextAreaProps, Message, Segment } from 'semantic-ui-react';
+import {
+    Button,
+    Container,
+    Form,
+    Icon,
+    InputOnChangeData,
+    TextAreaProps,
+    Message,
+    Segment
+} from 'semantic-ui-react';
 
-import { CreateBox, BoxState, RootState } from '../../models';
+import { CreateBox, BoxState, RootState, ActionType } from '../../models';
 import { createGroupBox, findGroupBoxes } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
@@ -66,7 +75,7 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
             return <Redirect to={`/group/${groupId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
-        } else if (modified) {
+        } else if (modified && modified.actionType == ActionType.CREATE) {
             const { id: boxId } = modified;
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />
         } else {
