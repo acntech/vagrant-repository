@@ -4,13 +4,49 @@ import { connect } from 'react-redux';
 import { Header, Segment, Message } from 'semantic-ui-react'
 
 import { Notification, NotificationState, RootState } from '../../models';
-import { dismissNotification } from '../../state/actions';
+import { clearNotifications, dismissNotification } from '../../state/actions';
+
+const notificationDetails = {
+    info: {
+        icon: 'info circle',
+        info: true,
+        warning: false,
+        error: false,
+        success: false,
+        timeout: 5000
+    },
+    warning: {
+        icon: 'warning circle',
+        info: false,
+        warning: true,
+        error: false,
+        success: false,
+        timeout: 2000
+    },
+    error: {
+        icon: 'ban',
+        info: false,
+        warning: false,
+        error: true,
+        success: false,
+        timeout: 5000
+    },
+    success: {
+        icon: 'check circle',
+        info: false,
+        warning: false,
+        error: false,
+        success: true,
+        timeout: 2000
+    }
+};
 
 interface ComponentStateProps {
     notificationState: NotificationState;
 }
 
 interface ComponentDispatchProps {
+    clearNotifications: () => Promise<any>;
     dismissNotification: (uuid: string) => Promise<any>;
 }
 
@@ -41,7 +77,13 @@ class SecondaryHeaderComponent extends Component<ComponentProps> {
     }
 }
 
-const HeaderFragment: React.SFC<ComponentFieldProps> = (props) => {
+interface HeaderFragmentProps {
+    title?: string;
+    subtitle?: string;
+    children?: string | ReactNode;
+}
+
+const HeaderFragment: React.SFC<HeaderFragmentProps> = (props) => {
     const { title, subtitle, children } = props;
 
     return (
@@ -65,18 +107,17 @@ const MessagesFragment: React.SFC<MessagesFragmentProps> = (props) => {
             <Segment basic className="secondary-header">
                 {notifications.map((notification, index) => {
                     const { uuid, severity, title, content } = notification;
-                    const info = severity === 'info';
-                    const warning = severity === 'warning';
-                    const error = severity === 'error';
-                    const success = severity === 'success';
-                    let icon = 'info circle';
-                    if (error) {
-                        icon = 'ban';
-                    } else if (warning) {
-                        icon = 'warning circle';
-                    } else if (success) {
-                        icon = 'check circle';
-                    }
+                    const {
+                        icon,
+                        info,
+                        warning,
+                        error,
+                        success,
+                        timeout
+                    } = notificationDetails[severity];
+
+                    window.setTimeout(() => onDismissMessage(uuid), timeout);
+
                     return <Message
                         key={index}
                         info={info}
@@ -100,6 +141,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
+    clearNotifications: () => dispatch(clearNotifications()),
     dismissNotification: (uuid: string) => dispatch(dismissNotification(uuid))
 });
 
