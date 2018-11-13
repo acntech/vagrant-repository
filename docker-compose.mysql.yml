@@ -23,25 +23,26 @@ services:
     depends_on:
       - database
     environment:
-      - SPRING_PROFILES_ACTIVE=postgres
+      - SPRING_PROFILES_ACTIVE=mysql
     ports:
       - 8080:8080
-#    volumes:
-#      - ./postgresql.jar:/docker-java-home/jre/lib/ext/postgresql.jar
+    volumes:
+      - ./mysql-connector-java.jar:/docker-java-home/jre/lib/ext/mysql-connector-java.jar
     networks:
       - vagrant_repository
 
   database:
-    image: postgres
+    image: mariadb
     container_name: vagrant-repository-database
     hostname: database
     domainname: vagrant-repository.local
     environment:
-      - POSTGRES_DB=vagrant-repository
-      - POSTGRES_USER=vagrant-repository
-      - POSTGRES_PASSWORD=64nd4lf
+      - MYSQL_DATABASE=vagrant-repository
+      - MYSQL_USER=vagrant-repository
+      - MYSQL_PASSWORD=64nd4lf
+      - MYSQL_ROOT_PASSWORD=5m4u6
     ports:
-      - 5432:5432
+      - 3306:3306
     networks:
       - vagrant_repository
 

@@ -23,25 +23,25 @@ services:
     depends_on:
       - database
     environment:
-      - SPRING_PROFILES_ACTIVE=postgres
+      - SPRING_PROFILES_ACTIVE=oracle
     ports:
       - 8080:8080
-#    volumes:
-#      - ./postgresql.jar:/docker-java-home/jre/lib/ext/postgresql.jar
+    volumes:
+      - ./ojdbc.jar:/docker-java-home/jre/lib/ext/ojdbc.jar
     networks:
       - vagrant_repository
 
   database:
-    image: postgres
+    image: # Find an Oracle Database 12c+ image
     container_name: vagrant-repository-database
     hostname: database
     domainname: vagrant-repository.local
     environment:
-      - POSTGRES_DB=vagrant-repository
-      - POSTGRES_USER=vagrant-repository
-      - POSTGRES_PASSWORD=64nd4lf
+      - ORACLE_DB=vagrant-repository
+      - ORACLE_USER=vagrant-repository
+      - ORACLE_PASSWORD=64nd4lf
     ports:
-      - 5432:5432
+      - 1521:1521
     networks:
       - vagrant_repository
 

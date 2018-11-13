@@ -15,3 +15,7 @@ spring:
   h2:
     console:
       enabled: true
+  flyway:
+    locations:
+      - classpath:db/vendor/h2
+      - classpath:db/migration

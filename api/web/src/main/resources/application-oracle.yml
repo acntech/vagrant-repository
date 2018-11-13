@@ -3,16 +3,16 @@
 ########################
 spring:
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.Oracle12cDialect
     show-sql: false
     hibernate:
       ddl-auto: none
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://database:5432/vagrant-repository
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@database:1521/vagrant-repository
     username: vagrant-repository
     password: 64nd4lf
   flyway:
     locations:
-      - classpath:db/vendor/postgres
+      - classpath:db/vendor/oracle
       - classpath:db/migration
