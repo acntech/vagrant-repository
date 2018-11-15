@@ -16,7 +16,8 @@ services:
       - vagrant_repository
 
   api:
-    image: acntechie/vagrant-repository-api
+    build: .
+    image: acntechie/vagrant-repository-api:mysql
     container_name: vagrant-repository-api
     hostname: api
     domainname: vagrant-repository.local
@@ -26,8 +27,6 @@ services:
       - SPRING_PROFILES_ACTIVE=mysql
     ports:
       - 8080:8080
-    volumes:
-      - ./mysql-connector-java.jar:/docker-java-home/jre/lib/ext/mysql-connector-java.jar
     networks:
       - vagrant_repository
 

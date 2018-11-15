@@ -24,6 +24,9 @@ spring:
   h2:
     console:
       enabled: false
+  flyway:
+    clean-on-validation-error: true
+    out-of-order: true
 
 # Logging
 logging:

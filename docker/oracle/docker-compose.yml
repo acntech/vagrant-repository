@@ -16,7 +16,8 @@ services:
       - vagrant_repository
 
   api:
-    image: acntechie/vagrant-repository-api
+    build: .
+    image: acntechie/vagrant-repository-api:oracle
     container_name: vagrant-repository-api
     hostname: api
     domainname: vagrant-repository.local
@@ -26,13 +27,11 @@ services:
       - SPRING_PROFILES_ACTIVE=oracle
     ports:
       - 8080:8080
-    volumes:
-      - ./ojdbc.jar:/docker-java-home/jre/lib/ext/ojdbc.jar
     networks:
       - vagrant_repository
 
   database:
-    image: # Find an Oracle Database 12c+ image
+    image: # Find an Oracle XE 18c image
     container_name: vagrant-repository-database
     hostname: database
     domainname: vagrant-repository.local

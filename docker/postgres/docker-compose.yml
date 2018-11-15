@@ -16,7 +16,8 @@ services:
       - vagrant_repository
 
   api:
-    image: acntechie/vagrant-repository-api
+    build: .
+    image: acntechie/vagrant-repository-api:postgres
     container_name: vagrant-repository-api
     hostname: api
     domainname: vagrant-repository.local
@@ -26,8 +27,6 @@ services:
       - SPRING_PROFILES_ACTIVE=postgres
     ports:
       - 8080:8080
-#    volumes:
-#      - ./postgresql.jar:/docker-java-home/jre/lib/ext/postgresql.jar
     networks:
       - vagrant_repository
 
