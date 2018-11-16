@@ -1,0 +1,18 @@
+########################
+# SPRING Configuration #
+########################
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://database:3306/vagrant-repository
+    username: vagrant-repository
+    password: 64nd4lf
+  flyway:
+    locations:
+      - classpath:db/vendor/mysql
+      - classpath:db/migration
