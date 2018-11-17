@@ -9,3 +9,7 @@
 .clickable-table-row {
     cursor: pointer;
 }
+
+.loading-indicator-body {
+    padding: 2rem;
+}

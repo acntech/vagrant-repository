@@ -92,7 +92,7 @@ const HeaderFragment: React.SFC<HeaderFragmentProps> = (props) => {
             {subtitle ? <Header.Subheader>{subtitle}</Header.Subheader> : null}
         </Segment>
     );
-}
+};
 
 interface MessagesFragmentProps {
     notifications: Notification[];
@@ -134,7 +134,7 @@ const MessagesFragment: React.SFC<MessagesFragmentProps> = (props) => {
     } else {
         return null;
     }
-}
+};
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     notificationState: state.notificationState

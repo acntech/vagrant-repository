@@ -7,7 +7,7 @@ import {
     NotificationActionType,
     ShowNotificationAction
 } from '../../models';
-import { initialNotificationState } from '../store/initial-state';
+import { initialNotificationState } from '../store';
 
 export const reducer = (state: NotificationState = initialNotificationState, action: NotificationAction): NotificationState => {
     switch (action.type) {
@@ -20,7 +20,7 @@ export const reducer = (state: NotificationState = initialNotificationState, act
         default:
             return state;
     }
-}
+};
 
 export const show = (state: NotificationState = initialNotificationState, action: ShowNotificationAction): NotificationState => {
     switch (action.type) {
@@ -35,7 +35,7 @@ export const show = (state: NotificationState = initialNotificationState, action
             return state;
         }
     }
-}
+};
 
 export const dismiss = (state: NotificationState = initialNotificationState, action: DismissNotificationAction): NotificationState => {
     switch (action.type) {
@@ -50,7 +50,7 @@ export const dismiss = (state: NotificationState = initialNotificationState, act
             return state;
         }
     }
-}
+};
 
 export const clear = (state: NotificationState = initialNotificationState, action: ClearNotificationsAction): NotificationState => {
     switch (action.type) {
@@ -62,4 +62,4 @@ export const clear = (state: NotificationState = initialNotificationState, actio
             return state;
         }
     }
-}
+};

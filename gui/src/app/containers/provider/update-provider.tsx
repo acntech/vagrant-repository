@@ -203,9 +203,9 @@ class UpdateProviderContainer extends Component<ComponentProps, ComponentState> 
                 }
             });
         }
-    }
+    };
 
-    private onFormSubmit = (event: any) => {
+    private onFormSubmit = () => {
         const { providerId } = this.props.match.params;
         const { formData } = this.state;
         const { formFile } = formData;
@@ -221,7 +221,7 @@ class UpdateProviderContainer extends Component<ComponentProps, ComponentState> 
                 }
             });
         }
-    }
+    };
 
     private onCancelButtonClick = () => {
         this.setState({ cancel: true });
@@ -237,7 +237,7 @@ interface UpdateProviderFragmentProps {
     onCancelButtonClick: () => void;
     onFormSubmit: (event: any) => void
     formData: FormData;
-};
+}
 
 const UpdateProviderFragment: SFC<UpdateProviderFragmentProps> = (props) => {
     const {
@@ -302,7 +302,7 @@ const UpdateProviderFragment: SFC<UpdateProviderFragmentProps> = (props) => {
             </Segment>
         </Container>
     );
-}
+};
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     groupState: state.groupState,

@@ -102,7 +102,7 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
                 description: formDescriptionValue
             });
         }
-    }
+    };
 
     private onFormInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         const { value } = event.currentTarget;
@@ -115,7 +115,7 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
                 formNameValue: value
             }
         });
-    }
+    };
 
     private onFormTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
         const { value } = event.currentTarget;
@@ -128,7 +128,7 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
                 formDescriptionValue: value
             }
         });
-    }
+    };
 
     private onCancelButtonClick = () => {
         this.setState({ cancel: true });
@@ -141,7 +141,7 @@ interface CreateGroupFragmentProps {
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
     onFormTextAreaChange: (event: React.SyntheticEvent<HTMLTextAreaElement>, data: TextAreaProps) => void;
     formData: FormData;
-};
+}
 
 const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
     const {

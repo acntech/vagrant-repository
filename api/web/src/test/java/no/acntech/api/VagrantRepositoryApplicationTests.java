@@ -7,7 +7,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class RepositoryManagerApplicationTests {
+class VagrantRepositoryApplicationTests {
 
     @Test
     void contextLoads() {

@@ -1,0 +1,18 @@
+########################
+# SPRING Configuration #
+########################
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.Oracle12cDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@database:1521/vagrant-repository
+    username: vagrant-repository
+    password: 64nd4lf
+  flyway:
+    locations:
+      - classpath:db/vendor/oracle
+      - classpath:db/migration

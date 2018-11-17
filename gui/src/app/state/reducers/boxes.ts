@@ -11,7 +11,7 @@ import {
     EntityType,
     ActionType
 } from '../../models';
-import { initialBoxState } from '../store/initial-state';
+import { initialBoxState } from '../store';
 
 export const reducer = (state: BoxState = initialBoxState, action: BoxAction): BoxState => {
     switch (action.type) {
@@ -30,7 +30,7 @@ export const reducer = (state: BoxState = initialBoxState, action: BoxAction): B
         default:
             return state;
     }
-}
+};
 
 export const create = (state: BoxState = initialBoxState, action: CreateBoxAction): BoxState => {
     switch (action.type) {
@@ -64,7 +64,7 @@ export const create = (state: BoxState = initialBoxState, action: CreateBoxActio
             return state;
         }
     }
-}
+};
 
 export const get = (state: BoxState = initialBoxState, action: GetBoxAction): BoxState => {
     switch (action.type) {
@@ -96,7 +96,7 @@ export const get = (state: BoxState = initialBoxState, action: GetBoxAction): Bo
             return state;
         }
     }
-}
+};
 
 export const find = (state: BoxState = initialBoxState, action: FindBoxesAction): BoxState => {
     switch (action.type) {
@@ -130,7 +130,7 @@ export const find = (state: BoxState = initialBoxState, action: FindBoxesAction)
             return state;
         }
     }
-}
+};
 
 const replaceOrAppend = (boxes: Box[], box: Box) => {
     const index = boxes.map(box => box.id).indexOf(box.id);
@@ -142,4 +142,4 @@ const replaceOrAppend = (boxes: Box[], box: Box) => {
     }
 
     return boxes;
-}
+};

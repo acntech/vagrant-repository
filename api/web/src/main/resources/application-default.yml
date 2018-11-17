@@ -9,22 +9,13 @@ spring:
       ddl-auto: none
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:vagrant-repository;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
   h2:
     console:
       enabled: true
-
-# Logging
-logging:
-  level:
-    org.springframework: INFO
-    no.acntech: DEBUG
-
-#########################
-# ACNTECH Configuration #
-#########################
-acntech:
-  file:
-    upload-dir: /tmp/vagrant-repository-manager/uploads
+  flyway:
+    locations:
+      - classpath:db/vendor/h2
+      - classpath:db/migration

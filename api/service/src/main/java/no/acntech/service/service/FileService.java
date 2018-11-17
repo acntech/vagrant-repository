@@ -32,8 +32,8 @@ public class FileService {
         this.providerRepository = providerRepository;
     }
 
-    public void uploadFile(final Long providerId,
-                           final MultipartFile file) {
+    public Optional<Provider> uploadFile(final Long providerId,
+                                         final MultipartFile file) {
         Optional<Provider> providerOptional = providerRepository.findById(providerId);
 
         if (providerOptional.isPresent()) {
@@ -59,7 +59,7 @@ public class FileService {
             provider.setChecksumType(ChecksumType.SHA1);
             provider.setChecksum(sha1Checksum);
 
-            providerRepository.save(provider);
+            return Optional.of(providerRepository.save(provider));
         } else {
             throw new IllegalStateException("No provider found for ID " + providerId);
         }

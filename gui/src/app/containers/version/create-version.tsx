@@ -113,7 +113,7 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
                 description: formDescriptionValue
             });
         }
-    }
+    };
 
     private onFormInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         const { value } = event.currentTarget;
@@ -126,7 +126,7 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
                 formNameValue: value
             }
         });
-    }
+    };
 
     private onFormTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
         const { value } = event.currentTarget;
@@ -139,7 +139,7 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
                 formDescriptionValue: value
             }
         });
-    }
+    };
 
     private onCancelButtonClick = () => {
         this.setState({ cancel: true });
@@ -152,7 +152,7 @@ interface CreateBoxFragmentProps {
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
     onFormTextAreaChange: (event: React.SyntheticEvent<HTMLTextAreaElement>, data: TextAreaProps) => void;
     formData: FormData;
-};
+}
 
 const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
     const {
@@ -204,7 +204,7 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
             </Segment>
         </Container>
     );
-}
+};
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     versionState: state.versionState

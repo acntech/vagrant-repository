@@ -10,7 +10,9 @@ class LoadingIndicatorComponent extends Component<{}> {
         return (
             <Container>
                 <PrimaryHeader />
-                <Segment loading />
+                <Segment loading>
+                    <div className='loading-indicator-body' />
+                </Segment>
             </Container>
         );
     }
