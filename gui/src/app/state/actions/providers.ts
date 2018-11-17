@@ -110,10 +110,11 @@ export function updateVersionProvider(providerId: number, file: any) {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
-        }
+        };
         return axios.post(url, formData, config)
             .then((response) => {
                 dispatch(showSuccess('Provider updated successfully'));
+                console.log(response);
                 return dispatch(updateProviderSuccess(response.data));
             })
             .catch((error) => {

@@ -129,7 +129,7 @@ interface BoxesFragmentProps {
     boxes: Box[];
     onTableRowClick: (boxId: number) => void;
     onCreateBoxButtonClick: () => void;
-};
+}
 
 const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
     const { boxes, onTableRowClick, onCreateBoxButtonClick } = props;

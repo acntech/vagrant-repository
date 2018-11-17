@@ -13,7 +13,7 @@ import {
     EntityType,
     ActionType,
 } from '../../models';
-import { initialProviderState } from '../store/initial-state';
+import { initialProviderState } from '../store';
 
 export function reducer(state: ProviderState = initialProviderState, action: ProviderAction): ProviderState {
     switch (action.type) {
@@ -70,7 +70,7 @@ export const create = (state: ProviderState = initialProviderState, action: Crea
             return state;
         }
     }
-}
+};
 
 export const get = (state: ProviderState = initialProviderState, action: GetProviderAction): ProviderState => {
     switch (action.type) {
@@ -102,7 +102,7 @@ export const get = (state: ProviderState = initialProviderState, action: GetProv
             return state;
         }
     }
-}
+};
 
 export function find(state: ProviderState = initialProviderState, action: FindProvidersAction): ProviderState {
     switch (action.type) {
@@ -170,7 +170,7 @@ export const update = (state: ProviderState = initialProviderState, action: Upda
             return state;
         }
     }
-}
+};
 
 const replaceOrAppend = (providers: Provider[], provider: Provider) => {
     const index = providers.map(p => p.id).indexOf(provider.id);
@@ -182,4 +182,4 @@ const replaceOrAppend = (providers: Provider[], provider: Provider) => {
     }
 
     return providers;
-}
+};

@@ -11,7 +11,7 @@ import {
     EntityType,
     ActionType
 } from '../../models';
-import { initialVersionState } from '../store/initial-state';
+import { initialVersionState } from '../store';
 
 export function reducer(state: VersionState = initialVersionState, action: VersionAction): VersionState {
     switch (action.type) {
@@ -64,7 +64,7 @@ export const create = (state: VersionState = initialVersionState, action: Create
             return state;
         }
     }
-}
+};
 
 export const get = (state: VersionState = initialVersionState, action: GetVersionAction): VersionState => {
     switch (action.type) {
@@ -96,7 +96,7 @@ export const get = (state: VersionState = initialVersionState, action: GetVersio
             return state;
         }
     }
-}
+};
 
 export function find(state: VersionState = initialVersionState, action: FindVersionsAction): VersionState {
     switch (action.type) {
@@ -140,4 +140,4 @@ const replaceOrAppend = (versions: Version[], version: Version) => {
     }
 
     return versions;
-}
+};

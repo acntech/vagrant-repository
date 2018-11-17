@@ -31,8 +31,10 @@ public class ProviderResource {
     }
 
     @PostMapping(path = "{id}")
-    public void postFile(@PathVariable(name = "id") final Long providerId,
+    public ResponseEntity<Provider> postFile(@PathVariable(name = "id") final Long providerId,
                          @RequestParam("file") final MultipartFile file) {
-        fileService.uploadFile(providerId, file);
+        Optional<Provider> provider = fileService.uploadFile(providerId, file);
+        return provider.map(ResponseEntity.ok()::body)
+                .orElseGet(ResponseEntity.noContent()::build);
     }
 }

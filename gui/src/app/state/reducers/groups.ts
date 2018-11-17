@@ -11,7 +11,7 @@ import {
     EntityType,
     ActionType
 } from '../../models';
-import { initialGroupState } from '../store/initial-state';
+import { initialGroupState } from '../store';
 
 export const reducer = (state: GroupState = initialGroupState, action: GroupAction): GroupState => {
     switch (action.type) {
@@ -30,7 +30,7 @@ export const reducer = (state: GroupState = initialGroupState, action: GroupActi
         default:
             return state;
     }
-}
+};
 
 export const create = (state: GroupState = initialGroupState, action: CreateGroupAction): GroupState => {
     switch (action.type) {
@@ -64,7 +64,7 @@ export const create = (state: GroupState = initialGroupState, action: CreateGrou
             return state;
         }
     }
-}
+};
 
 export const get = (state: GroupState = initialGroupState, action: GetGroupAction): GroupState => {
     switch (action.type) {
@@ -96,7 +96,7 @@ export const get = (state: GroupState = initialGroupState, action: GetGroupActio
             return state;
         }
     }
-}
+};
 
 export const find = (state: GroupState = initialGroupState, action: FindGroupsAction): GroupState => {
     switch (action.type) {
@@ -130,7 +130,7 @@ export const find = (state: GroupState = initialGroupState, action: FindGroupsAc
             return state;
         }
     }
-}
+};
 
 const replaceOrAppend = (groups: Group[], group: Group) => {
     const index = groups.map(group => group.id).indexOf(group.id);
@@ -142,4 +142,4 @@ const replaceOrAppend = (groups: Group[], group: Group) => {
     }
 
     return groups;
-}
+};

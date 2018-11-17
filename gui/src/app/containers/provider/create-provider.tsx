@@ -97,18 +97,18 @@ class CreateProviderContainer extends Component<ComponentProps, ComponentState> 
         const { formData } = this.state;
         const { providerType } = formData;
         this.props.createVersionProvider(versionId, { providerType: providerType });
-    }
+    };
 
     private onFormSelectChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         const { value } = event.currentTarget;
         const providerType = ProviderType[value];
         const { formData } = this.state;
         this.setState({ formData: { ...formData, formError: false, formWarning: false, providerType: providerType } });
-    }
+    };
 
     private onCancelButtonClick = () => {
         this.setState({ cancel: true });
-    }
+    };
 }
 
 interface CreateBoxFragmentProps {
@@ -116,7 +116,7 @@ interface CreateBoxFragmentProps {
     onFormSubmit: () => void;
     onFormSelectChange: (event: React.SyntheticEvent<HTMLInputElement>, data: DropdownProps) => void;
     formData: FormData;
-};
+}
 
 const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
     const { onCancelButtonClick, onFormSubmit, onFormSelectChange, formData } = props;
@@ -158,7 +158,7 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
             </Segment>
         </Container>
     );
-}
+};
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     providerState: state.providerState

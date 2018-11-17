@@ -57,7 +57,7 @@ public class ProviderService {
             if (providers.stream().anyMatch(v -> v.getProviderType().equals(saveProvider.getProviderType()))) {
                 throw new IllegalStateException("A provider of type " + saveProvider.getProviderType() + " already exists for version " + version.getName());
             } else {
-                return Optional.ofNullable(providerRepository.save(saveProvider))
+                return Optional.of(providerRepository.save(saveProvider))
                         .orElseThrow(() -> new IllegalStateException("Save returned no value"));
             }
         } else {

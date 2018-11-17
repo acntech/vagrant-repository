@@ -169,7 +169,7 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
                 onCreateProviderButtonClick={onCreateProviderButtonClick} />
         </Container>
     );
-}
+};
 
 interface ProvidersFragmentProps {
     providers: Provider[];
@@ -212,7 +212,7 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
             </Table>
         </Segment>
     );
-}
+};
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     groupState: state.groupState,

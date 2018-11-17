@@ -45,7 +45,7 @@ export const intitialIntlState: IntlState = {
 
 export const initializeLocales = () => {
     addLocaleData([...enLocaleData]);
-}
+};
 
 export const initialRootState: RootState = {
     intl: intitialIntlState,

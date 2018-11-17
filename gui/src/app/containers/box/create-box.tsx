@@ -111,7 +111,7 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
         } else {
             this.props.createGroupBox(groupId, { name: formNameValue, description: formDescriptionValue });
         }
-    }
+    };
 
     private onFormInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         const { value } = event.currentTarget;
@@ -124,7 +124,7 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
                 formNameValue: value
             }
         });
-    }
+    };
 
     private onFormTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
         const { value } = event.currentTarget;
@@ -137,7 +137,7 @@ class CreateBoxContainer extends Component<ComponentProps, ComponentState> {
                 formDescriptionValue: value
             }
         });
-    }
+    };
 
     private onCancelButtonClick = () => {
         this.setState({ cancel: true });
@@ -150,7 +150,7 @@ interface CreateBoxFragmentProps {
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
     onFormTextAreaChange: (event: React.SyntheticEvent<HTMLTextAreaElement>, data: TextAreaProps) => void;
     formData: FormData;
-};
+}
 
 const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
     const {

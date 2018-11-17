@@ -162,7 +162,7 @@ interface ViewProviderFragmentProps {
     box: Box;
     version: Version;
     provider: Provider;
-};
+}
 
 const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
     const {
@@ -177,9 +177,6 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
     const { id: providerId, providerType, size, checksumType, checksum } = provider;
     const formattedBytes = formatBytes(size, 0);
     const formattedChecksum = checksum ? `${checksumType}: ${checksum}` : undefined;
-    console.log(checksumType);
-    console.log(checksum);
-    console.log(formattedChecksum);
 
     return (
         <Container>
@@ -211,7 +208,7 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
             </Segment>
         </Container>
     );
-}
+};
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
     groupState: state.groupState,
