@@ -11,7 +11,7 @@ import {
     EntityType,
     ActionType
 } from '../../models';
-import { initialGroupState } from '../store';
+import { initialGroupState } from '../store/initial-state';
 
 export const reducer = (state: GroupState = initialGroupState, action: GroupAction): GroupState => {
     switch (action.type) {

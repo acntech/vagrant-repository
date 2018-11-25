@@ -15,7 +15,7 @@ import {
     EntityType,
     ActionType,
 } from '../../models';
-import { initialProviderState } from '../store';
+import { initialProviderState } from '../store/initial-state';
 
 export function reducer(state: ProviderState = initialProviderState, action: ProviderAction): ProviderState {
     switch (action.type) {

@@ -7,7 +7,7 @@ import {
     NotificationActionType,
     ShowNotificationAction
 } from '../../models';
-import { initialNotificationState } from '../store';
+import { initialNotificationState } from '../store/initial-state';
 
 export const reducer = (state: NotificationState = initialNotificationState, action: NotificationAction): NotificationState => {
     switch (action.type) {

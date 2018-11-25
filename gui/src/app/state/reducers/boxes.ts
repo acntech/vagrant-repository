@@ -11,7 +11,7 @@ import {
     EntityType,
     ActionType
 } from '../../models';
-import { initialBoxState } from '../store';
+import { initialBoxState } from '../store/initial-state';
 
 export const reducer = (state: BoxState = initialBoxState, action: BoxAction): BoxState => {
     switch (action.type) {
