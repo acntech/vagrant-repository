@@ -4,8 +4,11 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
 import {
+    Button,
+    ButtonProps,
     Container,
     Icon,
+    ModalProps,
     Segment,
     Table
 } from 'semantic-ui-react';
@@ -23,8 +26,8 @@ import {
     VersionState,
     RootState
 } from '../../models';
-import { getBox, getGroup, getProvider, getVersion } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { deleteProvider, getBox, getGroup, getProvider, getVersion } from '../../state/actions';
+import { ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 import { Link } from 'react-router-dom';
 import { NotFoundErrorContainer } from '../error';
 
@@ -40,6 +43,7 @@ interface ComponentStateProps {
 }
 
 interface ComponentDispatchProps {
+    deleteProvider: (providerId: number) => Promise<any>;
     getGroup: (groupId: number) => Promise<any>;
     getBox: (boxId: number) => Promise<any>;
     getVersion: (versionId: number) => Promise<any>;
@@ -53,9 +57,13 @@ interface ComponentState {
     box?: Box;
     version?: Version;
     provider?: Provider;
+    openDeleteProviderConfirmModal: boolean;
+    deleteProviderConfirmed: boolean;
 }
 
 const initialState: ComponentState = {
+    openDeleteProviderConfirmModal: false,
+    deleteProviderConfirmed: false
 };
 
 class ProviderContainer extends Component<ComponentProps, ComponentState> {
@@ -112,7 +120,7 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId, boxId, versionId, providerId } = this.props.match.params;
-        const { group, box, version, provider } = this.state;
+        const { group, box, version, provider, openDeleteProviderConfirmModal, deleteProviderConfirmed } = this.state;
         const { groupState, boxState, versionState, providerState } = this.props;
         const { loading: groupLoading } = groupState;
         const { loading: boxLoading } = boxState;
@@ -121,7 +129,7 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
 
         if (groupLoading || boxLoading || versionLoading || providerLoading) {
             return <LoadingIndicator />;
-        } else if (modified) {
+        } else if (modified || deleteProviderConfirmed) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />
         } else if (!group) {
             return <NotFoundErrorContainer
@@ -152,9 +160,32 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
                 group={group}
                 box={box}
                 version={version}
-                provider={provider} />
+                provider={provider}
+                onDeleteProviderButtonClick={this.onDeleteProviderButtonClick}
+                openDeleteProviderConfirmModal={openDeleteProviderConfirmModal}
+                onDeleteProviderModalClose={this.onDeleteProviderModalClose}
+                onDeleteProviderModalCloseButtonClick={this.onDeleteProviderModalCloseButtonClick} />
         }
-    }
+    };
+
+    private onDeleteProviderButtonClick = () => {
+        this.setState({ openDeleteProviderConfirmModal: true });
+    };
+
+    private onDeleteProviderModalClose = () => {
+        this.setState({ openDeleteProviderConfirmModal: false });
+    };
+
+    private onDeleteProviderModalCloseButtonClick = (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
+        const { providerId } = this.props.match.params;
+        const { positive } = data;
+        if (positive) {
+            this.props.deleteProvider(providerId);
+            this.setState({ openDeleteProviderConfirmModal: false, deleteProviderConfirmed: true });
+        } else {
+            this.setState({openDeleteProviderConfirmModal: false});
+        }
+    };
 }
 
 interface ViewProviderFragmentProps {
@@ -162,6 +193,10 @@ interface ViewProviderFragmentProps {
     box: Box;
     version: Version;
     provider: Provider;
+    onDeleteProviderButtonClick: () => void;
+    openDeleteProviderConfirmModal: boolean;
+    onDeleteProviderModalClose: (event: React.MouseEvent<HTMLElement>, data: ModalProps) => void;
+    onDeleteProviderModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
 const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
@@ -170,6 +205,10 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
         box,
         version,
         provider,
+        onDeleteProviderButtonClick,
+        openDeleteProviderConfirmModal,
+        onDeleteProviderModalClose,
+        onDeleteProviderModalCloseButtonClick
     } = props;
     const { id: groupId, name: groupName } = group;
     const { id: boxId, name: boxName } = box;
@@ -180,6 +219,12 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
 
     return (
         <Container>
+            <ConfirmModal
+                title='Delete provider'
+                subtitle='This action can not be reversed'
+                open={openDeleteProviderConfirmModal}
+                onClose={onDeleteProviderModalClose}
+                onClick={onDeleteProviderModalCloseButtonClick} />
             <PrimaryHeader />
             <SecondaryHeader>
                 <Link to='/'><Icon name='home' /></Link>{'/ '}
@@ -189,6 +234,11 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
                 <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`}>{ProviderType[providerType]}</Link>
             </SecondaryHeader>
             <Segment basic>
+                <Button.Group>
+                    <Button primary size='small' onClick={onDeleteProviderButtonClick}>
+                        <Icon name='delete' />Delete Provider
+                    </Button>
+                </Button.Group>
                 <Table celled>
                     <Table.Body>
                         <Table.Row>
@@ -218,6 +268,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
+    deleteProvider: (providerId: number) => dispatch(deleteProvider(providerId)),
     getGroup: (groupId: number) => dispatch(getGroup(groupId)),
     getBox: (boxId: number) => dispatch(getBox(boxId)),
     getVersion: (versionId: number) => dispatch(getVersion(versionId)),

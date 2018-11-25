@@ -32,7 +32,7 @@ export const reducer = (state: GroupState = initialGroupState, action: GroupActi
     }
 };
 
-export const create = (state: GroupState = initialGroupState, action: CreateGroupAction): GroupState => {
+const create = (state: GroupState = initialGroupState, action: CreateGroupAction): GroupState => {
     switch (action.type) {
         case CreateGroupActionType.LOADING: {
             const { groups } = state;
@@ -66,7 +66,7 @@ export const create = (state: GroupState = initialGroupState, action: CreateGrou
     }
 };
 
-export const get = (state: GroupState = initialGroupState, action: GetGroupAction): GroupState => {
+const get = (state: GroupState = initialGroupState, action: GetGroupAction): GroupState => {
     switch (action.type) {
         case GetGroupActionType.LOADING: {
             const { groups } = state;
@@ -98,7 +98,7 @@ export const get = (state: GroupState = initialGroupState, action: GetGroupActio
     }
 };
 
-export const find = (state: GroupState = initialGroupState, action: FindGroupsAction): GroupState => {
+const find = (state: GroupState = initialGroupState, action: FindGroupsAction): GroupState => {
     switch (action.type) {
         case FindGroupsActionType.LOADING: {
             const { groups } = state;
@@ -122,7 +122,7 @@ export const find = (state: GroupState = initialGroupState, action: FindGroupsAc
         case FindGroupsActionType.ERROR: {
             const { groups } = state;
             const { data } = action.error.response;
-            const error = { ...data, entityType: EntityType.GROUP, actionType: ActionType.GET };
+            const error = { ...data, entityType: EntityType.GROUP, actionType: ActionType.FIND };
             return { ...initialGroupState, groups: groups, error: error };
         }
 

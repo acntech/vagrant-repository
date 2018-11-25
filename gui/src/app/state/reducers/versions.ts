@@ -32,7 +32,7 @@ export function reducer(state: VersionState = initialVersionState, action: Versi
     }
 }
 
-export const create = (state: VersionState = initialVersionState, action: CreateVersionAction): VersionState => {
+const create = (state: VersionState = initialVersionState, action: CreateVersionAction): VersionState => {
     switch (action.type) {
         case CreateVersionActionType.LOADING: {
             const { versions } = state;
@@ -66,7 +66,7 @@ export const create = (state: VersionState = initialVersionState, action: Create
     }
 };
 
-export const get = (state: VersionState = initialVersionState, action: GetVersionAction): VersionState => {
+const get = (state: VersionState = initialVersionState, action: GetVersionAction): VersionState => {
     switch (action.type) {
         case GetVersionActionType.LOADING: {
             const { versions } = state;
@@ -98,7 +98,7 @@ export const get = (state: VersionState = initialVersionState, action: GetVersio
     }
 };
 
-export function find(state: VersionState = initialVersionState, action: FindVersionsAction): VersionState {
+function find(state: VersionState = initialVersionState, action: FindVersionsAction): VersionState {
     switch (action.type) {
         case FindVersionsActionType.LOADING: {
             const { versions } = state;
@@ -120,7 +120,7 @@ export function find(state: VersionState = initialVersionState, action: FindVers
         case FindVersionsActionType.ERROR: {
             const { versions } = state;
             const { data } = action.error.response;
-            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.GET };
+            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.FIND };
             return { ...initialVersionState, versions: versions, error: error };
         }
 

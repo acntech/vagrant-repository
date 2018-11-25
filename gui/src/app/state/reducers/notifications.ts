@@ -22,7 +22,7 @@ export const reducer = (state: NotificationState = initialNotificationState, act
     }
 };
 
-export const show = (state: NotificationState = initialNotificationState, action: ShowNotificationAction): NotificationState => {
+const show = (state: NotificationState = initialNotificationState, action: ShowNotificationAction): NotificationState => {
     switch (action.type) {
         case NotificationActionType.SHOW: {
             let { notifications } = state;
@@ -37,7 +37,7 @@ export const show = (state: NotificationState = initialNotificationState, action
     }
 };
 
-export const dismiss = (state: NotificationState = initialNotificationState, action: DismissNotificationAction): NotificationState => {
+const dismiss = (state: NotificationState = initialNotificationState, action: DismissNotificationAction): NotificationState => {
     switch (action.type) {
         case NotificationActionType.DISMISS: {
             let { notifications } = state;
@@ -52,7 +52,7 @@ export const dismiss = (state: NotificationState = initialNotificationState, act
     }
 };
 
-export const clear = (state: NotificationState = initialNotificationState, action: ClearNotificationsAction): NotificationState => {
+const clear = (state: NotificationState = initialNotificationState, action: ClearNotificationsAction): NotificationState => {
     switch (action.type) {
         case NotificationActionType.CLEAR: {
             return initialNotificationState;

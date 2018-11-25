@@ -1,6 +1,7 @@
 import {
     ChecksumType,
     CreateProviderActionType,
+    DeleteProviderActionType,
     GetProviderActionType,
     FindProvidersActionType,
     ProviderType,
@@ -90,9 +91,25 @@ export interface UpdateProviderErrorAction {
     error: any
 }
 
+export interface DeleteProviderLoadingAction {
+    type: DeleteProviderActionType.LOADING,
+    loading: boolean
+}
+
+export interface DeleteProviderSuccessAction {
+    type: DeleteProviderActionType.SUCCESS,
+    providerId: number
+}
+
+export interface DeleteProviderErrorAction {
+    type: DeleteProviderActionType.ERROR,
+    error: any
+}
+
 export type GetProviderAction = GetProviderLoadingAction | GetProviderSuccessAction | GetProviderErrorAction;
 export type FindProvidersAction = FindProvidersLoadingAction | FindProvidersSuccessAction | FindProvidersErrorAction;
 export type CreateProviderAction = CreateProviderLoadingAction | CreateProviderSuccessAction | CreateProviderErrorAction;
 export type UpdateProviderAction = UpdateProviderLoadingAction | UpdateProviderSuccessAction | UpdateProviderErrorAction;
+export type DeleteProviderAction = DeleteProviderLoadingAction | DeleteProviderSuccessAction | DeleteProviderErrorAction;
 
-export type ProviderAction = GetProviderAction | FindProvidersAction | CreateProviderAction | UpdateProviderAction;
+export type ProviderAction = GetProviderAction | FindProvidersAction | CreateProviderAction | UpdateProviderAction | DeleteProviderAction;

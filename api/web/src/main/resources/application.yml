@@ -41,4 +41,4 @@ acntech:
   file:
     root-context-path: /api/vagrant/boxes
     default-file-name: image.box
-    upload-dir: /tmp/vagrant-repository-manager/uploads
+    upload-dir: /tmp/vagrant-repository/uploads

@@ -26,7 +26,7 @@ import {
     RootState,
     ActionType
 } from '../../models';
-import { getBox, getGroup, getProvider, getVersion, updateVersionProvider } from '../../state/actions';
+import { getBox, getGroup, getProvider, getVersion, updateProvider } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 import { Link } from 'react-router-dom';
 import { NotFoundErrorContainer } from '../error';
@@ -47,7 +47,7 @@ interface ComponentDispatchProps {
     getBox: (boxId: number) => Promise<any>;
     getVersion: (versionId: number) => Promise<any>;
     getProvider: (providerId: number) => Promise<any>;
-    updateVersionProvider: (versionId: number, file: any) => Promise<any>;
+    updateProvider: (providerId: number, file: any) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
@@ -210,7 +210,7 @@ class UpdateProviderContainer extends Component<ComponentProps, ComponentState> 
         const { formData } = this.state;
         const { formFile } = formData;
         if (formFile) {
-            this.props.updateVersionProvider(providerId, formFile);
+            this.props.updateProvider(providerId, formFile);
         } else {
             this.setState({
                 formData: {
@@ -316,7 +316,7 @@ const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     getBox: (boxId: number) => dispatch(getBox(boxId)),
     getVersion: (versionId: number) => dispatch(getVersion(versionId)),
     getProvider: (providerId: number) => dispatch(getProvider(providerId)),
-    updateVersionProvider: (versionId: number, file: any) => dispatch(updateVersionProvider(versionId, file))
+    updateProvider: (providerId: number, file: any) => dispatch(updateProvider(providerId, file))
 });
 
 const ConnectedUpdateProviderContainer = connect(mapStateToProps, mapDispatchToProps)(UpdateProviderContainer);
