@@ -1,83 +1,86 @@
 package no.acntech.service.service;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
-
+import no.acntech.common.config.ApplicationProperties;
+import no.acntech.common.handler.FileHandler;
+import no.acntech.common.model.ChecksumType;
+import no.acntech.common.model.ProviderFile;
+import no.acntech.common.model.ProviderType;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import no.acntech.common.config.ApplicationProperties;
-import no.acntech.common.handler.FileHandler;
-import no.acntech.common.model.Box;
-import no.acntech.common.model.ChecksumType;
-import no.acntech.common.model.Group;
-import no.acntech.common.model.Provider;
-import no.acntech.common.model.Version;
-import no.acntech.service.repository.ProviderRepository;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+@SuppressWarnings("WeakerAccess")
 @Service
 public class FileService {
 
     private final ApplicationProperties applicationProperties;
     private final FileHandler fileHandler;
-    private final ProviderRepository providerRepository;
 
     public FileService(final ApplicationProperties applicationProperties,
-                       final FileHandler fileHandler,
-                       final ProviderRepository providerRepository) {
+                       final FileHandler fileHandler) {
         this.applicationProperties = applicationProperties;
         this.fileHandler = fileHandler;
-        this.providerRepository = providerRepository;
     }
 
-    public Optional<Provider> uploadFile(final Long providerId,
-                                         final MultipartFile file) {
-        Optional<Provider> providerOptional = providerRepository.findById(providerId);
-
-        if (providerOptional.isPresent()) {
-            Provider provider = providerOptional.get();
-            Version version = provider.getVersion();
-            Box box = version.getBox();
-            Group group = box.getGroup();
-
-            Path uploadPath = Paths.get(applicationProperties.getFile().getUploadDir())
-                    .resolve(group.getName())
-                    .resolve(box.getName())
-                    .resolve(version.getName())
-                    .resolve(provider.getProviderType().getName())
-                    .toAbsolutePath()
-                    .normalize();
-
-            String fileName = applicationProperties.getFile().getDefaultFileName();
-
-            long fileSize = fileHandler.saveFile(file, uploadPath, fileName);
-            String sha1Checksum = fileHandler.calculateSha1Checksum(uploadPath, fileName);
-
-            provider.setSize(fileSize);
-            provider.setChecksumType(ChecksumType.SHA1);
-            provider.setChecksum(sha1Checksum);
-
-            return Optional.of(providerRepository.save(provider));
-        } else {
-            throw new IllegalStateException("No provider found for ID " + providerId);
-        }
-    }
-
-    public Resource downloadFile(String groupName,
+    public ProviderFile saveFile(String groupName,
                                  String boxName,
                                  String versionName,
-                                 String providerName,
-                                 String fileName) {
-        Path downloadPath = Paths.get(applicationProperties.getFile().getUploadDir())
+                                 ProviderType providerType,
+                                 final MultipartFile file) {
+        Path uploadPath = Paths.get(applicationProperties.getFile().getUploadDir())
                 .resolve(groupName)
                 .resolve(boxName)
                 .resolve(versionName)
-                .resolve(providerName)
+                .resolve(providerType.getName())
                 .toAbsolutePath()
                 .normalize();
 
-        return fileHandler.readFile(downloadPath, fileName);
+        String fileName = applicationProperties.getFile().getDefaultFileName();
+
+        long fileSize = fileHandler.saveFile(file, uploadPath, fileName);
+        String checksum = fileHandler.calculateSha1Checksum(uploadPath, fileName);
+
+        return ProviderFile.builder()
+                .fileName(fileName)
+                .fileSize(fileSize)
+                .checksumType(ChecksumType.SHA1)
+                .checksum(checksum)
+                .build();
+    }
+
+    public Resource loadFile(String groupName,
+                             String boxName,
+                             String versionName,
+                             ProviderType providerType,
+                             String fileName) {
+        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
+                .resolve(groupName)
+                .resolve(boxName)
+                .resolve(versionName)
+                .resolve(providerType.getName())
+                .toAbsolutePath()
+                .normalize();
+
+        return fileHandler.readFile(filePath, fileName);
+    }
+
+    public void deleteFile(String groupName,
+                           String boxName,
+                           String versionName,
+                           ProviderType providerType) {
+        String fileName = applicationProperties.getFile().getDefaultFileName();
+
+        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
+                .resolve(groupName)
+                .resolve(boxName)
+                .resolve(versionName)
+                .resolve(providerType.getName())
+                .toAbsolutePath()
+                .normalize();
+
+        fileHandler.deleteFile(filePath, fileName);
     }
 }

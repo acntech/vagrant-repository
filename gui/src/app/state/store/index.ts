@@ -15,7 +15,3 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export const store = createStore<RootState>(rootReducer, initialRootState, applyMiddleware(...middlewares));
-
-export default store;
-
-export * from './initial-state';

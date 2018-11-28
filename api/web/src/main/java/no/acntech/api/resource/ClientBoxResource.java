@@ -1,7 +1,7 @@
 package no.acntech.api.resource;
 
-import java.util.Optional;
-
+import no.acntech.common.model.ClientBox;
+import no.acntech.service.service.ClientBoxService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,21 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import no.acntech.common.model.ClientBox;
-import no.acntech.service.service.ClientBoxService;
-import no.acntech.service.service.FileService;
+import java.util.Optional;
 
 @RequestMapping(path = "api/vagrant/boxes")
 @RestController
 public class ClientBoxResource {
 
     private final ClientBoxService clientBoxService;
-    private final FileService fileService;
 
-    public ClientBoxResource(final ClientBoxService clientBoxService,
-                             final FileService fileService) {
+    public ClientBoxResource(final ClientBoxService clientBoxService) {
         this.clientBoxService = clientBoxService;
-        this.fileService = fileService;
     }
 
     @GetMapping(path = "{groupName}/{boxName}")
@@ -43,7 +38,7 @@ public class ClientBoxResource {
                                             @PathVariable(name = "versionName") String versionName,
                                             @PathVariable(name = "providerName") String providerName,
                                             @PathVariable(name = "fileName") String fileName) {
-        Resource fileResource = fileService.downloadFile(groupName, boxName, versionName, providerName, fileName);
+        Resource fileResource = clientBoxService.getFile(groupName, boxName, versionName, providerName, fileName);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileResource.getFilename() + "\"")

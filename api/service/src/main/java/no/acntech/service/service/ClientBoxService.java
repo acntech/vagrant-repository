@@ -1,26 +1,20 @@
 package no.acntech.service.service;
 
+import no.acntech.common.config.ApplicationProperties;
+import no.acntech.common.model.*;
+import no.acntech.service.repository.BoxRepository;
+import no.acntech.service.repository.GroupRepository;
+import no.acntech.service.repository.ProviderRepository;
+import no.acntech.service.repository.VersionRepository;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import no.acntech.common.config.ApplicationProperties;
-import no.acntech.common.model.Box;
-import no.acntech.common.model.ClientBox;
-import no.acntech.common.model.ClientProvider;
-import no.acntech.common.model.ClientVersion;
-import no.acntech.common.model.Group;
-import no.acntech.common.model.Provider;
-import no.acntech.common.model.Version;
-import no.acntech.service.repository.BoxRepository;
-import no.acntech.service.repository.GroupRepository;
-import no.acntech.service.repository.ProviderRepository;
-import no.acntech.service.repository.VersionRepository;
 
 @Service
 public class ClientBoxService {
@@ -30,17 +24,20 @@ public class ClientBoxService {
     private final BoxRepository boxRepository;
     private final VersionRepository versionRepository;
     private final ProviderRepository providerRepository;
+    private final FileService fileService;
 
     public ClientBoxService(final ApplicationProperties applicationProperties,
                             final GroupRepository groupRepository,
                             final BoxRepository boxRepository,
                             final VersionRepository versionRepository,
-                            final ProviderRepository providerRepository) {
+                            final ProviderRepository providerRepository,
+                            final FileService fileService) {
         this.applicationProperties = applicationProperties;
         this.groupRepository = groupRepository;
         this.boxRepository = boxRepository;
         this.versionRepository = versionRepository;
         this.providerRepository = providerRepository;
+        this.fileService = fileService;
     }
 
     public Optional<ClientBox> get(final String groupName, final String boxName, UriComponentsBuilder uriBuilder) {
@@ -50,6 +47,15 @@ public class ClientBoxService {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .map(group -> mapBox(group, boxName, uriBuilder));
+    }
+
+    public Resource getFile(String groupName,
+                            String boxName,
+                            String versionName,
+                            String providerName,
+                            String fileName) {
+        ProviderType providerType = ProviderType.valueOf(providerName);
+        return fileService.loadFile(groupName, boxName, versionName, providerType, fileName);
     }
 
     private ClientBox mapBox(final Group group, final String boxName, UriComponentsBuilder uriBuilder) {

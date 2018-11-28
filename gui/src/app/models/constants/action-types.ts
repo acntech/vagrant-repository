@@ -99,3 +99,9 @@ export enum UpdateProviderActionType {
     SUCCESS = '[providers] UPDATE SUCCESS',
     ERROR = '[providers] UPDATE ERROR'
 }
+
+export enum DeleteProviderActionType {
+    LOADING = '[providers] DELETE LOADING',
+    SUCCESS = '[providers] DELETE SUCCESS',
+    ERROR = '[providers] DELETE ERROR'
+}
