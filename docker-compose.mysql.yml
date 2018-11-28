@@ -16,31 +16,31 @@ services:
       - vagrant_repository
 
   api:
-    build: .
-    image: acntechie/vagrant-repository-api:oracle
+    image: acntechie/vagrant-repository-api
     container_name: vagrant-repository-api
     hostname: api
     domainname: vagrant-repository.local
     depends_on:
       - database
     environment:
-      - SPRING_PROFILES_ACTIVE=oracle
+      - SPRING_PROFILES_ACTIVE=mysql
     ports:
       - 8080:8080
     networks:
       - vagrant_repository
 
   database:
-    image: # Find an Oracle XE 18c image
+    image: mariadb
     container_name: vagrant-repository-database
     hostname: database
     domainname: vagrant-repository.local
     environment:
-      - ORACLE_DB=vagrant-repository
-      - ORACLE_USER=vagrant-repository
-      - ORACLE_PASSWORD=64nd4lf
+      - MYSQL_DATABASE=vagrant-repository
+      - MYSQL_USER=vagrant-repository
+      - MYSQL_PASSWORD=64nd4lf
+      - MYSQL_ROOT_PASSWORD=5m4u6
     ports:
-      - 1521:1521
+      - 3306:3306
     networks:
       - vagrant_repository
 

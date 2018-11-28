@@ -16,8 +16,7 @@ services:
       - vagrant_repository
 
   api:
-    build: .
-    image: acntechie/vagrant-repository-api:postgres
+    image: acntechie/vagrant-repository-api
     container_name: vagrant-repository-api
     hostname: api
     domainname: vagrant-repository.local

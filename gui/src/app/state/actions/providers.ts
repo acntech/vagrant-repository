@@ -7,6 +7,10 @@ import {
     CreateProviderErrorAction,
     CreateProviderLoadingAction,
     CreateProviderSuccessAction,
+    DeleteProviderActionType,
+    DeleteProviderErrorAction,
+    DeleteProviderLoadingAction,
+    DeleteProviderSuccessAction,
     GetProviderActionType,
     GetProviderErrorAction,
     GetProviderLoadingAction,
@@ -37,6 +41,10 @@ const createProviderError = (error: any): CreateProviderErrorAction => ({ type: 
 const updateProviderLoading = (loading: boolean): UpdateProviderLoadingAction => ({ type: UpdateProviderActionType.LOADING, loading });
 const updateProviderSuccess = (payload: Provider): UpdateProviderSuccessAction => ({ type: UpdateProviderActionType.SUCCESS, payload });
 const updateProviderError = (error: any): UpdateProviderErrorAction => ({ type: UpdateProviderActionType.ERROR, error });
+
+const deleteProviderLoading = (loading: boolean): DeleteProviderLoadingAction => ({ type: DeleteProviderActionType.LOADING, loading });
+const deleteProviderSuccess = (providerId: number): DeleteProviderSuccessAction => ({ type: DeleteProviderActionType.SUCCESS, providerId });
+const deleteProviderError = (error: any): DeleteProviderErrorAction => ({ type: DeleteProviderActionType.ERROR, error });
 
 const providersRootPath = '/api/providers';
 const versionsRootPath = '/api/versions';
@@ -100,7 +108,7 @@ export function createVersionProvider(versionId: number, provider: CreateProvide
     };
 }
 
-export function updateVersionProvider(providerId: number, file: any) {
+export function updateProvider(providerId: number, file: any) {
     return (dispatch) => {
         dispatch(updateProviderLoading(true));
         const url = `${providersRootPath}/${providerId}`;
@@ -121,6 +129,23 @@ export function updateVersionProvider(providerId: number, file: any) {
                 const { message } = error.response.data;
                 dispatch(showError('Error updating provider', message));
                 return dispatch(updateProviderError(error));
+            });
+    };
+}
+
+export function deleteProvider(providerId: number) {
+    return (dispatch) => {
+        dispatch(deleteProviderLoading(true));
+        const url = `${providersRootPath}/${providerId}`;
+        return axios.delete(url)
+            .then(() => {
+                dispatch(showSuccess('Provider deleted successfully'));
+                return dispatch(deleteProviderSuccess(providerId));
+            })
+            .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error deleting provider', message));
+                return dispatch(deleteProviderError(error));
             });
     };
 }

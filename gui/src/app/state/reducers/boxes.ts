@@ -11,7 +11,7 @@ import {
     EntityType,
     ActionType
 } from '../../models';
-import { initialBoxState } from '../store';
+import { initialBoxState } from '../store/initial-state';
 
 export const reducer = (state: BoxState = initialBoxState, action: BoxAction): BoxState => {
     switch (action.type) {
@@ -32,7 +32,7 @@ export const reducer = (state: BoxState = initialBoxState, action: BoxAction): B
     }
 };
 
-export const create = (state: BoxState = initialBoxState, action: CreateBoxAction): BoxState => {
+const create = (state: BoxState = initialBoxState, action: CreateBoxAction): BoxState => {
     switch (action.type) {
         case CreateBoxActionType.LOADING: {
             const { boxes } = state;
@@ -66,7 +66,7 @@ export const create = (state: BoxState = initialBoxState, action: CreateBoxActio
     }
 };
 
-export const get = (state: BoxState = initialBoxState, action: GetBoxAction): BoxState => {
+const get = (state: BoxState = initialBoxState, action: GetBoxAction): BoxState => {
     switch (action.type) {
         case GetBoxActionType.LOADING: {
             const { boxes } = state;
@@ -98,7 +98,7 @@ export const get = (state: BoxState = initialBoxState, action: GetBoxAction): Bo
     }
 };
 
-export const find = (state: BoxState = initialBoxState, action: FindBoxesAction): BoxState => {
+const find = (state: BoxState = initialBoxState, action: FindBoxesAction): BoxState => {
     switch (action.type) {
         case FindBoxesActionType.LOADING: {
             const { boxes } = state;
@@ -122,7 +122,7 @@ export const find = (state: BoxState = initialBoxState, action: FindBoxesAction)
         case FindBoxesActionType.ERROR: {
             const { boxes } = state;
             const { data } = action.error.response;
-            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.GET };
+            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.FIND };
             return { ...initialBoxState, boxes: boxes, error: error };
         }
 

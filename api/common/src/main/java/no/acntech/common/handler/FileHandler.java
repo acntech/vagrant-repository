@@ -1,10 +1,6 @@
 package no.acntech.common.handler;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
+import no.acntech.common.exception.FileStorageException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +9,10 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import no.acntech.common.exception.FileStorageException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Component
 public class FileHandler {
@@ -60,6 +59,26 @@ public class FileHandler {
             return new UrlResource(filePath.toUri());
         } catch (MalformedURLException e) {
             throw new FileStorageException("File does not exist", e);
+        }
+    }
+
+    public void deleteFile(Path fileDirectory, String fileName) {
+        if (!Files.exists(fileDirectory)) {
+            throw new FileStorageException("File directory does not exist");
+        }
+
+        Path filePath = fileDirectory.resolve(fileName);
+
+        if (!Files.exists(filePath)) {
+            throw new FileStorageException("File does not exist");
+        }
+
+        try {
+            if (!Files.deleteIfExists(filePath)) {
+                throw new FileStorageException("Could not delete file");
+            }
+        } catch (IOException e) {
+            throw new FileStorageException("Error while deleting file", e);
         }
     }
 

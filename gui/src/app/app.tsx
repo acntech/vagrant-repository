@@ -3,7 +3,8 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { IntlProvider } from "react-intl";
 
-import store, { initializeLocales } from './state/store';
+import { store } from './state/store';
+import { initializeLocales } from './state/store/initial-state';
 import { ErrorHandlerProvider } from './providers';
 import { RootContainer } from './containers';
 
