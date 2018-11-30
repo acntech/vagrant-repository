@@ -21,6 +21,12 @@ spring:
     enabled: false
   aop:
     proxy-target-class: true
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
   h2:
     console:
       enabled: false

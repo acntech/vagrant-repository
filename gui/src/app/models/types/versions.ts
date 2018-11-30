@@ -1,5 +1,6 @@
 import {
     CreateVersionActionType,
+    DeleteVersionActionType,
     GetVersionActionType,
     FindVersionsActionType,
     UpdateVersionActionType,
@@ -87,9 +88,25 @@ export interface UpdateVersionErrorAction {
     error: any
 }
 
+export interface DeleteVersionLoadingAction {
+    type: DeleteVersionActionType.LOADING,
+    loading: boolean
+}
+
+export interface DeleteVersionSuccessAction {
+    type: DeleteVersionActionType.SUCCESS,
+    versionId: number
+}
+
+export interface DeleteVersionErrorAction {
+    type: DeleteVersionActionType.ERROR,
+    error: any
+}
+
 export type GetVersionAction = GetVersionLoadingAction | GetVersionSuccessAction | GetVersionErrorAction;
 export type FindVersionsAction = FindVersionsLoadingAction | FindVersionsSuccessAction | FindVersionsErrorAction;
 export type CreateVersionAction = CreateVersionLoadingAction | CreateVersionSuccessAction | CreateVersionErrorAction;
 export type UpdateVersionAction = UpdateVersionLoadingAction | UpdateVersionSuccessAction | UpdateVersionErrorAction;
+export type DeleteVersionAction = DeleteVersionLoadingAction | DeleteVersionSuccessAction | DeleteVersionErrorAction;
 
-export type VersionAction = GetVersionAction | FindVersionsAction | CreateVersionAction | UpdateVersionAction;
+export type VersionAction = GetVersionAction | FindVersionsAction | CreateVersionAction | UpdateVersionAction | DeleteVersionAction;

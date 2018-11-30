@@ -9,29 +9,31 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 
 @Component
 public class FileHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileHandler.class);
 
-    public long saveFile(MultipartFile file, Path fileDirectory, String fileName) {
-        if (Files.exists(fileDirectory)) {
-            LOGGER.info("File directory already exists, skipping directory creation");
+    public long saveFile(MultipartFile file, Path directory, String fileName) {
+        if (Files.exists(directory)) {
+            LOGGER.info("Directory {} already exists, skipping directory creation", directory.toString());
         } else {
-            LOGGER.info("File directory does not exist, creating directory");
+            LOGGER.info("Directory {} does not exist, creating directory", directory.toString());
             try {
-                Files.createDirectories(fileDirectory);
+                Files.createDirectories(directory);
             } catch (IOException e) {
                 throw new FileStorageException("Could not create file directory", e);
             }
         }
 
-        Path filePath = fileDirectory.resolve(fileName);
+        Path filePath = directory.resolve(fileName);
 
         if (Files.exists(filePath)) {
             throw new FileStorageException("File already exists");
@@ -44,12 +46,12 @@ public class FileHandler {
         }
     }
 
-    public Resource readFile(Path fileDirectory, String fileName) {
-        if (!Files.exists(fileDirectory)) {
-            throw new FileStorageException("File directory does not exist");
+    public Resource readFile(Path directory, String fileName) {
+        if (!Files.exists(directory)) {
+            throw new FileStorageException("Directory does not exist");
         }
 
-        Path filePath = fileDirectory.resolve(fileName);
+        Path filePath = directory.resolve(fileName);
 
         if (!Files.exists(filePath)) {
             throw new FileStorageException("File does not exist");
@@ -62,15 +64,17 @@ public class FileHandler {
         }
     }
 
-    public void deleteFile(Path fileDirectory, String fileName) {
-        if (!Files.exists(fileDirectory)) {
-            throw new FileStorageException("File directory does not exist");
+    public void deleteFile(Path directory, String fileName) {
+        if (!Files.exists(directory)) {
+            LOGGER.warn("Directory {} does not exist", directory.toString());
+            return;
         }
 
-        Path filePath = fileDirectory.resolve(fileName);
+        Path filePath = directory.resolve(fileName);
 
         if (!Files.exists(filePath)) {
-            throw new FileStorageException("File does not exist");
+            LOGGER.warn("File {} does not exist in directory {}", filePath.toString(), directory.toString());
+            return;
         }
 
         try {
@@ -79,6 +83,24 @@ public class FileHandler {
             }
         } catch (IOException e) {
             throw new FileStorageException("Error while deleting file", e);
+        }
+    }
+
+    public void deleteDirectory(Path directory) {
+        if (!Files.exists(directory)) {
+            LOGGER.warn("Directory {} does not exist", directory.toString());
+            return;
+        }
+
+        try {
+            if (!Files.walk(directory)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .allMatch(File::delete)) {
+                throw new FileStorageException("Could not delete some content from directory");
+            }
+        } catch (IOException e) {
+            throw new FileStorageException("Error while deleting directory", e);
         }
     }
 

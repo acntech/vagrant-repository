@@ -1,3 +1,2 @@
-export * from './action-types';
-export * from './provider-types';
-export * from './checksum-types';
+export * from './actions';
+export * from './providers';

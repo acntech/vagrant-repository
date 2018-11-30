@@ -26,6 +26,8 @@ services:
       - SPRING_PROFILES_ACTIVE=postgres
     ports:
       - 8080:8080
+    volumes:
+      - api:/tmp/vagrant-repository
     networks:
       - vagrant_repository
 
@@ -40,8 +42,16 @@ services:
       - POSTGRES_PASSWORD=64nd4lf
     ports:
       - 5432:5432
+    volumes:
+      - database:/var/lib/postgresql/data
     networks:
       - vagrant_repository
+
+volumes:
+  api:
+    name: vagrant-repository-api
+  database:
+    name: vagrant-repository-database
 
 networks:
   vagrant_repository:

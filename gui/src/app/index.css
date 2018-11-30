@@ -13,3 +13,7 @@
 .loading-indicator-body {
     padding: 2rem;
 }
+
+.ui.buttons {
+    margin-right: 1.1rem;
+}
