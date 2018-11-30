@@ -7,6 +7,10 @@ import {
     CreateVersionErrorAction,
     CreateVersionLoadingAction,
     CreateVersionSuccessAction,
+    DeleteVersionActionType,
+    DeleteVersionErrorAction,
+    DeleteVersionLoadingAction,
+    DeleteVersionSuccessAction,
     GetVersionActionType,
     GetVersionErrorAction,
     GetVersionLoadingAction,
@@ -29,6 +33,10 @@ const findVersionsError = (error: any): FindVersionsErrorAction => ({ type: Find
 const createVersionLoading = (loading: boolean): CreateVersionLoadingAction => ({ type: CreateVersionActionType.LOADING, loading });
 const createVersionSuccess = (payload: Version): CreateVersionSuccessAction => ({ type: CreateVersionActionType.SUCCESS, payload });
 const createVersionError = (error: any): CreateVersionErrorAction => ({ type: CreateVersionActionType.ERROR, error });
+
+const deleteVersionLoading = (loading: boolean): DeleteVersionLoadingAction => ({ type: DeleteVersionActionType.LOADING, loading });
+const deleteVersionSuccess = (versionId: number): DeleteVersionSuccessAction => ({ type: DeleteVersionActionType.SUCCESS, versionId });
+const deleteVersionError = (error: any): DeleteVersionErrorAction => ({ type: DeleteVersionActionType.ERROR, error });
 
 const versionsRootPath = '/api/versions';
 const boxesRootPath = '/api/boxes';
@@ -88,6 +96,23 @@ export function createBoxVersion(boxId: number, version: CreateVersion) {
                 const { message } = error.response.data;
                 dispatch(showError('Error creating version', message));
                 return dispatch(createVersionError(error));
+            });
+    };
+}
+
+export function deleteVersion(versionId: number) {
+    return (dispatch) => {
+        dispatch(deleteVersionLoading(true));
+        const url = `${versionsRootPath}/${versionId}`;
+        return axios.delete(url)
+            .then(() => {
+                dispatch(showSuccess('Version deleted successfully'));
+                return dispatch(deleteVersionSuccess(versionId));
+            })
+            .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error deleting version', message));
+                return dispatch(deleteVersionError(error));
             });
     };
 }

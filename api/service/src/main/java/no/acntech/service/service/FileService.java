@@ -83,4 +83,34 @@ public class FileService {
 
         fileHandler.deleteFile(filePath, fileName);
     }
+
+    public void deleteDirectory(String groupName,
+                                String boxName,
+                                String versionName) {
+
+        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
+                .resolve(groupName)
+                .resolve(boxName)
+                .resolve(versionName)
+                .toAbsolutePath()
+                .normalize();
+
+        fileHandler.deleteDirectory(filePath);
+    }
+
+    public void deleteDirectory(String groupName,
+                                String boxName,
+                                String versionName,
+                                ProviderType providerType) {
+
+        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
+                .resolve(groupName)
+                .resolve(boxName)
+                .resolve(versionName)
+                .resolve(providerType.getName())
+                .toAbsolutePath()
+                .normalize();
+
+        fileHandler.deleteDirectory(filePath);
+    }
 }

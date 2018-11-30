@@ -3,12 +3,12 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
+import {Button, ButtonProps, Container, Icon, ModalProps, Segment, Table} from 'semantic-ui-react';
 
 import { formatBytes } from '../../core/utils';
 import { Box, BoxState, Group, GroupState, Provider, ProviderState, RootState, Version, VersionState } from '../../models';
-import { findBoxVersions, findGroups, findGroupBoxes, findVersionProviders } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { deleteVersion, findBoxVersions, findGroups, findGroupBoxes, findVersionProviders } from '../../state/actions';
+import {ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader} from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -23,6 +23,7 @@ interface ComponentStateProps {
 }
 
 interface ComponentDispatchProps {
+    deleteVersion: (versionId: number) => Promise<any>;
     findGroups: (name?: string) => Promise<any>;
     findGroupBoxes: (groupId: number) => Promise<any>;
     findBoxVersions: (boxId: number) => Promise<any>;
@@ -37,10 +38,14 @@ interface ComponentState {
     version?: Version;
     providerId?: number;
     createProvider: boolean;
+    openDeleteVersionConfirmModal: boolean;
+    deleteVersionConfirmed: boolean;
 }
 
 const initialState: ComponentState = {
-    createProvider: false
+    createProvider: false,
+    openDeleteVersionConfirmModal: false,
+    deleteVersionConfirmed: false
 };
 
 class VersionContainer extends Component<ComponentProps, ComponentState> {
@@ -89,7 +94,15 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId, boxId, versionId } = this.props.match.params;
-        const { createProvider, group, box, providerId, version } = this.state;
+        const {
+            createProvider,
+            group,
+            box,
+            version,
+            providerId,
+            openDeleteVersionConfirmModal,
+            deleteVersionConfirmed
+        } = this.state;
         const { providerState } = this.props;
         const { providers, loading } = providerState;
 
@@ -99,6 +112,8 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
             return <LoadingIndicator />;
         } else if (createProvider) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/create`} />;
+        } else if (deleteVersionConfirmed) {
+            return <Redirect to={`/group/${groupId}/box/${boxId}`} />
         } else if (!group) {
             return <NotFoundErrorContainer
                 header
@@ -126,7 +141,11 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
                 version={version}
                 providers={versionProviders}
                 onTableRowClick={this.onTableRowClick}
-                onCreateProviderButtonClick={this.onCreateProviderButtonClick} />;
+                onCreateProviderButtonClick={this.onCreateProviderButtonClick}
+                onDeleteVersionButtonClick={this.onDeleteVersionButtonClick}
+                openDeleteVersionConfirmModal={openDeleteVersionConfirmModal}
+                onDeleteVersionModalClose={this.onDeleteVersionModalClose}
+                onDeleteVersionModalCloseButtonClick={this.onDeleteVersionModalCloseButtonClick}/>;
         }
     }
 
@@ -137,6 +156,25 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
     private onCreateProviderButtonClick = () => {
         this.setState({ createProvider: true });
     };
+
+    private onDeleteVersionButtonClick = () => {
+        this.setState({ openDeleteVersionConfirmModal: true });
+    };
+
+    private onDeleteVersionModalClose = () => {
+        this.setState({ openDeleteVersionConfirmModal: false });
+    };
+
+    private onDeleteVersionModalCloseButtonClick = (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
+        const { versionId } = this.props.match.params;
+        const { positive } = data;
+        if (positive) {
+            this.props.deleteVersion(versionId);
+            this.setState({ openDeleteVersionConfirmModal: false, deleteVersionConfirmed: true });
+        } else {
+            this.setState({openDeleteVersionConfirmModal: false});
+        }
+    };
 }
 
 interface VersionFragmentProps {
@@ -146,16 +184,37 @@ interface VersionFragmentProps {
     providers: Provider[];
     onTableRowClick: (providerId: number) => void;
     onCreateProviderButtonClick: () => void;
+    onDeleteVersionButtonClick: () => void;
+    openDeleteVersionConfirmModal: boolean;
+    onDeleteVersionModalClose: (event: React.MouseEvent<HTMLElement>, data: ModalProps) => void;
+    onDeleteVersionModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
 const VersionFragment: SFC<VersionFragmentProps> = (props) => {
-    const { group, box, version, providers, onTableRowClick, onCreateProviderButtonClick } = props;
+    const {
+        group,
+        box,
+        version,
+        providers,
+        onTableRowClick,
+        onCreateProviderButtonClick,
+        onDeleteVersionButtonClick,
+        openDeleteVersionConfirmModal,
+        onDeleteVersionModalClose,
+        onDeleteVersionModalCloseButtonClick
+    } = props;
     const { id: groupId, name: groupName } = group;
     const { id: boxId, name: boxName } = box;
     const { id: versionId, name: versionName, description } = version;
 
     return (
         <Container>
+            <ConfirmModal
+                title='Delete version'
+                subtitle='This action can not be reversed'
+                open={openDeleteVersionConfirmModal}
+                onClose={onDeleteVersionModalClose}
+                onClick={onDeleteVersionModalCloseButtonClick} />
             <PrimaryHeader />
             <SecondaryHeader subtitle={description}>
                 <Link to='/'><Icon name='home' /></Link>{'/ '}
@@ -166,7 +225,8 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
             <ProvidersFragment
                 providers={providers}
                 onTableRowClick={onTableRowClick}
-                onCreateProviderButtonClick={onCreateProviderButtonClick} />
+                onCreateProviderButtonClick={onCreateProviderButtonClick}
+                onDeleteVersionButtonClick={onDeleteVersionButtonClick}/>
         </Container>
     );
 };
@@ -175,16 +235,22 @@ interface ProvidersFragmentProps {
     providers: Provider[];
     onTableRowClick: (providerId: number) => void;
     onCreateProviderButtonClick: () => void;
+    onDeleteVersionButtonClick: () => void;
 }
 
 const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
-    const { providers, onTableRowClick, onCreateProviderButtonClick } = props;
+    const { providers, onTableRowClick, onCreateProviderButtonClick, onDeleteVersionButtonClick } = props;
 
     return (
         <Segment basic>
             <Button.Group>
                 <Button primary size='tiny' onClick={onCreateProviderButtonClick}>
                     <Icon name='file' />New Provider
+                </Button>
+            </Button.Group>
+            <Button.Group>
+                <Button primary size='small' onClick={onDeleteVersionButtonClick}>
+                    <Icon name='delete' />Delete Version
                 </Button>
             </Button.Group>
             <Table celled selectable>
@@ -222,6 +288,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
+    deleteVersion: (versionId: number) => dispatch(deleteVersion(versionId)),
     findGroups: (name?: string) => dispatch(findGroups(name)),
     findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
     findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId)),

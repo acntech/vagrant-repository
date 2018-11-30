@@ -27,6 +27,7 @@ services:
     ports:
       - 8080:8080
     volumes:
+      - api:/tmp/vagrant-repository
       - ./ojdbc8.jar:/docker-java-home/jre/lib/ext/ojdbc8.jar
     networks:
       - vagrant_repository
@@ -42,8 +43,16 @@ services:
       - ORACLE_PASSWORD=64nd4lf
     ports:
       - 1521:1521
+    volumes:
+      - database:/var/lib/postgresql/data
     networks:
       - vagrant_repository
+
+volumes:
+  api:
+    name: vagrant-repository-api
+  database:
+    name: vagrant-repository-database
 
 networks:
   vagrant_repository:

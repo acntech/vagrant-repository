@@ -4,6 +4,8 @@ import {
     VersionAction,
     CreateVersionAction,
     CreateVersionActionType,
+    DeleteVersionAction,
+    DeleteVersionActionType,
     GetVersionAction,
     GetVersionActionType,
     FindVersionsAction,
@@ -11,7 +13,7 @@ import {
     EntityType,
     ActionType
 } from '../../models';
-import { initialVersionState } from '../store/initial-state';
+import {initialVersionState} from '../store/initial-state';
 
 export function reducer(state: VersionState = initialVersionState, action: VersionAction): VersionState {
     switch (action.type) {
@@ -27,6 +29,10 @@ export function reducer(state: VersionState = initialVersionState, action: Versi
         case FindVersionsActionType.SUCCESS:
         case FindVersionsActionType.ERROR:
             return find(state, action);
+        case DeleteVersionActionType.LOADING:
+        case DeleteVersionActionType.SUCCESS:
+        case DeleteVersionActionType.ERROR:
+            return remove(state, action);
         default:
             return state;
     }
@@ -129,6 +135,36 @@ function find(state: VersionState = initialVersionState, action: FindVersionsAct
         }
     }
 }
+
+const remove = (state: VersionState = initialVersionState, action: DeleteVersionAction): VersionState => {
+    switch (action.type) {
+        case DeleteVersionActionType.LOADING: {
+            const { versions } = state;
+            const { loading } = action;
+            return { ...initialVersionState, versions: versions, loading: loading };
+        }
+
+        case DeleteVersionActionType.SUCCESS: {
+            let { versions } = state;
+            const { versionId } = action;
+            let modified = { id: versionId, entityType: EntityType.VERSION, actionType: ActionType.DELETE };
+            versions = versions.filter(version => version.id != versionId);
+
+            return { ...initialVersionState, versions: versions, modified: modified };
+        }
+
+        case DeleteVersionActionType.ERROR: {
+            const { versions } = state;
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.DELETE };
+            return { ...initialVersionState, versions: versions, error: error };
+        }
+
+        default: {
+            return state;
+        }
+    }
+};
 
 const replaceOrAppend = (versions: Version[], version: Version) => {
     const index = versions.map(version => version.id).indexOf(version.id);

@@ -76,6 +76,12 @@ export enum UpdateVersionActionType {
     ERROR = '[versions] UPDATE ERROR'
 }
 
+export enum DeleteVersionActionType {
+    LOADING = '[versions] DELETE LOADING',
+    SUCCESS = '[versions] DELETE SUCCESS',
+    ERROR = '[versions] DELETE ERROR'
+}
+
 export enum GetProviderActionType {
     LOADING = '[providers] GET LOADING',
     SUCCESS = '[providers] GET SUCCESS',

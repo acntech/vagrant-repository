@@ -105,7 +105,7 @@ public class ProviderService {
 
             providerRepository.deleteById(provider.getId());
 
-            fileService.deleteFile(
+            fileService.deleteDirectory(
                     group.getName(),
                     box.getName(),
                     version.getName(),
