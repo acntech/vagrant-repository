@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -104,13 +105,12 @@ public class FileHandler {
         }
     }
 
-    public String calculateSha1Checksum(Path fileDirectory, String fileName) {
-        Path filePath = fileDirectory.resolve(fileName);
+    public String calculateSha1Checksum(Path directory, String fileName) {
+        Path filePath = directory.resolve(fileName);
 
         if (Files.exists(filePath)) {
-            try {
-                byte[] content = Files.readAllBytes(filePath);
-                return DigestUtils.sha1Hex(content);
+            try (FileInputStream fileInputStream = new FileInputStream(filePath.toFile())) {
+                return DigestUtils.sha1Hex(fileInputStream);
             } catch (IOException e) {
                 throw new FileStorageException("Could not read file", e);
             }

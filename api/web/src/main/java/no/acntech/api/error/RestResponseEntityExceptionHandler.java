@@ -1,7 +1,7 @@
 package no.acntech.api.error;
 
-import javax.validation.ConstraintViolationException;
-
+import no.acntech.common.exception.UnknownProviderException;
+import no.acntech.common.model.ApiError;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +12,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.util.UrlPathHelper;
 
-import no.acntech.common.model.ApiError;
+import javax.validation.ConstraintViolationException;
 
+@SuppressWarnings("Duplicates")
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -45,6 +46,17 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message("Validation failed for input message")
+                .path(findRequestPath(request))
+                .build();
+        return handleExceptionInternal(exception, apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({UnknownProviderException.class})
+    public ResponseEntity<Object> handleIUnknownProviderException(UnknownProviderException exception, WebRequest request) {
+        ApiError apiError = ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(exception.getLocalizedMessage())
                 .path(findRequestPath(request))
                 .build();
         return handleExceptionInternal(exception, apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
