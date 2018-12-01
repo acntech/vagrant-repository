@@ -1,5 +1,7 @@
 package no.acntech.common.model;
 
+import java.util.stream.Stream;
+
 public enum ProviderType {
 
     VIRTUALBOX("virtualbox", "VirtualBox");
@@ -18,5 +20,12 @@ public enum ProviderType {
 
     public String getReadable() {
         return readable;
+    }
+
+    public static ProviderType fromName(String name) {
+        return Stream.of(values())
+                .filter(providerType -> providerType.name.equals(name))
+                .findFirst()
+                .orElse(null);
     }
 }

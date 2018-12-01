@@ -1,6 +1,7 @@
 package no.acntech.service.service;
 
 import no.acntech.common.config.ApplicationProperties;
+import no.acntech.common.exception.UnknownProviderException;
 import no.acntech.common.model.*;
 import no.acntech.service.repository.BoxRepository;
 import no.acntech.service.repository.GroupRepository;
@@ -54,7 +55,12 @@ public class ClientBoxService {
                             String versionName,
                             String providerName,
                             String fileName) {
-        ProviderType providerType = ProviderType.valueOf(providerName);
+        ProviderType providerType = ProviderType.fromName(providerName);
+
+        if (providerType == null) {
+            throw new UnknownProviderException("Unknown provider");
+        }
+
         return fileService.loadFile(groupName, boxName, versionName, providerType, fileName);
     }
 
