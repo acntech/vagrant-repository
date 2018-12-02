@@ -7,6 +7,10 @@ import {
     CreateBoxErrorAction,
     CreateBoxLoadingAction,
     CreateBoxSuccessAction,
+    DeleteBoxActionType,
+    DeleteBoxErrorAction,
+    DeleteBoxLoadingAction,
+    DeleteBoxSuccessAction,
     GetBoxActionType,
     GetBoxErrorAction,
     GetBoxLoadingAction,
@@ -29,6 +33,10 @@ const findBoxesError = (error: any): FindBoxesErrorAction => ({ type: FindBoxesA
 const createBoxLoading = (loading: boolean): CreateBoxLoadingAction => ({ type: CreateBoxActionType.LOADING, loading });
 const createBoxSuccess = (payload: Box): CreateBoxSuccessAction => ({ type: CreateBoxActionType.SUCCESS, payload });
 const createBoxError = (error: any): CreateBoxErrorAction => ({ type: CreateBoxActionType.ERROR, error });
+
+const deleteBoxLoading = (loading: boolean): DeleteBoxLoadingAction => ({ type: DeleteBoxActionType.LOADING, loading });
+const deleteBoxSuccess = (boxId: number): DeleteBoxSuccessAction => ({ type: DeleteBoxActionType.SUCCESS, boxId });
+const deleteBoxError = (error: any): DeleteBoxErrorAction => ({ type: DeleteBoxActionType.ERROR, error });
 
 const boxesRootPath = '/api/boxes';
 const groupsRootPath = '/api/groups';
@@ -88,6 +96,23 @@ export function createGroupBox(groupId: number, box: CreateBox) {
                 const { message } = error.response.data;
                 dispatch(showError('Error creating group', message));
                 return dispatch(createBoxError(error));
+            });
+    };
+}
+
+export function deleteBox(boxId: number) {
+    return (dispatch) => {
+        dispatch(deleteBoxLoading(true));
+        const url = `${boxesRootPath}/${boxId}`;
+        return axios.delete(url)
+            .then(() => {
+                dispatch(showSuccess('Box deleted successfully'));
+                return dispatch(deleteBoxSuccess(boxId));
+            })
+            .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error deleting box', message));
+                return dispatch(deleteBoxError(error));
             });
     };
 }

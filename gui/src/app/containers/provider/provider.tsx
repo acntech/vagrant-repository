@@ -161,8 +161,8 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
                 box={box}
                 version={version}
                 provider={provider}
-                onDeleteProviderButtonClick={this.onDeleteProviderButtonClick}
                 openDeleteProviderConfirmModal={openDeleteProviderConfirmModal}
+                onDeleteProviderButtonClick={this.onDeleteProviderButtonClick}
                 onDeleteProviderModalClose={this.onDeleteProviderModalClose}
                 onDeleteProviderModalCloseButtonClick={this.onDeleteProviderModalCloseButtonClick} />
         }
@@ -193,8 +193,8 @@ interface ViewProviderFragmentProps {
     box: Box;
     version: Version;
     provider: Provider;
-    onDeleteProviderButtonClick: () => void;
     openDeleteProviderConfirmModal: boolean;
+    onDeleteProviderButtonClick: () => void;
     onDeleteProviderModalClose: (event: React.MouseEvent<HTMLElement>, data: ModalProps) => void;
     onDeleteProviderModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
@@ -205,8 +205,8 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
         box,
         version,
         provider,
-        onDeleteProviderButtonClick,
         openDeleteProviderConfirmModal,
+        onDeleteProviderButtonClick,
         onDeleteProviderModalClose,
         onDeleteProviderModalCloseButtonClick
     } = props;
@@ -220,7 +220,7 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
     return (
         <Container>
             <ConfirmModal
-                title='Delete provider'
+                title='Delete Provider'
                 subtitle='This action can not be reversed'
                 open={openDeleteProviderConfirmModal}
                 onClose={onDeleteProviderModalClose}
