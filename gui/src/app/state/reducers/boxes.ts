@@ -4,6 +4,8 @@ import {
     BoxAction,
     CreateBoxAction,
     CreateBoxActionType,
+    DeleteBoxAction,
+    DeleteBoxActionType,
     GetBoxAction,
     GetBoxActionType,
     FindBoxesAction,
@@ -27,6 +29,10 @@ export const reducer = (state: BoxState = initialBoxState, action: BoxAction): B
         case FindBoxesActionType.SUCCESS:
         case FindBoxesActionType.ERROR:
             return find(state, action);
+        case DeleteBoxActionType.LOADING:
+        case DeleteBoxActionType.SUCCESS:
+        case DeleteBoxActionType.ERROR:
+            return remove(state, action);
         default:
             return state;
     }
@@ -123,6 +129,36 @@ const find = (state: BoxState = initialBoxState, action: FindBoxesAction): BoxSt
             const { boxes } = state;
             const { data } = action.error.response;
             const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.FIND };
+            return { ...initialBoxState, boxes: boxes, error: error };
+        }
+
+        default: {
+            return state;
+        }
+    }
+};
+
+const remove = (state: BoxState = initialBoxState, action: DeleteBoxAction): BoxState => {
+    switch (action.type) {
+        case DeleteBoxActionType.LOADING: {
+            const { boxes } = state;
+            const { loading } = action;
+            return { ...initialBoxState, boxes: boxes, loading: loading };
+        }
+
+        case DeleteBoxActionType.SUCCESS: {
+            let { boxes } = state;
+            const { boxId } = action;
+            let modified = { id: boxId, entityType: EntityType.BOX, actionType: ActionType.DELETE };
+            boxes = boxes.filter(box => box.id != boxId);
+
+            return { ...initialBoxState, boxes: boxes, modified: modified };
+        }
+
+        case DeleteBoxActionType.ERROR: {
+            const { boxes } = state;
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.DELETE };
             return { ...initialBoxState, boxes: boxes, error: error };
         }
 

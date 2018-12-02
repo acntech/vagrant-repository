@@ -3,12 +3,39 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import {Button, ButtonProps, Container, Icon, ModalProps, Segment, Table} from 'semantic-ui-react';
-
+import {
+    Button,
+    ButtonProps,
+    Container,
+    Icon,
+    ModalProps,
+    Segment, Table
+} from 'semantic-ui-react';
 import { formatBytes } from '../../core/utils';
-import { Box, BoxState, Group, GroupState, Provider, ProviderState, RootState, Version, VersionState } from '../../models';
-import { deleteVersion, findBoxVersions, findGroups, findGroupBoxes, findVersionProviders } from '../../state/actions';
-import {ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader} from '../../components';
+import {
+    Box,
+    BoxState,
+    Group,
+    GroupState,
+    Provider,
+    ProviderState,
+    RootState,
+    Version,
+    VersionState
+} from '../../models';
+import {
+    deleteVersion,
+    findBoxVersions,
+    findGroups,
+    findGroupBoxes,
+    findVersionProviders
+} from '../../state/actions';
+import {
+    ConfirmModal,
+    LoadingIndicator,
+    PrimaryHeader,
+    SecondaryHeader
+} from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -142,8 +169,8 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
                 providers={versionProviders}
                 onTableRowClick={this.onTableRowClick}
                 onCreateProviderButtonClick={this.onCreateProviderButtonClick}
-                onDeleteVersionButtonClick={this.onDeleteVersionButtonClick}
                 openDeleteVersionConfirmModal={openDeleteVersionConfirmModal}
+                onDeleteVersionButtonClick={this.onDeleteVersionButtonClick}
                 onDeleteVersionModalClose={this.onDeleteVersionModalClose}
                 onDeleteVersionModalCloseButtonClick={this.onDeleteVersionModalCloseButtonClick}/>;
         }
@@ -172,7 +199,7 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
             this.props.deleteVersion(versionId);
             this.setState({ openDeleteVersionConfirmModal: false, deleteVersionConfirmed: true });
         } else {
-            this.setState({openDeleteVersionConfirmModal: false});
+            this.setState({ openDeleteVersionConfirmModal: false });
         }
     };
 }
@@ -184,8 +211,8 @@ interface VersionFragmentProps {
     providers: Provider[];
     onTableRowClick: (providerId: number) => void;
     onCreateProviderButtonClick: () => void;
-    onDeleteVersionButtonClick: () => void;
     openDeleteVersionConfirmModal: boolean;
+    onDeleteVersionButtonClick: () => void;
     onDeleteVersionModalClose: (event: React.MouseEvent<HTMLElement>, data: ModalProps) => void;
     onDeleteVersionModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
@@ -210,7 +237,7 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
     return (
         <Container>
             <ConfirmModal
-                title='Delete version'
+                title='Delete Version'
                 subtitle='This action can not be reversed'
                 open={openDeleteVersionConfirmModal}
                 onClose={onDeleteVersionModalClose}

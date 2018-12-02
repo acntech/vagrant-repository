@@ -14,15 +14,15 @@ import java.util.Optional;
 @Service
 public class ProviderService {
 
-    private final ProviderRepository providerRepository;
     private final VersionRepository versionRepository;
+    private final ProviderRepository providerRepository;
     private final FileService fileService;
 
-    public ProviderService(final ProviderRepository providerRepository,
-                           final VersionRepository versionRepository,
+    public ProviderService(final VersionRepository versionRepository,
+                           final ProviderRepository providerRepository,
                            final FileService fileService) {
-        this.providerRepository = providerRepository;
         this.versionRepository = versionRepository;
+        this.providerRepository = providerRepository;
         this.fileService = fileService;
     }
 

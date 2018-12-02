@@ -34,6 +34,12 @@ export enum GetBoxActionType {
     ERROR = '[boxes] GET ERROR'
 }
 
+export enum DeleteBoxActionType {
+    LOADING = '[boxes] DELETE LOADING',
+    SUCCESS = '[boxes] DELETE SUCCESS',
+    ERROR = '[boxes] DELETE ERROR'
+}
+
 export enum FindBoxesActionType {
     LOADING = '[boxes] FIND LOADING',
     SUCCESS = '[boxes] FIND SUCCESS',

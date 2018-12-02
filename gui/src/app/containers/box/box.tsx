@@ -3,11 +3,29 @@ import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
-
-import { Box, BoxState, Group, GroupState, RootState, Version, VersionState } from '../../models';
-import { findBoxVersions, findGroups, findGroupBoxes } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import {
+    Button, ButtonProps,
+    Container,
+    Icon, ModalProps,
+    Segment,
+    Table
+} from 'semantic-ui-react';
+import {
+    Box,
+    BoxState,
+    Group,
+    GroupState,
+    RootState,
+    Version,
+    VersionState
+} from '../../models';
+import {
+    deleteBox,
+    findBoxVersions,
+    findGroups,
+    findGroupBoxes
+} from '../../state/actions';
+import {ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader} from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -21,6 +39,7 @@ interface ComponentStateProps {
 }
 
 interface ComponentDispatchProps {
+    deleteBox: (boxId: number) => Promise<any>;
     findGroups: (name?: string) => Promise<any>;
     findGroupBoxes: (groupId: number) => Promise<any>;
     findBoxVersions: (boxId: number) => Promise<any>;
@@ -33,10 +52,14 @@ interface ComponentState {
     box?: Box;
     versionId?: number;
     createVersion: boolean;
+    openDeleteBoxConfirmModal: boolean;
+    deleteBoxConfirmed: boolean;
 }
 
 const initialState: ComponentState = {
-    createVersion: false
+    createVersion: false,
+    openDeleteBoxConfirmModal: false,
+    deleteBoxConfirmed: false
 };
 
 class BoxContainer extends Component<ComponentProps, ComponentState> {
@@ -76,7 +99,14 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId, boxId } = this.props.match.params;
-        const { versionId, group, box, createVersion } = this.state;
+        const {
+            versionId,
+            group,
+            box,
+            createVersion,
+            deleteBoxConfirmed,
+            openDeleteBoxConfirmModal
+        } = this.state;
         const { versionState } = this.props;
         const { versions, loading } = versionState;
 
@@ -86,6 +116,8 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
             return <LoadingIndicator />;
         } else if (createVersion) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/create`} />;
+        } else if (deleteBoxConfirmed) {
+            return <Redirect to={`/group/${groupId}`} />
         } else if (!group) {
             return <NotFoundErrorContainer
                 header
@@ -106,7 +138,11 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
                 box={box}
                 versions={boxVersions}
                 onTableRowClick={this.onTableRowClick}
-                onCreateVersionButtonClick={this.onCreateVersionButtonClick} />;
+                onCreateVersionButtonClick={this.onCreateVersionButtonClick}
+                openDeleteBoxConfirmModal={openDeleteBoxConfirmModal}
+                onDeleteBoxButtonClick={this.onDeleteBoxButtonClick}
+                onDeleteBoxModalClose={this.onDeleteBoxModalClose}
+                onDeleteBoxModalCloseButtonClick={this.onDeleteBoxModalCloseButtonClick} />;
         }
     }
 
@@ -116,7 +152,26 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
 
     private onCreateVersionButtonClick = () => {
         this.setState({ createVersion: true });
-    }
+    };
+
+    private onDeleteBoxButtonClick = () => {
+        this.setState({ openDeleteBoxConfirmModal: true });
+    };
+
+    private onDeleteBoxModalClose = () => {
+        this.setState({ openDeleteBoxConfirmModal: false });
+    };
+
+    private onDeleteBoxModalCloseButtonClick = (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {
+        const { boxId } = this.props.match.params;
+        const { positive } = data;
+        if (positive) {
+            this.props.deleteBox(boxId);
+            this.setState({ openDeleteBoxConfirmModal: false, deleteBoxConfirmed: true });
+        } else {
+            this.setState({ openDeleteBoxConfirmModal: false });
+        }
+    };
 }
 
 interface BoxFragmentProps {
@@ -125,15 +180,35 @@ interface BoxFragmentProps {
     versions: Version[];
     onTableRowClick: (versionId: number) => void;
     onCreateVersionButtonClick: () => void;
+    openDeleteBoxConfirmModal: boolean;
+    onDeleteBoxButtonClick: () => void;
+    onDeleteBoxModalClose: (event: React.MouseEvent<HTMLElement>, data: ModalProps) => void;
+    onDeleteBoxModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
 const BoxFragment: SFC<BoxFragmentProps> = (props) => {
-    const { group, box, versions, onTableRowClick, onCreateVersionButtonClick } = props;
+    const {
+        group,
+        box,
+        versions,
+        onTableRowClick,
+        onCreateVersionButtonClick,
+        openDeleteBoxConfirmModal,
+        onDeleteBoxButtonClick,
+        onDeleteBoxModalClose,
+        onDeleteBoxModalCloseButtonClick
+    } = props;
     const { id: groupId, name: groupName } = group;
     const { id: boxId, name: boxName, description } = box;
 
     return (
         <Container>
+            <ConfirmModal
+                title='Delete Box'
+                subtitle='This action can not be reversed'
+                open={openDeleteBoxConfirmModal}
+                onClose={onDeleteBoxModalClose}
+                onClick={onDeleteBoxModalCloseButtonClick} />
             <PrimaryHeader />
             <SecondaryHeader subtitle={description}>
                 <Link to='/'><Icon name='home' /></Link>{'/ '}
@@ -143,7 +218,8 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
             <VersionsFragment
                 versions={versions}
                 onTableRowClick={onTableRowClick}
-                onCreateVersionButtonClick={onCreateVersionButtonClick} />
+                onCreateVersionButtonClick={onCreateVersionButtonClick}
+                onDeleteBoxButtonClick={onDeleteBoxButtonClick} />
         </Container>
     );
 };
@@ -152,16 +228,27 @@ interface VersionsFragmentProps {
     versions: Version[];
     onTableRowClick: (versionId: number) => void;
     onCreateVersionButtonClick: () => void;
+    onDeleteBoxButtonClick: () => void;
 }
 
 const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
-    const { versions, onTableRowClick, onCreateVersionButtonClick } = props;
+    const {
+        versions,
+        onTableRowClick,
+        onCreateVersionButtonClick,
+        onDeleteBoxButtonClick
+    } = props;
 
     return (
         <Segment basic>
             <Button.Group>
                 <Button primary size='tiny' onClick={onCreateVersionButtonClick}>
                     <Icon name='tag' />New Version
+                </Button>
+            </Button.Group>
+            <Button.Group>
+                <Button primary size='small' onClick={onDeleteBoxButtonClick}>
+                    <Icon name='delete' />Delete Box
                 </Button>
             </Button.Group>
             <Table celled selectable>
@@ -194,6 +281,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
+    deleteBox: (boxId: number) => dispatch(deleteBox(boxId)),
     findGroups: (name?: string) => dispatch(findGroups(name)),
     findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
     findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId))

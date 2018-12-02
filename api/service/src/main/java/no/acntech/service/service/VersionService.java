@@ -17,18 +17,18 @@ import java.util.Optional;
 @Service
 public class VersionService {
 
-    private final ProviderRepository providerRepository;
-    private final VersionRepository versionRepository;
     private final BoxRepository boxRepository;
+    private final VersionRepository versionRepository;
+    private final ProviderRepository providerRepository;
     private final FileService fileService;
 
-    public VersionService(final ProviderRepository providerRepository,
+    public VersionService(final BoxRepository boxRepository,
                           final VersionRepository versionRepository,
-                          final BoxRepository boxRepository,
+                          final ProviderRepository providerRepository,
                           final FileService fileService) {
-        this.providerRepository = providerRepository;
-        this.versionRepository = versionRepository;
         this.boxRepository = boxRepository;
+        this.versionRepository = versionRepository;
+        this.providerRepository = providerRepository;
         this.fileService = fileService;
     }
 
@@ -83,9 +83,7 @@ public class VersionService {
 
             List<Provider> providers = providerRepository.findByVersionId(versionId);
 
-            providers.forEach(provider -> {
-                providerRepository.deleteById(provider.getId());
-            });
+            providers.forEach(provider -> providerRepository.deleteById(provider.getId()));
 
             versionRepository.deleteById(versionId);
 

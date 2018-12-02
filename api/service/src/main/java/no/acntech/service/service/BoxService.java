@@ -1,28 +1,40 @@
 package no.acntech.service.service;
 
-import javax.validation.Valid;
-
-import java.util.List;
-import java.util.Optional;
-
+import no.acntech.common.model.Box;
+import no.acntech.common.model.Group;
+import no.acntech.common.model.Provider;
+import no.acntech.common.model.Version;
+import no.acntech.service.repository.BoxRepository;
+import no.acntech.service.repository.GroupRepository;
+import no.acntech.service.repository.ProviderRepository;
+import no.acntech.service.repository.VersionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import no.acntech.common.model.Box;
-import no.acntech.common.model.Group;
-import no.acntech.service.repository.BoxRepository;
-import no.acntech.service.repository.GroupRepository;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BoxService {
 
-    private final BoxRepository boxRepository;
-    private final GroupRepository groupRepository;
 
-    public BoxService(final BoxRepository boxRepository,
-                      final GroupRepository groupRepository) {
-        this.boxRepository = boxRepository;
+    private final GroupRepository groupRepository;
+    private final BoxRepository boxRepository;
+    private final VersionRepository versionRepository;
+    private final ProviderRepository providerRepository;
+    private final FileService fileService;
+
+    public BoxService(final GroupRepository groupRepository,
+                      final BoxRepository boxRepository,
+                      final VersionRepository versionRepository,
+                      final ProviderRepository providerRepository,
+                      final FileService fileService) {
         this.groupRepository = groupRepository;
+        this.boxRepository = boxRepository;
+        this.versionRepository = versionRepository;
+        this.providerRepository = providerRepository;
+        this.fileService = fileService;
     }
 
     public Optional<Box> get(final Long boxId) {
@@ -62,6 +74,34 @@ public class BoxService {
             }
         } else {
             throw new IllegalStateException("A group with ID " + groupId + " does not exist");
+        }
+    }
+
+    @Transactional
+    public void delete(final Long boxId) {
+        Optional<Box> boxOptional = boxRepository.findById(boxId);
+
+        if (boxOptional.isPresent()) {
+            Box box = boxOptional.get();
+            Group group = box.getGroup();
+
+            List<Version> versions = versionRepository.findByBoxId(boxId);
+
+            versions.forEach(version -> {
+                List<Provider> providers = providerRepository.findByVersionId(version.getId());
+
+                providers.forEach(provider -> providerRepository.deleteById(provider.getId()));
+
+                versionRepository.deleteById(version.getId());
+            });
+
+            boxRepository.deleteById(boxId);
+
+            fileService.deleteDirectory(
+                    group.getName(),
+                    box.getName());
+        } else {
+            throw new IllegalStateException("No box found for ID " + boxId);
         }
     }
 }

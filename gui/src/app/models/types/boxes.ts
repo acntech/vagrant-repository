@@ -1,6 +1,7 @@
 import {
     CreateBoxActionType,
     GetBoxActionType,
+    DeleteBoxActionType,
     FindBoxesActionType,
     UpdateBoxActionType,
     Error,
@@ -87,9 +88,25 @@ export interface UpdateBoxErrorAction {
     error: any
 }
 
+export interface DeleteBoxLoadingAction {
+    type: DeleteBoxActionType.LOADING,
+    loading: boolean
+}
+
+export interface DeleteBoxSuccessAction {
+    type: DeleteBoxActionType.SUCCESS,
+    boxId: number
+}
+
+export interface DeleteBoxErrorAction {
+    type: DeleteBoxActionType.ERROR,
+    error: any
+}
+
 export type GetBoxAction = GetBoxLoadingAction | GetBoxSuccessAction | GetBoxErrorAction;
 export type FindBoxesAction = FindBoxesLoadingAction | FindBoxesSuccessAction | FindBoxesErrorAction;
 export type CreateBoxAction = CreateBoxLoadingAction | CreateBoxSuccessAction | CreateBoxErrorAction;
 export type UpdateBoxAction = UpdateBoxLoadingAction | UpdateBoxSuccessAction | UpdateBoxErrorAction;
+export type DeleteBoxAction = DeleteBoxLoadingAction | DeleteBoxSuccessAction | DeleteBoxErrorAction;
 
-export type BoxAction = GetBoxAction | FindBoxesAction | CreateBoxAction | UpdateBoxAction;
+export type BoxAction = GetBoxAction | FindBoxesAction | CreateBoxAction | UpdateBoxAction | DeleteBoxAction;
