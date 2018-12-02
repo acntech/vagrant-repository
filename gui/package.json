@@ -1,6 +1,6 @@
 {
     "name": "vagrant-repository-manager-gui",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Vagrant Repository Manager GUI",
     "author": "Thomas Johansen <thomas.johansen@accenture.com>",
     "license": "Apache-2.0",
