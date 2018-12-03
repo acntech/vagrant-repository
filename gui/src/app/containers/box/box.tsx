@@ -52,14 +52,14 @@ interface ComponentState {
     box?: Box;
     versionId?: number;
     createVersion: boolean;
-    openDeleteBoxConfirmModal: boolean;
     deleteBoxConfirmed: boolean;
+    openDeleteBoxConfirmModal: boolean;
 }
 
 const initialState: ComponentState = {
     createVersion: false,
-    openDeleteBoxConfirmModal: false,
-    deleteBoxConfirmed: false
+    deleteBoxConfirmed: false,
+    openDeleteBoxConfirmModal: false
 };
 
 class BoxContainer extends Component<ComponentProps, ComponentState> {

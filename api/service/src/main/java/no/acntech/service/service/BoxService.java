@@ -77,6 +77,7 @@ public class BoxService {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     @Transactional
     public void delete(final Long boxId) {
         Optional<Box> boxOptional = boxRepository.findById(boxId);
