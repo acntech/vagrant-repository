@@ -123,16 +123,31 @@ public class ClientBoxService {
     }
 
     private String determineProviderUrl(final Group group, final Box box, final Version version, final Provider provider, final UriComponentsBuilder uriBuilder) {
-        String contextPath = applicationProperties.getFile().getRootContextPath();
+        String contextPath = applicationProperties.getApi().getClientContextPath();
         String fileName = applicationProperties.getFile().getDefaultFileName();
         String groupName = group.getName().toLowerCase();
         String boxName = box.getName().toLowerCase();
         String versionName = version.getName().toLowerCase();
         String providerName = provider.getProviderType().getName();
-        URI uri = uriBuilder
-                .path("{contextPath}/{groupName}/{boxName}/{versionName}/{providerName}/{fileName}")
-                .buildAndExpand(contextPath, groupName, boxName, versionName, providerName, fileName)
-                .toUri();
-        return uri.toString();
+
+        if (applicationProperties.getProxy().isSet()) {
+            String scheme = applicationProperties.getProxy().getScheme();
+            String host = applicationProperties.getProxy().getHost();
+            int port = applicationProperties.getProxy().getPort();
+            URI uri = uriBuilder
+                    .scheme(scheme)
+                    .host(host)
+                    .port(port)
+                    .path("{contextPath}/{groupName}/{boxName}/{versionName}/{providerName}/{fileName}")
+                    .buildAndExpand(contextPath, groupName, boxName, versionName, providerName, fileName)
+                    .toUri();
+            return uri.toString();
+        } else {
+            URI uri = uriBuilder
+                    .path("{contextPath}/{groupName}/{boxName}/{versionName}/{providerName}/{fileName}")
+                    .buildAndExpand(contextPath, groupName, boxName, versionName, providerName, fileName)
+                    .toUri();
+            return uri.toString();
+        }
     }
 }
