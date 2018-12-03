@@ -4,10 +4,16 @@ export enum NotificationActionType {
     CLEAR = '[notifications] CLEAR'
 }
 
-export enum GetGroupActionType {
-    LOADING = '[groups] GET LOADING',
-    SUCCESS = '[groups] GET SUCCESS',
-    ERROR = '[groups] GET ERROR'
+export enum CreateGroupActionType {
+    LOADING = '[groups] CREATE LOADING',
+    SUCCESS = '[groups] CREATE SUCCESS',
+    ERROR = '[groups] CREATE ERROR'
+}
+
+export enum DeleteGroupActionType {
+    LOADING = '[groups] DELETE LOADING',
+    SUCCESS = '[groups] DELETE SUCCESS',
+    ERROR = '[groups] DELETE ERROR'
 }
 
 export enum FindGroupsActionType {
@@ -16,10 +22,10 @@ export enum FindGroupsActionType {
     ERROR = '[groups] FIND ERROR'
 }
 
-export enum CreateGroupActionType {
-    LOADING = '[groups] CREATE LOADING',
-    SUCCESS = '[groups] CREATE SUCCESS',
-    ERROR = '[groups] CREATE ERROR'
+export enum GetGroupActionType {
+    LOADING = '[groups] GET LOADING',
+    SUCCESS = '[groups] GET SUCCESS',
+    ERROR = '[groups] GET ERROR'
 }
 
 export enum UpdateGroupActionType {
@@ -28,10 +34,10 @@ export enum UpdateGroupActionType {
     ERROR = '[groups] UPDATE ERROR'
 }
 
-export enum GetBoxActionType {
-    LOADING = '[boxes] GET LOADING',
-    SUCCESS = '[boxes] GET SUCCESS',
-    ERROR = '[boxes] GET ERROR'
+export enum CreateBoxActionType {
+    LOADING = '[boxes] CREATE LOADING',
+    SUCCESS = '[boxes] CREATE SUCCESS',
+    ERROR = '[boxes] CREATE ERROR'
 }
 
 export enum DeleteBoxActionType {
@@ -46,10 +52,10 @@ export enum FindBoxesActionType {
     ERROR = '[boxes] FIND ERROR'
 }
 
-export enum CreateBoxActionType {
-    LOADING = '[boxes] CREATE LOADING',
-    SUCCESS = '[boxes] CREATE SUCCESS',
-    ERROR = '[boxes] CREATE ERROR'
+export enum GetBoxActionType {
+    LOADING = '[boxes] GET LOADING',
+    SUCCESS = '[boxes] GET SUCCESS',
+    ERROR = '[boxes] GET ERROR'
 }
 
 export enum UpdateBoxActionType {
@@ -58,28 +64,10 @@ export enum UpdateBoxActionType {
     ERROR = '[boxes] UPDATE ERROR'
 }
 
-export enum GetVersionActionType {
-    LOADING = '[versions] GET LOADING',
-    SUCCESS = '[versions] GET SUCCESS',
-    ERROR = '[versions] GET ERROR'
-}
-
-export enum FindVersionsActionType {
-    LOADING = '[versions] FIND LOADING',
-    SUCCESS = '[versions] FIND SUCCESS',
-    ERROR = '[versions] FIND ERROR'
-}
-
 export enum CreateVersionActionType {
     LOADING = '[versions] CREATE LOADING',
     SUCCESS = '[versions] CREATE SUCCESS',
     ERROR = '[versions] CREATE ERROR'
-}
-
-export enum UpdateVersionActionType {
-    LOADING = '[versions] UPDATE LOADING',
-    SUCCESS = '[versions] UPDATE SUCCESS',
-    ERROR = '[versions] UPDATE ERROR'
 }
 
 export enum DeleteVersionActionType {
@@ -88,16 +76,22 @@ export enum DeleteVersionActionType {
     ERROR = '[versions] DELETE ERROR'
 }
 
-export enum GetProviderActionType {
-    LOADING = '[providers] GET LOADING',
-    SUCCESS = '[providers] GET SUCCESS',
-    ERROR = '[providers] GET ERROR'
+export enum FindVersionsActionType {
+    LOADING = '[versions] FIND LOADING',
+    SUCCESS = '[versions] FIND SUCCESS',
+    ERROR = '[versions] FIND ERROR'
 }
 
-export enum FindProvidersActionType {
-    LOADING = '[providers] FIND LOADING',
-    SUCCESS = '[providers] FIND SUCCESS',
-    ERROR = '[providers] FIND ERROR'
+export enum GetVersionActionType {
+    LOADING = '[versions] GET LOADING',
+    SUCCESS = '[versions] GET SUCCESS',
+    ERROR = '[versions] GET ERROR'
+}
+
+export enum UpdateVersionActionType {
+    LOADING = '[versions] UPDATE LOADING',
+    SUCCESS = '[versions] UPDATE SUCCESS',
+    ERROR = '[versions] UPDATE ERROR'
 }
 
 export enum CreateProviderActionType {
@@ -106,14 +100,26 @@ export enum CreateProviderActionType {
     ERROR = '[providers] CREATE ERROR'
 }
 
-export enum UpdateProviderActionType {
-    LOADING = '[providers] UPDATE LOADING',
-    SUCCESS = '[providers] UPDATE SUCCESS',
-    ERROR = '[providers] UPDATE ERROR'
-}
-
 export enum DeleteProviderActionType {
     LOADING = '[providers] DELETE LOADING',
     SUCCESS = '[providers] DELETE SUCCESS',
     ERROR = '[providers] DELETE ERROR'
+}
+
+export enum FindProvidersActionType {
+    LOADING = '[providers] FIND LOADING',
+    SUCCESS = '[providers] FIND SUCCESS',
+    ERROR = '[providers] FIND ERROR'
+}
+
+export enum GetProviderActionType {
+    LOADING = '[providers] GET LOADING',
+    SUCCESS = '[providers] GET SUCCESS',
+    ERROR = '[providers] GET ERROR'
+}
+
+export enum UpdateProviderActionType {
+    LOADING = '[providers] UPDATE LOADING',
+    SUCCESS = '[providers] UPDATE SUCCESS',
+    ERROR = '[providers] UPDATE ERROR'
 }

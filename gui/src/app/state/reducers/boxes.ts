@@ -20,25 +20,25 @@ export const reducer = (state: BoxState = initialBoxState, action: BoxAction): B
         case CreateBoxActionType.LOADING:
         case CreateBoxActionType.SUCCESS:
         case CreateBoxActionType.ERROR:
-            return create(state, action);
-        case GetBoxActionType.LOADING:
-        case GetBoxActionType.SUCCESS:
-        case GetBoxActionType.ERROR:
-            return get(state, action);
-        case FindBoxesActionType.LOADING:
-        case FindBoxesActionType.SUCCESS:
-        case FindBoxesActionType.ERROR:
-            return find(state, action);
+            return createBox(state, action);
         case DeleteBoxActionType.LOADING:
         case DeleteBoxActionType.SUCCESS:
         case DeleteBoxActionType.ERROR:
-            return remove(state, action);
+            return deleteBox(state, action);
+        case FindBoxesActionType.LOADING:
+        case FindBoxesActionType.SUCCESS:
+        case FindBoxesActionType.ERROR:
+            return findBoxes(state, action);
+        case GetBoxActionType.LOADING:
+        case GetBoxActionType.SUCCESS:
+        case GetBoxActionType.ERROR:
+            return getBox(state, action);
         default:
             return state;
     }
 };
 
-const create = (state: BoxState = initialBoxState, action: CreateBoxAction): BoxState => {
+const createBox = (state: BoxState = initialBoxState, action: CreateBoxAction): BoxState => {
     switch (action.type) {
         case CreateBoxActionType.LOADING: {
             const { boxes } = state;
@@ -72,29 +72,27 @@ const create = (state: BoxState = initialBoxState, action: CreateBoxAction): Box
     }
 };
 
-const get = (state: BoxState = initialBoxState, action: GetBoxAction): BoxState => {
+const deleteBox = (state: BoxState = initialBoxState, action: DeleteBoxAction): BoxState => {
     switch (action.type) {
-        case GetBoxActionType.LOADING: {
+        case DeleteBoxActionType.LOADING: {
             const { boxes } = state;
             const { loading } = action;
             return { ...initialBoxState, boxes: boxes, loading: loading };
         }
 
-        case GetBoxActionType.SUCCESS: {
+        case DeleteBoxActionType.SUCCESS: {
             let { boxes } = state;
-            const { payload } = action;
+            const { boxId } = action;
+            let modified = { id: boxId, entityType: EntityType.BOX, actionType: ActionType.DELETE };
+            boxes = boxes.filter(box => box.id != boxId);
 
-            if (payload) {
-                boxes = replaceOrAppend(boxes, payload);
-            }
-
-            return { ...initialBoxState, boxes: boxes };
+            return { ...initialBoxState, boxes: boxes, modified: modified };
         }
 
-        case GetBoxActionType.ERROR: {
+        case DeleteBoxActionType.ERROR: {
             const { boxes } = state;
             const { data } = action.error.response;
-            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.GET };
+            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.DELETE };
             return { ...initialBoxState, boxes: boxes, error: error };
         }
 
@@ -104,7 +102,7 @@ const get = (state: BoxState = initialBoxState, action: GetBoxAction): BoxState 
     }
 };
 
-const find = (state: BoxState = initialBoxState, action: FindBoxesAction): BoxState => {
+const findBoxes = (state: BoxState = initialBoxState, action: FindBoxesAction): BoxState => {
     switch (action.type) {
         case FindBoxesActionType.LOADING: {
             const { boxes } = state;
@@ -138,27 +136,29 @@ const find = (state: BoxState = initialBoxState, action: FindBoxesAction): BoxSt
     }
 };
 
-const remove = (state: BoxState = initialBoxState, action: DeleteBoxAction): BoxState => {
+const getBox = (state: BoxState = initialBoxState, action: GetBoxAction): BoxState => {
     switch (action.type) {
-        case DeleteBoxActionType.LOADING: {
+        case GetBoxActionType.LOADING: {
             const { boxes } = state;
             const { loading } = action;
             return { ...initialBoxState, boxes: boxes, loading: loading };
         }
 
-        case DeleteBoxActionType.SUCCESS: {
+        case GetBoxActionType.SUCCESS: {
             let { boxes } = state;
-            const { boxId } = action;
-            let modified = { id: boxId, entityType: EntityType.BOX, actionType: ActionType.DELETE };
-            boxes = boxes.filter(box => box.id != boxId);
+            const { payload } = action;
 
-            return { ...initialBoxState, boxes: boxes, modified: modified };
+            if (payload) {
+                boxes = replaceOrAppend(boxes, payload);
+            }
+
+            return { ...initialBoxState, boxes: boxes };
         }
 
-        case DeleteBoxActionType.ERROR: {
+        case GetBoxActionType.ERROR: {
             const { boxes } = state;
             const { data } = action.error.response;
-            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.DELETE };
+            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.GET };
             return { ...initialBoxState, boxes: boxes, error: error };
         }
 

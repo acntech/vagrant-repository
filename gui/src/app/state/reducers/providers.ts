@@ -22,29 +22,29 @@ export function reducer(state: ProviderState = initialProviderState, action: Pro
         case CreateProviderActionType.LOADING:
         case CreateProviderActionType.SUCCESS:
         case CreateProviderActionType.ERROR:
-            return create(state, action);
-        case GetProviderActionType.LOADING:
-        case GetProviderActionType.SUCCESS:
-        case GetProviderActionType.ERROR:
-            return get(state, action);
-        case FindProvidersActionType.LOADING:
-        case FindProvidersActionType.SUCCESS:
-        case FindProvidersActionType.ERROR:
-            return find(state, action);
-        case UpdateProviderActionType.LOADING:
-        case UpdateProviderActionType.SUCCESS:
-        case UpdateProviderActionType.ERROR:
-            return update(state, action);
+            return createProvider(state, action);
         case DeleteProviderActionType.LOADING:
         case DeleteProviderActionType.SUCCESS:
         case DeleteProviderActionType.ERROR:
-            return remove(state, action);
+            return deleteProvider(state, action);
+        case FindProvidersActionType.LOADING:
+        case FindProvidersActionType.SUCCESS:
+        case FindProvidersActionType.ERROR:
+            return findProviders(state, action);
+        case GetProviderActionType.LOADING:
+        case GetProviderActionType.SUCCESS:
+        case GetProviderActionType.ERROR:
+            return getProvider(state, action);
+        case UpdateProviderActionType.LOADING:
+        case UpdateProviderActionType.SUCCESS:
+        case UpdateProviderActionType.ERROR:
+            return updateProvider(state, action);
         default:
             return state;
     }
 }
 
-const create = (state: ProviderState = initialProviderState, action: CreateProviderAction): ProviderState => {
+const createProvider = (state: ProviderState = initialProviderState, action: CreateProviderAction): ProviderState => {
     switch (action.type) {
         case CreateProviderActionType.LOADING: {
             const { providers } = state;
@@ -78,29 +78,27 @@ const create = (state: ProviderState = initialProviderState, action: CreateProvi
     }
 };
 
-const get = (state: ProviderState = initialProviderState, action: GetProviderAction): ProviderState => {
+const deleteProvider = (state: ProviderState = initialProviderState, action: DeleteProviderAction): ProviderState => {
     switch (action.type) {
-        case GetProviderActionType.LOADING: {
+        case DeleteProviderActionType.LOADING: {
             const { providers } = state;
             const { loading } = action;
             return { ...initialProviderState, providers: providers, loading: loading };
         }
 
-        case GetProviderActionType.SUCCESS: {
+        case DeleteProviderActionType.SUCCESS: {
             let { providers } = state;
-            const { payload } = action;
+            const { providerId } = action;
+            let modified = { id: providerId, entityType: EntityType.PROVIDER, actionType: ActionType.DELETE };
+            providers = providers.filter(provider => provider.id != providerId);
 
-            if (payload) {
-                providers = replaceOrAppend(providers, payload);
-            }
-
-            return { ...initialProviderState, providers: providers };
+            return { ...initialProviderState, providers: providers, modified: modified };
         }
 
-        case GetProviderActionType.ERROR: {
+        case DeleteProviderActionType.ERROR: {
             const { providers } = state;
             const { data } = action.error.response;
-            const error = { ...data, entityType: EntityType.PROVIDER, actionType: ActionType.GET };
+            const error = { ...data, entityType: EntityType.PROVIDER, actionType: ActionType.DELETE };
             return { ...initialProviderState, providers: providers, error: error };
         }
 
@@ -110,7 +108,7 @@ const get = (state: ProviderState = initialProviderState, action: GetProviderAct
     }
 };
 
-function find(state: ProviderState = initialProviderState, action: FindProvidersAction): ProviderState {
+const findProviders = (state: ProviderState = initialProviderState, action: FindProvidersAction): ProviderState => {
     switch (action.type) {
         case FindProvidersActionType.LOADING: {
             const { providers } = state;
@@ -142,9 +140,41 @@ function find(state: ProviderState = initialProviderState, action: FindProviders
             return state;
         }
     }
-}
+};
 
-const update = (state: ProviderState = initialProviderState, action: UpdateProviderAction): ProviderState => {
+const getProvider = (state: ProviderState = initialProviderState, action: GetProviderAction): ProviderState => {
+    switch (action.type) {
+        case GetProviderActionType.LOADING: {
+            const { providers } = state;
+            const { loading } = action;
+            return { ...initialProviderState, providers: providers, loading: loading };
+        }
+
+        case GetProviderActionType.SUCCESS: {
+            let { providers } = state;
+            const { payload } = action;
+
+            if (payload) {
+                providers = replaceOrAppend(providers, payload);
+            }
+
+            return { ...initialProviderState, providers: providers };
+        }
+
+        case GetProviderActionType.ERROR: {
+            const { providers } = state;
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.PROVIDER, actionType: ActionType.GET };
+            return { ...initialProviderState, providers: providers, error: error };
+        }
+
+        default: {
+            return state;
+        }
+    }
+};
+
+const updateProvider = (state: ProviderState = initialProviderState, action: UpdateProviderAction): ProviderState => {
     switch (action.type) {
         case UpdateProviderActionType.LOADING: {
             const { providers } = state;
@@ -169,36 +199,6 @@ const update = (state: ProviderState = initialProviderState, action: UpdateProvi
             const { providers } = state;
             const { data } = action.error.response;
             const error = { ...data, entityType: EntityType.PROVIDER, actionType: ActionType.UPDATE };
-            return { ...initialProviderState, providers: providers, error: error };
-        }
-
-        default: {
-            return state;
-        }
-    }
-};
-
-const remove = (state: ProviderState = initialProviderState, action: DeleteProviderAction): ProviderState => {
-    switch (action.type) {
-        case DeleteProviderActionType.LOADING: {
-            const { providers } = state;
-            const { loading } = action;
-            return { ...initialProviderState, providers: providers, loading: loading };
-        }
-
-        case DeleteProviderActionType.SUCCESS: {
-            let { providers } = state;
-            const { providerId } = action;
-            let modified = { id: providerId, entityType: EntityType.PROVIDER, actionType: ActionType.DELETE };
-            providers = providers.filter(provider => provider.id != providerId);
-
-            return { ...initialProviderState, providers: providers, modified: modified };
-        }
-
-        case DeleteProviderActionType.ERROR: {
-            const { providers } = state;
-            const { data } = action.error.response;
-            const error = { ...data, entityType: EntityType.PROVIDER, actionType: ActionType.DELETE };
             return { ...initialProviderState, providers: providers, error: error };
         }
 

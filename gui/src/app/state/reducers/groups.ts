@@ -4,10 +4,12 @@ import {
     GroupAction,
     CreateGroupAction,
     CreateGroupActionType,
-    GetGroupAction,
-    GetGroupActionType,
+    DeleteGroupAction,
+    DeleteGroupActionType,
     FindGroupsAction,
     FindGroupsActionType,
+    GetGroupAction,
+    GetGroupActionType,
     EntityType,
     ActionType
 } from '../../models';
@@ -18,21 +20,25 @@ export const reducer = (state: GroupState = initialGroupState, action: GroupActi
         case CreateGroupActionType.LOADING:
         case CreateGroupActionType.SUCCESS:
         case CreateGroupActionType.ERROR:
-            return create(state, action);
-        case GetGroupActionType.LOADING:
-        case GetGroupActionType.SUCCESS:
-        case GetGroupActionType.ERROR:
-            return get(state, action);
+            return createGroup(state, action);
+        case DeleteGroupActionType.LOADING:
+        case DeleteGroupActionType.SUCCESS:
+        case DeleteGroupActionType.ERROR:
+            return deleteGroup(state, action);
         case FindGroupsActionType.LOADING:
         case FindGroupsActionType.SUCCESS:
         case FindGroupsActionType.ERROR:
-            return find(state, action);
+            return findGroups(state, action);
+        case GetGroupActionType.LOADING:
+        case GetGroupActionType.SUCCESS:
+        case GetGroupActionType.ERROR:
+            return getGroup(state, action);
         default:
             return state;
     }
 };
 
-const create = (state: GroupState = initialGroupState, action: CreateGroupAction): GroupState => {
+const createGroup = (state: GroupState = initialGroupState, action: CreateGroupAction): GroupState => {
     switch (action.type) {
         case CreateGroupActionType.LOADING: {
             const { groups } = state;
@@ -66,7 +72,37 @@ const create = (state: GroupState = initialGroupState, action: CreateGroupAction
     }
 };
 
-const get = (state: GroupState = initialGroupState, action: GetGroupAction): GroupState => {
+const deleteGroup = (state: GroupState = initialGroupState, action: DeleteGroupAction): GroupState => {
+    switch (action.type) {
+        case DeleteGroupActionType.LOADING: {
+            const { groups } = state;
+            const { loading } = action;
+            return { ...initialGroupState, groups: groups, loading: loading };
+        }
+
+        case DeleteGroupActionType.SUCCESS: {
+            let { groups } = state;
+            const { groupId } = action;
+            let modified = { id: groupId, entityType: EntityType.GROUP, actionType: ActionType.DELETE };
+            groups = groups.filter(group => group.id != groupId);
+
+            return { ...initialGroupState, groups: groups, modified: modified };
+        }
+
+        case DeleteGroupActionType.ERROR: {
+            const { groups } = state;
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.GROUP, actionType: ActionType.DELETE };
+            return { ...initialGroupState, groups: groups, error: error };
+        }
+
+        default: {
+            return state;
+        }
+    }
+};
+
+const getGroup = (state: GroupState = initialGroupState, action: GetGroupAction): GroupState => {
     switch (action.type) {
         case GetGroupActionType.LOADING: {
             const { groups } = state;
@@ -98,7 +134,7 @@ const get = (state: GroupState = initialGroupState, action: GetGroupAction): Gro
     }
 };
 
-const find = (state: GroupState = initialGroupState, action: FindGroupsAction): GroupState => {
+const findGroups = (state: GroupState = initialGroupState, action: FindGroupsAction): GroupState => {
     switch (action.type) {
         case FindGroupsActionType.LOADING: {
             const { groups } = state;

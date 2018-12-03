@@ -20,25 +20,25 @@ export function reducer(state: VersionState = initialVersionState, action: Versi
         case CreateVersionActionType.LOADING:
         case CreateVersionActionType.SUCCESS:
         case CreateVersionActionType.ERROR:
-            return create(state, action);
-        case GetVersionActionType.LOADING:
-        case GetVersionActionType.SUCCESS:
-        case GetVersionActionType.ERROR:
-            return get(state, action);
-        case FindVersionsActionType.LOADING:
-        case FindVersionsActionType.SUCCESS:
-        case FindVersionsActionType.ERROR:
-            return find(state, action);
+            return createVersion(state, action);
         case DeleteVersionActionType.LOADING:
         case DeleteVersionActionType.SUCCESS:
         case DeleteVersionActionType.ERROR:
-            return remove(state, action);
+            return deleteVersion(state, action);
+        case FindVersionsActionType.LOADING:
+        case FindVersionsActionType.SUCCESS:
+        case FindVersionsActionType.ERROR:
+            return findVersions(state, action);
+        case GetVersionActionType.LOADING:
+        case GetVersionActionType.SUCCESS:
+        case GetVersionActionType.ERROR:
+            return getVersion(state, action);
         default:
             return state;
     }
 }
 
-const create = (state: VersionState = initialVersionState, action: CreateVersionAction): VersionState => {
+const createVersion = (state: VersionState = initialVersionState, action: CreateVersionAction): VersionState => {
     switch (action.type) {
         case CreateVersionActionType.LOADING: {
             const { versions } = state;
@@ -72,29 +72,27 @@ const create = (state: VersionState = initialVersionState, action: CreateVersion
     }
 };
 
-const get = (state: VersionState = initialVersionState, action: GetVersionAction): VersionState => {
+const deleteVersion = (state: VersionState = initialVersionState, action: DeleteVersionAction): VersionState => {
     switch (action.type) {
-        case GetVersionActionType.LOADING: {
+        case DeleteVersionActionType.LOADING: {
             const { versions } = state;
             const { loading } = action;
             return { ...initialVersionState, versions: versions, loading: loading };
         }
 
-        case GetVersionActionType.SUCCESS: {
+        case DeleteVersionActionType.SUCCESS: {
             let { versions } = state;
-            const { payload } = action;
+            const { versionId } = action;
+            let modified = { id: versionId, entityType: EntityType.VERSION, actionType: ActionType.DELETE };
+            versions = versions.filter(version => version.id != versionId);
 
-            if (payload) {
-                versions = replaceOrAppend(versions, payload);
-            }
-
-            return { ...initialVersionState, versions: versions };
+            return { ...initialVersionState, versions: versions, modified: modified };
         }
 
-        case GetVersionActionType.ERROR: {
+        case DeleteVersionActionType.ERROR: {
             const { versions } = state;
             const { data } = action.error.response;
-            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.GET };
+            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.DELETE };
             return { ...initialVersionState, versions: versions, error: error };
         }
 
@@ -104,7 +102,7 @@ const get = (state: VersionState = initialVersionState, action: GetVersionAction
     }
 };
 
-function find(state: VersionState = initialVersionState, action: FindVersionsAction): VersionState {
+const findVersions = (state: VersionState = initialVersionState, action: FindVersionsAction): VersionState => {
     switch (action.type) {
         case FindVersionsActionType.LOADING: {
             const { versions } = state;
@@ -134,29 +132,31 @@ function find(state: VersionState = initialVersionState, action: FindVersionsAct
             return state;
         }
     }
-}
+};
 
-const remove = (state: VersionState = initialVersionState, action: DeleteVersionAction): VersionState => {
+const getVersion = (state: VersionState = initialVersionState, action: GetVersionAction): VersionState => {
     switch (action.type) {
-        case DeleteVersionActionType.LOADING: {
+        case GetVersionActionType.LOADING: {
             const { versions } = state;
             const { loading } = action;
             return { ...initialVersionState, versions: versions, loading: loading };
         }
 
-        case DeleteVersionActionType.SUCCESS: {
+        case GetVersionActionType.SUCCESS: {
             let { versions } = state;
-            const { versionId } = action;
-            let modified = { id: versionId, entityType: EntityType.VERSION, actionType: ActionType.DELETE };
-            versions = versions.filter(version => version.id != versionId);
+            const { payload } = action;
 
-            return { ...initialVersionState, versions: versions, modified: modified };
+            if (payload) {
+                versions = replaceOrAppend(versions, payload);
+            }
+
+            return { ...initialVersionState, versions: versions };
         }
 
-        case DeleteVersionActionType.ERROR: {
+        case GetVersionActionType.ERROR: {
             const { versions } = state;
             const { data } = action.error.response;
-            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.DELETE };
+            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.GET };
             return { ...initialVersionState, versions: versions, error: error };
         }
 
