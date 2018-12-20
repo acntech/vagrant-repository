@@ -85,15 +85,6 @@ public class Box {
             return this;
         }
 
-        public Builder from(Box box) {
-            if (box != null) {
-                this.name = box.name;
-                this.description = box.description;
-                this.group = box.group;
-            }
-            return this;
-        }
-
         public Box build() {
             Box box = new Box();
             box.name = this.name;

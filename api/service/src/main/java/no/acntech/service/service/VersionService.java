@@ -1,12 +1,11 @@
 package no.acntech.service.service;
 
-import no.acntech.common.model.Box;
-import no.acntech.common.model.Group;
-import no.acntech.common.model.Provider;
-import no.acntech.common.model.Version;
+import no.acntech.common.model.*;
 import no.acntech.service.repository.BoxRepository;
 import no.acntech.service.repository.ProviderRepository;
 import no.acntech.service.repository.VersionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +15,8 @@ import java.util.Optional;
 
 @Service
 public class VersionService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersionService.class);
 
     private final BoxRepository boxRepository;
     private final VersionRepository versionRepository;
@@ -33,31 +34,33 @@ public class VersionService {
     }
 
     public Optional<Version> get(final Long versionId) {
+        LOGGER.info("Get version with ID {}", versionId);
         return versionRepository.findById(versionId);
     }
 
     public List<Version> find(final Long boxId, final String name) {
-        if (boxId == null) {
-            throw new IllegalArgumentException("Version ID is null");
+        if (name == null) {
+            LOGGER.info("Find versions by box-ID {}", boxId);
+            return versionRepository.findByBoxId(boxId);
         } else {
-            if (name == null) {
-                return versionRepository.findByBoxId(boxId);
-            } else {
-                return versionRepository.findByBoxIdAndName(boxId, name.toLowerCase());
-            }
+            String sanitizedName = name.toLowerCase();
+            LOGGER.info("Find versions by box-ID {} and name {}", boxId, sanitizedName);
+            return versionRepository.findByBoxIdAndName(boxId, sanitizedName);
         }
     }
 
     @Transactional
-    public Version create(final Long boxId, @Valid final Version version) {
+    public Version create(final Long boxId, @Valid final ModifyVersion modifyVersion) {
+        String sanitizedName = modifyVersion.getName().toLowerCase();
+        LOGGER.info("Create version with name {} for box-ID {}", sanitizedName, boxId);
         Optional<Box> boxOptional = boxRepository.findById(boxId);
 
         if (boxOptional.isPresent()) {
             Box box = boxOptional.get();
             List<Version> versions = versionRepository.findByBoxId(box.getId());
             Version saveVersion = Version.builder()
-                    .from(version)
-                    .name(version.getName().toLowerCase())
+                    .name(sanitizedName)
+                    .description(modifyVersion.getDescription())
                     .box(box)
                     .build();
 
@@ -74,6 +77,7 @@ public class VersionService {
 
     @Transactional
     public void delete(final Long versionId) {
+        LOGGER.info("Delete version with ID {}", versionId);
         Optional<Version> versionOptional = versionRepository.findById(versionId);
 
         if (versionOptional.isPresent()) {

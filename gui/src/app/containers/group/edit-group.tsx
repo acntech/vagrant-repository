@@ -13,19 +13,30 @@ import {
     Segment
 } from 'semantic-ui-react';
 
-import { CreateGroup, GroupState, RootState, ActionType } from '../../models';
-import { createGroup } from '../../state/actions';
+import {
+    UpdateGroup,
+    GroupState,
+    RootState,
+    ActionType
+} from '../../models';
+import { getGroup, updateGroup } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { NotFoundErrorContainer } from '..';
+
+interface RouteProps {
+    match: any;
+}
 
 interface ComponentStateProps {
     groupState: GroupState;
 }
 
 interface ComponentDispatchProps {
-    createGroup: (createGroup: CreateGroup) => Promise<any>;
+    getGroup: (groupId: number) => Promise<any>;
+    updateGroup: (groupId: number, updateGroup: UpdateGroup) => Promise<any>;
 }
 
-type ComponentProps = ComponentDispatchProps & ComponentStateProps;
+type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
 
 interface FormData {
     formError: boolean;
@@ -35,11 +46,13 @@ interface FormData {
 }
 
 interface ComponentState {
+    groupFound: boolean;
     cancel: boolean;
     formData: FormData;
 }
 
 const initialState: ComponentState = {
+    groupFound: false,
     cancel: false,
     formData: {
         formError: false,
@@ -47,27 +60,59 @@ const initialState: ComponentState = {
     }
 };
 
-class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
+class EditGroupContainer extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
         this.state = initialState;
     }
 
+    public componentDidMount() {
+        const { groupId } = this.props.match.params;
+        this.props.getGroup(groupId);
+    }
+
+    public componentDidUpdate() {
+        const { groupFound } = this.state;
+        if (!groupFound) {
+            const { groupId } = this.props.match.params;
+            const { groups } = this.props.groupState;
+            const group = groups.find((group) => group.id == groupId);
+            if (group) {
+                const { name, description } = group;
+                this.setState({
+                    groupFound: true,
+                    formData: {
+                        formError: false,
+                        formNameValue: name,
+                        formDescriptionValue: description
+                    }
+                });
+            }
+        }
+    }
+
     public render(): ReactNode {
-        const { cancel, formData } = this.state;
+        const { groupId } = this.props.match.params;
+        const { groupFound, cancel, formData } = this.state;
         const { groupState } = this.props;
         const { loading, modified } = groupState;
 
-        if (cancel) {
-            return <Redirect to='/' />;
-        } else if (loading) {
+        if (loading) {
             return <LoadingIndicator />;
-        } else if (modified && modified.actionType == ActionType.CREATE) {
-            const { id: groupId } = modified;
-            return <Redirect to={`/group/${groupId}`} />
+        } else if (cancel) {
+            return <Redirect to={`/group/${groupId}`} />;
+        } else if (modified && modified.actionType == ActionType.UPDATE) {
+            const { id: modifiedGroupId } = modified;
+            return <Redirect to={`/group/${modifiedGroupId}`} />
+        } else if (!groupFound) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No group found'
+                content={`Could not find group for ID ${groupId}`} />;
         } else {
-            return <CreateGroupFragment
+            return <EditGroupFragment
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}
                 onFormInputChange={this.onFormInputChange}
@@ -96,10 +141,12 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
                 }
             })
         } else {
-            this.props.createGroup({
+            const { groupId } = this.props.match.params;
+            const group = {
                 name: formNameValue,
                 description: formDescriptionValue
-            });
+            };
+            this.props.updateGroup(groupId, group);
         }
     };
 
@@ -134,7 +181,7 @@ class CreateGroupContainer extends Component<ComponentProps, ComponentState> {
     }
 }
 
-interface CreateGroupFragmentProps {
+interface EditGroupFragmentProps {
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
@@ -142,7 +189,7 @@ interface CreateGroupFragmentProps {
     formData: FormData;
 }
 
-const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
+const EditGroupFragment: SFC<EditGroupFragmentProps> = (props) => {
     const {
         onCancelButtonClick,
         onFormSubmit,
@@ -160,7 +207,7 @@ const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Create Group</SecondaryHeader>
+            <SecondaryHeader>Update Group</SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>
@@ -182,7 +229,7 @@ const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
                     </Form.Group>
                     <Form.Group>
                         <Form.Button
-                            primary size='tiny'><Icon name='group' />Create Group</Form.Button>
+                            primary size='tiny'><Icon name='group' />Update Group</Form.Button>
                         <Button
                             secondary size='tiny'
                             onClick={onCancelButtonClick}><Icon name='cancel' />Cancel</Button>
@@ -199,9 +246,10 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
-    createGroup: (group: CreateGroup) => dispatch(createGroup(group))
+    getGroup: (groupId: number) => dispatch(getGroup(groupId)),
+    updateGroup: (groupId: number, group: UpdateGroup) => dispatch(updateGroup(groupId, group))
 });
 
-const ConnectedCreateGroupContainer = connect(mapStateToProps, mapDispatchToProps)(CreateGroupContainer);
+const ConnectedEditGroupContainer = connect(mapStateToProps, mapDispatchToProps)(EditGroupContainer);
 
-export { ConnectedCreateGroupContainer as CreateGroupContainer };
+export { ConnectedEditGroupContainer as EditGroupContainer };
