@@ -16,6 +16,7 @@ import {
     PageNotFoundErrorContainer,
     ProviderContainer,
     VersionContainer,
+    EditGroupContainer,
     UpdateProviderContainer
 } from '../';
 
@@ -39,6 +40,7 @@ class RootContainer extends Component<ComponentProps> {
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?" exact component={VersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/create" exact component={CreateVersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?" exact component={BoxContainer} />
+                    <Route path="/group/:groupId?/edit" exact component={EditGroupContainer} />
                     <Route path="/group/:groupId?/create" exact component={CreateBoxContainer} />
                     <Route path="/group/:groupId?" exact component={GroupContainer} />
                     <Route path="/create" exact component={CreateGroupContainer} />

@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import no.acntech.common.model.ModifyVersion;
 import no.acntech.common.model.Provider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ import no.acntech.common.model.Box;
 import no.acntech.common.model.Version;
 import no.acntech.service.service.BoxService;
 import no.acntech.service.service.VersionService;
+
+import javax.validation.Valid;
 
 @RequestMapping(path = "api/boxes")
 @RestController
@@ -49,9 +52,9 @@ public class BoxResource {
 
     @PostMapping(path = "{id}/versions")
     public ResponseEntity<Version> post(@PathVariable(name = "id") final Long boxId,
-                                        @RequestBody final Version version,
+                                        @Valid @RequestBody final ModifyVersion modifyVersion,
                                         final UriComponentsBuilder uriBuilder) {
-        Version createdVersion = versionService.create(boxId, version);
+        Version createdVersion = versionService.create(boxId, modifyVersion);
         URI uri = uriBuilder.path("versions/{id}").buildAndExpand(createdVersion.getId()).toUri();
         return ResponseEntity.created(uri).body(createdVersion);
     }

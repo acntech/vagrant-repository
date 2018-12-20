@@ -1,13 +1,12 @@
 package no.acntech.service.service;
 
-import no.acntech.common.model.Box;
-import no.acntech.common.model.Group;
-import no.acntech.common.model.Provider;
-import no.acntech.common.model.Version;
+import no.acntech.common.model.*;
 import no.acntech.service.repository.BoxRepository;
 import no.acntech.service.repository.GroupRepository;
 import no.acntech.service.repository.ProviderRepository;
 import no.acntech.service.repository.VersionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +16,8 @@ import java.util.Optional;
 
 @Service
 public class GroupService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupService.class);
 
     private final GroupRepository groupRepository;
     private final BoxRepository boxRepository;
@@ -36,37 +37,44 @@ public class GroupService {
         this.fileService = fileService;
     }
 
-    public List<Group> find(final String name) {
-        if (name == null) {
-            return groupRepository.findAll();
-        } else {
-            return groupRepository.findByName(name.toLowerCase());
-        }
-    }
-
     public Optional<Group> get(final Long groupId) {
+        LOGGER.info("Get group with ID {}", groupId);
         return groupRepository.findById(groupId);
     }
 
+    public List<Group> find(final String name) {
+        if (name == null) {
+            LOGGER.info("Find groups");
+            return groupRepository.findAll();
+        } else {
+            String sanitizedName = name.toLowerCase();
+            LOGGER.info("Find groups by name {}", sanitizedName);
+            return groupRepository.findByName(sanitizedName);
+        }
+    }
+
     @Transactional
-    public Group create(@Valid final Group group) {
-        Group saveGroup = Group.builder()
-                .from(group)
-                .name(group.getName().toLowerCase())
+    public Group create(final ModifyGroup modifyGroup) {
+        String sanitizedName = modifyGroup.getName().toLowerCase();
+        LOGGER.info("Create group with name {}", sanitizedName);
+        Group group = Group.builder()
+                .name(sanitizedName)
+                .description(modifyGroup.getDescription())
                 .build();
 
-        List<Group> groups = groupRepository.findByName(saveGroup.getName());
+        List<Group> groups = groupRepository.findByName(group.getName());
         if (groups.isEmpty()) {
-            return Optional.ofNullable(groupRepository.save(saveGroup))
+            return Optional.ofNullable(groupRepository.save(group))
                     .orElseThrow(() -> new IllegalStateException("Save returned no value"));
         } else {
-            throw new IllegalStateException("A group with name " + saveGroup.getName() + " already exists");
+            throw new IllegalStateException("A group with name " + group.getName() + " already exists");
         }
     }
 
     @SuppressWarnings("Duplicates")
     @Transactional
     public void delete(final Long groupId) {
+        LOGGER.info("Delete group with ID {}", groupId);
         Optional<Group> groupOptional = groupRepository.findById(groupId);
 
         if (groupOptional.isPresent()) {
@@ -92,6 +100,24 @@ public class GroupService {
 
             fileService.deleteDirectory(
                     group.getName());
+        } else {
+            throw new IllegalStateException("No group found for ID " + groupId);
+        }
+    }
+
+    @Transactional
+    public Group update(final Long groupId,
+                        @Valid final ModifyGroup modifyGroup) {
+        LOGGER.info("Update group with ID {}", groupId);
+        Optional<Group> groupOptional = groupRepository.findById(groupId);
+
+        if (groupOptional.isPresent()) {
+            String sanitizedName = modifyGroup.getName().toLowerCase();
+            Group group = groupOptional.get();
+            group.setName(sanitizedName);
+            group.setDescription(modifyGroup.getDescription());
+
+            return groupRepository.save(group);
         } else {
             throw new IllegalStateException("No group found for ID " + groupId);
         }

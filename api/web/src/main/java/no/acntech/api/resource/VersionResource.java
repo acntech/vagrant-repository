@@ -1,5 +1,6 @@
 package no.acntech.api.resource;
 
+import no.acntech.common.model.CreateProvider;
 import no.acntech.common.model.Provider;
 import no.acntech.common.model.ProviderType;
 import no.acntech.common.model.Version;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -48,9 +50,9 @@ public class VersionResource {
 
     @PostMapping(path = "{id}/providers")
     public ResponseEntity<Provider> post(@PathVariable(name = "id") final Long versionId,
-                                         @RequestBody final Provider provider,
+                                         @Valid @RequestBody final CreateProvider createProvider,
                                          final UriComponentsBuilder uriBuilder) {
-        Provider createdProvider = providerService.create(versionId, provider);
+        Provider createdProvider = providerService.create(versionId, createProvider);
         URI uri = uriBuilder.path("providers/{id}").buildAndExpand(createdProvider.getId()).toUri();
         return ResponseEntity.created(uri).body(createdProvider);
     }

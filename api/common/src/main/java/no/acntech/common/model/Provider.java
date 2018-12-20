@@ -119,17 +119,6 @@ public class Provider {
             return this;
         }
 
-        public Builder from(Provider provider) {
-            if (provider != null) {
-                this.providerType = provider.providerType;
-                this.size = provider.size;
-                this.checksumType = provider.checksumType;
-                this.checksum = provider.checksum;
-                this.version = provider.version;
-            }
-            return this;
-        }
-
         public Provider build() {
             Provider provider = new Provider();
             provider.providerType = this.providerType;

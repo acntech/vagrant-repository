@@ -10,6 +10,8 @@ import {
     FindGroupsActionType,
     GetGroupAction,
     GetGroupActionType,
+    UpdateGroupAction,
+    UpdateGroupActionType,
     EntityType,
     ActionType
 } from '../../models';
@@ -33,6 +35,10 @@ export const reducer = (state: GroupState = initialGroupState, action: GroupActi
         case GetGroupActionType.SUCCESS:
         case GetGroupActionType.ERROR:
             return getGroup(state, action);
+        case UpdateGroupActionType.LOADING:
+        case UpdateGroupActionType.SUCCESS:
+        case UpdateGroupActionType.ERROR:
+            return updateGroup(state, action);
         default:
             return state;
     }
@@ -159,6 +165,40 @@ const findGroups = (state: GroupState = initialGroupState, action: FindGroupsAct
             const { groups } = state;
             const { data } = action.error.response;
             const error = { ...data, entityType: EntityType.GROUP, actionType: ActionType.FIND };
+            return { ...initialGroupState, groups: groups, error: error };
+        }
+
+        default: {
+            return state;
+        }
+    }
+};
+
+const updateGroup = (state: GroupState = initialGroupState, action: UpdateGroupAction): GroupState => {
+    switch (action.type) {
+        case UpdateGroupActionType.LOADING: {
+            const { groups } = state;
+            const { loading } = action;
+            return { ...initialGroupState, groups: groups, loading: loading };
+        }
+
+        case UpdateGroupActionType.SUCCESS: {
+            let { groups } = state;
+            const { payload } = action;
+            let modified;
+
+            if (payload) {
+                groups = replaceOrAppend(groups, payload);
+                modified = { id: payload.id, entityType: EntityType.GROUP, actionType: ActionType.UPDATE };
+            }
+
+            return { ...initialGroupState, groups: groups, modified: modified };
+        }
+
+        case UpdateGroupActionType.ERROR: {
+            const { groups } = state;
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.GROUP, actionType: ActionType.UPDATE };
             return { ...initialGroupState, groups: groups, error: error };
         }
 

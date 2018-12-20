@@ -89,7 +89,7 @@ const HeaderFragment: React.SFC<HeaderFragmentProps> = (props) => {
     return (
         <Segment basic className="secondary-header">
             <Header>{children ? children : title}</Header>
-            {subtitle ? <Header.Subheader>{subtitle}</Header.Subheader> : null}
+            {subtitle ? <Header.Subheader><h4>{subtitle}</h4></Header.Subheader> : null}
         </Segment>
     );
 };

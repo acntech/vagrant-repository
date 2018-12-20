@@ -1,16 +1,10 @@
 package no.acntech.common.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
-
-import java.time.ZonedDateTime;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.time.ZonedDateTime;
 
 @Table(name = "GROUPS")
 @Entity
@@ -35,8 +29,16 @@ public class Group {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public ZonedDateTime getCreated() {
@@ -67,14 +69,6 @@ public class Group {
 
         public Builder description(String description) {
             this.description = description;
-            return this;
-        }
-
-        public Builder from(Group group) {
-            if (group != null) {
-                this.name = group.name;
-                this.description = group.description;
-            }
             return this;
         }
 

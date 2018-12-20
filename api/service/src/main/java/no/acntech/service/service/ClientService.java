@@ -7,6 +7,8 @@ import no.acntech.service.repository.BoxRepository;
 import no.acntech.service.repository.GroupRepository;
 import no.acntech.service.repository.ProviderRepository;
 import no.acntech.service.repository.VersionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,7 +20,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ClientBoxService {
+public class ClientService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientService.class);
 
     private final ApplicationProperties applicationProperties;
     private final GroupRepository groupRepository;
@@ -27,12 +31,12 @@ public class ClientBoxService {
     private final ProviderRepository providerRepository;
     private final FileService fileService;
 
-    public ClientBoxService(final ApplicationProperties applicationProperties,
-                            final GroupRepository groupRepository,
-                            final BoxRepository boxRepository,
-                            final VersionRepository versionRepository,
-                            final ProviderRepository providerRepository,
-                            final FileService fileService) {
+    public ClientService(final ApplicationProperties applicationProperties,
+                         final GroupRepository groupRepository,
+                         final BoxRepository boxRepository,
+                         final VersionRepository versionRepository,
+                         final ProviderRepository providerRepository,
+                         final FileService fileService) {
         this.applicationProperties = applicationProperties;
         this.groupRepository = groupRepository;
         this.boxRepository = boxRepository;
@@ -41,7 +45,10 @@ public class ClientBoxService {
         this.fileService = fileService;
     }
 
-    public Optional<ClientBox> get(final String groupName, final String boxName, UriComponentsBuilder uriBuilder) {
+    public Optional<ClientBox> get(String groupName,
+                                   String boxName,
+                                   final UriComponentsBuilder uriBuilder) {
+        LOGGER.info("Getting client information about {}/{}", groupName, boxName);
         List<Group> groups = groupRepository.findByName(groupName);
 
         return groups.stream()
@@ -55,6 +62,7 @@ public class ClientBoxService {
                             String versionName,
                             String providerName,
                             String fileName) {
+        LOGGER.info("Getting client file information about {}/{}/{}/{}", groupName, boxName, versionName, providerName);
         ProviderType providerType = ProviderType.fromName(providerName);
 
         if (providerType == null) {
@@ -64,7 +72,9 @@ public class ClientBoxService {
         return fileService.loadFile(groupName, boxName, versionName, providerType, fileName);
     }
 
-    private ClientBox mapBox(final Group group, final String boxName, UriComponentsBuilder uriBuilder) {
+    private ClientBox mapBox(final Group group,
+                             String boxName,
+                             final UriComponentsBuilder uriBuilder) {
         List<Box> boxes = boxRepository.findByGroupIdAndName(group.getId(), boxName.toLowerCase());
 
         return boxes.stream()
@@ -74,7 +84,9 @@ public class ClientBoxService {
                 .orElse(null);
     }
 
-    private ClientBox mapBox(final Group group, final Box box, UriComponentsBuilder uriBuilder) {
+    private ClientBox mapBox(final Group group,
+                             final Box box,
+                             final UriComponentsBuilder uriBuilder) {
         List<Version> versions = versionRepository.findByBoxId(box.getId());
 
         List<ClientVersion> clientVersions = versions.stream()
@@ -88,7 +100,10 @@ public class ClientBoxService {
                 .build();
     }
 
-    private ClientVersion mapVersion(final Group group, final Box box, final Version version, UriComponentsBuilder uriBuilder) {
+    private ClientVersion mapVersion(final Group group,
+                                     final Box box,
+                                     final Version version,
+                                     final UriComponentsBuilder uriBuilder) {
         List<Provider> providers = providerRepository.findByVersionId(version.getId());
 
         List<ClientProvider> clientProviders = providers.stream()
@@ -107,7 +122,11 @@ public class ClientBoxService {
         return provider.getSize() != null && provider.getChecksumType() != null && provider.getChecksum() != null;
     }
 
-    private ClientProvider mapProvider(final Group group, final Box box, final Version version, final Provider provider, UriComponentsBuilder uriBuilder) {
+    private ClientProvider mapProvider(final Group group,
+                                       final Box box,
+                                       final Version version,
+                                       final Provider provider,
+                                       final UriComponentsBuilder uriBuilder) {
         return ClientProvider.builder()
                 .name(provider.getProviderType().getName())
                 .url(determineProviderUrl(group, box, version, provider, uriBuilder))
@@ -116,13 +135,18 @@ public class ClientBoxService {
                 .build();
     }
 
-    private String determineBoxNamespace(final Group group, final Box box) {
+    private String determineBoxNamespace(final Group group,
+                                         final Box box) {
         String groupName = group.getName().toLowerCase();
         String boxName = box.getName().toLowerCase();
         return groupName + "/" + boxName;
     }
 
-    private String determineProviderUrl(final Group group, final Box box, final Version version, final Provider provider, final UriComponentsBuilder uriBuilder) {
+    private String determineProviderUrl(final Group group,
+                                        final Box box,
+                                        final Version version,
+                                        final Provider provider,
+                                        final UriComponentsBuilder uriBuilder) {
         String contextPath = applicationProperties.getApi().getClientContextPath();
         String fileName = applicationProperties.getFile().getDefaultFileName();
         String groupName = group.getName().toLowerCase();
