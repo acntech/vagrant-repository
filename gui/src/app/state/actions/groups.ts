@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import {
     CreateGroup,
+    UpdateGroup,
     Group,
     CreateGroupActionType,
     CreateGroupErrorAction,
@@ -18,7 +19,11 @@ import {
     GetGroupActionType,
     GetGroupErrorAction,
     GetGroupLoadingAction,
-    GetGroupSuccessAction
+    GetGroupSuccessAction,
+    UpdateGroupActionType,
+    UpdateGroupErrorAction,
+    UpdateGroupLoadingAction,
+    UpdateGroupSuccessAction
 } from '../../models';
 import { showError, showSuccess } from '../actions';
 
@@ -37,6 +42,10 @@ const findGroupsError = (error: any): FindGroupsErrorAction => ({ type: FindGrou
 const getGroupLoading = (loading: boolean): GetGroupLoadingAction => ({ type: GetGroupActionType.LOADING, loading });
 const getGroupSuccess = (payload: Group): GetGroupSuccessAction => ({ type: GetGroupActionType.SUCCESS, payload });
 const getGroupError = (error: any): GetGroupErrorAction => ({ type: GetGroupActionType.ERROR, error });
+
+const updateGroupLoading = (loading: boolean): UpdateGroupLoadingAction => ({ type: UpdateGroupActionType.LOADING, loading });
+const updateGroupSuccess = (payload: Group): UpdateGroupSuccessAction => ({ type: UpdateGroupActionType.SUCCESS, payload });
+const updateGroupError = (error: any): UpdateGroupErrorAction => ({ type: UpdateGroupActionType.ERROR, error });
 
 const groupsRootPath = '/api/groups';
 
@@ -98,6 +107,23 @@ export function deleteGroup(groupId: number) {
                 const { message } = error.response.data;
                 dispatch(showError('Error deleting group', message));
                 return dispatch(deleteGroupError(error));
+            });
+    };
+}
+
+export function updateGroup(groupId: number, group: UpdateGroup) {
+    return (dispatch) => {
+        dispatch(updateGroupLoading(true));
+        const url = `${groupsRootPath}/${groupId}`;
+        return axios.put(url, group)
+            .then((response) => {
+                dispatch(showSuccess('Group updated successfully'));
+                return dispatch(updateGroupSuccess(response.data));
+            })
+            .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error updating group', message));
+                return dispatch(updateGroupError(error));
             });
     };
 }

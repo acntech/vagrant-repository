@@ -1,7 +1,7 @@
 package no.acntech.api.resource;
 
 import no.acntech.common.model.ClientBox;
-import no.acntech.service.service.ClientBoxService;
+import no.acntech.service.service.ClientService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,19 +16,19 @@ import java.util.Optional;
 
 @RequestMapping(path = "api/vagrant/boxes")
 @RestController
-public class ClientBoxResource {
+public class ClientResource {
 
-    private final ClientBoxService clientBoxService;
+    private final ClientService clientService;
 
-    public ClientBoxResource(final ClientBoxService clientBoxService) {
-        this.clientBoxService = clientBoxService;
+    public ClientResource(final ClientService clientService) {
+        this.clientService = clientService;
     }
 
     @GetMapping(path = "{groupName}/{boxName}")
     public ResponseEntity<ClientBox> get(@PathVariable(name = "groupName") String groupName,
                                          @PathVariable(name = "boxName") String boxName,
                                          final UriComponentsBuilder uriBuilder) {
-        Optional<ClientBox> clientBox = clientBoxService.get(groupName, boxName, uriBuilder);
+        Optional<ClientBox> clientBox = clientService.get(groupName, boxName, uriBuilder);
         return clientBox.map(ResponseEntity::ok).orElseGet(ResponseEntity.notFound()::build);
     }
 
@@ -38,7 +38,7 @@ public class ClientBoxResource {
                                             @PathVariable(name = "versionName") String versionName,
                                             @PathVariable(name = "providerName") String providerName,
                                             @PathVariable(name = "fileName") String fileName) {
-        Resource fileResource = clientBoxService.getFile(groupName, boxName, versionName, providerName, fileName);
+        Resource fileResource = clientService.getFile(groupName, boxName, versionName, providerName, fileName);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileResource.getFilename() + "\"")

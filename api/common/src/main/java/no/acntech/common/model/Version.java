@@ -85,15 +85,6 @@ public class Version {
             return this;
         }
 
-        public Builder from(Version version) {
-            if (version != null) {
-                this.name = version.name;
-                this.description = version.description;
-                this.box = version.box;
-            }
-            return this;
-        }
-
         public Version build() {
             Version version = new Version();
             version.description = this.description;

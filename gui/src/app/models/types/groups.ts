@@ -13,6 +13,11 @@ export interface CreateGroup {
     description?: string;
 }
 
+export interface UpdateGroup {
+    name: string;
+    description?: string;
+}
+
 export interface Group {
     id: number;
     name: string;

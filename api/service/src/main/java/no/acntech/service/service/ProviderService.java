@@ -3,6 +3,8 @@ package no.acntech.service.service;
 import no.acntech.common.model.*;
 import no.acntech.service.repository.ProviderRepository;
 import no.acntech.service.repository.VersionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +15,8 @@ import java.util.Optional;
 
 @Service
 public class ProviderService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProviderService.class);
 
     private final VersionRepository versionRepository;
     private final ProviderRepository providerRepository;
@@ -27,30 +31,30 @@ public class ProviderService {
     }
 
     public Optional<Provider> get(final Long providerId) {
+        LOGGER.info("Get provider with ID {}", providerId);
         return providerRepository.findById(providerId);
     }
 
     public List<Provider> find(final Long versionId, final ProviderType providerType) {
-        if (versionId == null) {
-            throw new IllegalArgumentException("Version ID is null");
+        if (providerType == null) {
+            LOGGER.info("Find providers by version-ID {}", versionId);
+            return providerRepository.findByVersionId(versionId);
         } else {
-            if (providerType == null) {
-                return providerRepository.findByVersionId(versionId);
-            } else {
-                return providerRepository.findByVersionIdAndProviderType(versionId, providerType);
-            }
+            LOGGER.info("Find providers by version-ID {} and name {}", versionId, providerType);
+            return providerRepository.findByVersionIdAndProviderType(versionId, providerType);
         }
     }
 
     @Transactional
-    public Provider create(final Long versionId, @Valid final Provider provider) {
+    public Provider create(final Long versionId, @Valid final CreateProvider createProvider) {
+        LOGGER.info("Create provider with type {} for version-ID {}", createProvider.getProviderType(), versionId);
         Optional<Version> versionOptional = versionRepository.findById(versionId);
 
         if (versionOptional.isPresent()) {
             Version version = versionOptional.get();
             List<Provider> providers = providerRepository.findByVersionId(version.getId());
             Provider saveProvider = Provider.builder()
-                    .from(provider)
+                    .providerType(createProvider.getProviderType())
                     .version(version)
                     .build();
 
@@ -68,6 +72,7 @@ public class ProviderService {
     @Transactional
     public Optional<Provider> update(final Long providerId,
                                      final MultipartFile file) {
+        LOGGER.info("Update provider with ID {}", providerId);
         Optional<Provider> providerOptional = providerRepository.findById(providerId);
 
         if (providerOptional.isPresent()) {
@@ -95,6 +100,7 @@ public class ProviderService {
 
     @Transactional
     public void delete(final Long providerId) {
+        LOGGER.info("Delete provider with ID {}", providerId);
         Optional<Provider> providerOptional = providerRepository.findById(providerId);
 
         if (providerOptional.isPresent()) {

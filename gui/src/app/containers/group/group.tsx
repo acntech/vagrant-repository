@@ -13,7 +13,7 @@ import {
 } from 'semantic-ui-react';
 import { Box, BoxState, Group, GroupState, RootState } from '../../models';
 import { deleteGroup, findGroups, findGroupBoxes } from '../../state/actions';
-import {ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader} from '../../components';
+import { ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -37,12 +37,14 @@ interface ComponentState {
     group?: Group;
     boxId?: number;
     createBox: boolean;
+    editGroup: boolean;
     deleteGroupConfirmed: boolean;
     openDeleteGroupConfirmModal: boolean;
 }
 
 const initialState: ComponentState = {
     createBox: false,
+    editGroup: false,
     deleteGroupConfirmed: false,
     openDeleteGroupConfirmModal: false
 };
@@ -80,6 +82,7 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
             boxId,
             group,
             createBox,
+            editGroup,
             deleteGroupConfirmed,
             openDeleteGroupConfirmModal
         } = this.state;
@@ -90,6 +93,8 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
             return <LoadingIndicator />;
         } else if (createBox) {
             return <Redirect to={`/group/${groupId}/create`} />;
+        } else if (editGroup) {
+            return <Redirect to={`/group/${groupId}/edit`} />;
         } else if (deleteGroupConfirmed) {
             return <Redirect to='/' />
         } else if (!group) {
@@ -106,6 +111,7 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
                 boxes={groupBoxes}
                 onTableRowClick={this.onTableRowClick}
                 onCreateBoxButtonClick={this.onCreateBoxButtonClick}
+                onEditGroupButtonClick={this.onEditGroupButtonClick}
                 openDeleteGroupConfirmModal={openDeleteGroupConfirmModal}
                 onDeleteGroupButtonClick={this.onDeleteGroupButtonClick}
                 onDeleteGroupModalClose={this.onDeleteGroupModalClose}
@@ -119,6 +125,10 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
 
     private onCreateBoxButtonClick = () => {
         this.setState({ createBox: true });
+    };
+
+    private onEditGroupButtonClick = () => {
+        this.setState({ editGroup: true });
     };
 
     private onDeleteGroupButtonClick = () => {
@@ -147,6 +157,7 @@ interface GroupFragmentProps {
     onTableRowClick: (boxId: number) => void;
     onCreateBoxButtonClick: () => void;
     openDeleteGroupConfirmModal: boolean;
+    onEditGroupButtonClick: () => void;
     onDeleteGroupButtonClick: () => void;
     onDeleteGroupModalClose: (event: React.MouseEvent<HTMLElement>, data: ModalProps) => void;
     onDeleteGroupModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
@@ -158,6 +169,7 @@ const GroupFragment: SFC<GroupFragmentProps> = (props) => {
         boxes,
         onTableRowClick,
         onCreateBoxButtonClick,
+        onEditGroupButtonClick,
         openDeleteGroupConfirmModal,
         onDeleteGroupButtonClick,
         onDeleteGroupModalClose,
@@ -182,6 +194,7 @@ const GroupFragment: SFC<GroupFragmentProps> = (props) => {
                 boxes={boxes}
                 onTableRowClick={onTableRowClick}
                 onCreateBoxButtonClick={onCreateBoxButtonClick}
+                onEditGroupButtonClick={onEditGroupButtonClick}
                 onDeleteGroupButtonClick={onDeleteGroupButtonClick} />
         </Container>
     );
@@ -191,6 +204,7 @@ interface BoxesFragmentProps {
     boxes: Box[];
     onTableRowClick: (boxId: number) => void;
     onCreateBoxButtonClick: () => void;
+    onEditGroupButtonClick: () => void;
     onDeleteGroupButtonClick: () => void;
 }
 
@@ -199,6 +213,7 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
         boxes,
         onTableRowClick,
         onCreateBoxButtonClick,
+        onEditGroupButtonClick,
         onDeleteGroupButtonClick
     } = props;
 
@@ -207,6 +222,11 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
             <Button.Group>
                 <Button primary size='tiny' onClick={onCreateBoxButtonClick}>
                     <Icon name='cube' />New Box
+                </Button>
+            </Button.Group>
+            <Button.Group>
+                <Button primary size='small' onClick={onEditGroupButtonClick}>
+                    <Icon name='pencil' />Edit Group
                 </Button>
             </Button.Group>
             <Button.Group>
