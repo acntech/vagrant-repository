@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 import {
-    CreateBox,
     Box,
+    ModifyBox,
     CreateBoxActionType,
     CreateBoxErrorAction,
     CreateBoxLoadingAction,
@@ -18,7 +18,11 @@ import {
     FindBoxesActionType,
     FindBoxesErrorAction,
     FindBoxesLoadingAction,
-    FindBoxesSuccessAction
+    FindBoxesSuccessAction,
+    UpdateBoxActionType,
+    UpdateBoxErrorAction,
+    UpdateBoxLoadingAction,
+    UpdateBoxSuccessAction
 } from '../../models';
 import { showError, showSuccess } from '../actions';
 
@@ -37,6 +41,10 @@ const createBoxError = (error: any): CreateBoxErrorAction => ({ type: CreateBoxA
 const deleteBoxLoading = (loading: boolean): DeleteBoxLoadingAction => ({ type: DeleteBoxActionType.LOADING, loading });
 const deleteBoxSuccess = (boxId: number): DeleteBoxSuccessAction => ({ type: DeleteBoxActionType.SUCCESS, boxId });
 const deleteBoxError = (error: any): DeleteBoxErrorAction => ({ type: DeleteBoxActionType.ERROR, error });
+
+const updateBoxLoading = (loading: boolean): UpdateBoxLoadingAction => ({ type: UpdateBoxActionType.LOADING, loading });
+const updateBoxSuccess = (payload: Box): UpdateBoxSuccessAction => ({ type: UpdateBoxActionType.SUCCESS, payload });
+const updateBoxError = (error: any): UpdateBoxErrorAction => ({ type: UpdateBoxActionType.ERROR, error });
 
 const boxesRootPath = '/api/boxes';
 const groupsRootPath = '/api/groups';
@@ -83,7 +91,7 @@ export function findGroupBoxes(groupId: number) {
     };
 }
 
-export function createGroupBox(groupId: number, box: CreateBox) {
+export function createGroupBox(groupId: number, box: ModifyBox) {
     return (dispatch) => {
         dispatch(createBoxLoading(true));
         const url = `${groupsRootPath}/${groupId}/boxes`;
@@ -113,6 +121,23 @@ export function deleteBox(boxId: number) {
                 const { message } = error.response.data;
                 dispatch(showError('Error deleting box', message));
                 return dispatch(deleteBoxError(error));
+            });
+    };
+}
+
+export function updateBox(boxId: number, box: ModifyBox) {
+    return (dispatch) => {
+        dispatch(updateBoxLoading(true));
+        const url = `${boxesRootPath}/${boxId}`;
+        return axios.put(url, box)
+            .then((response) => {
+                dispatch(showSuccess('Box updated successfully'));
+                return dispatch(updateBoxSuccess(response.data));
+            })
+            .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error update group', message));
+                return dispatch(updateBoxError(error));
             });
     };
 }

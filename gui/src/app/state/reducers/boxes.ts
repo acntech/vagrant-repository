@@ -10,6 +10,8 @@ import {
     GetBoxActionType,
     FindBoxesAction,
     FindBoxesActionType,
+    UpdateBoxAction,
+    UpdateBoxActionType,
     EntityType,
     ActionType
 } from '../../models';
@@ -33,6 +35,10 @@ export const reducer = (state: BoxState = initialBoxState, action: BoxAction): B
         case GetBoxActionType.SUCCESS:
         case GetBoxActionType.ERROR:
             return getBox(state, action);
+        case UpdateBoxActionType.LOADING:
+        case UpdateBoxActionType.SUCCESS:
+        case UpdateBoxActionType.ERROR:
+            return updateBox(state, action);
         default:
             return state;
     }
@@ -159,6 +165,40 @@ const getBox = (state: BoxState = initialBoxState, action: GetBoxAction): BoxSta
             const { boxes } = state;
             const { data } = action.error.response;
             const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.GET };
+            return { ...initialBoxState, boxes: boxes, error: error };
+        }
+
+        default: {
+            return state;
+        }
+    }
+};
+
+const updateBox = (state: BoxState = initialBoxState, action: UpdateBoxAction): BoxState => {
+    switch (action.type) {
+        case UpdateBoxActionType.LOADING: {
+            const { boxes } = state;
+            const { loading } = action;
+            return { ...initialBoxState, boxes: boxes, loading: loading };
+        }
+
+        case UpdateBoxActionType.SUCCESS: {
+            let { boxes } = state;
+            const { payload } = action;
+            let modified;
+
+            if (payload) {
+                boxes = replaceOrAppend(boxes, payload);
+                modified = { id: payload.id, entityType: EntityType.BOX, actionType: ActionType.UPDATE };
+            }
+
+            return { ...initialBoxState, boxes: boxes, modified: modified };
+        }
+
+        case UpdateBoxActionType.ERROR: {
+            const { boxes } = state;
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.BOX, actionType: ActionType.UPDATE };
             return { ...initialBoxState, boxes: boxes, error: error };
         }
 

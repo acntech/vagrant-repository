@@ -11,7 +11,7 @@ import {
     Version
 } from '../';
 
-export interface CreateProvider {
+export interface ModifyProvider {
     providerType: ProviderType;
 }
 

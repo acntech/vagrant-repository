@@ -14,7 +14,7 @@ import {
     Segment
 } from 'semantic-ui-react';
 
-import { CreateBox, BoxState, RootState, ActionType } from '../../models';
+import { ModifyBox, BoxState, RootState, ActionType } from '../../models';
 import { createGroupBox, findGroupBoxes } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
@@ -28,7 +28,7 @@ interface ComponentStateProps {
 
 interface ComponentDispatchProps {
     findGroupBoxes: (groupId: number) => Promise<any>;
-    createGroupBox: (groupId: number, box: CreateBox) => Promise<any>;
+    createGroupBox: (groupId: number, box: ModifyBox) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
@@ -210,7 +210,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
-    createGroupBox: (groupId: number, box: CreateBox) => dispatch(createGroupBox(groupId, box))
+    createGroupBox: (groupId: number, box: ModifyBox) => dispatch(createGroupBox(groupId, box))
 });
 
 const ConnectedCreateBoxContainer = connect(mapStateToProps, mapDispatchToProps)(CreateBoxContainer);

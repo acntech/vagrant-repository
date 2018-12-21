@@ -13,7 +13,7 @@ import {
     Segment
 } from 'semantic-ui-react';
 
-import { CreateVersion, VersionState, RootState, ActionType } from '../../models';
+import { ModifyVersion, VersionState, RootState, ActionType } from '../../models';
 import { createBoxVersion, findBoxVersions } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
@@ -27,7 +27,7 @@ interface ComponentStateProps {
 
 interface ComponentDispatchProps {
     findBoxVersions: (boxId: number) => Promise<any>;
-    createBoxVersion: (boxId: number, version: CreateVersion) => Promise<any>;
+    createBoxVersion: (boxId: number, version: ModifyVersion) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
@@ -212,7 +212,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId)),
-    createBoxVersion: (boxId: number, version: CreateVersion) => dispatch(createBoxVersion(boxId, version))
+    createBoxVersion: (boxId: number, version: ModifyVersion) => dispatch(createBoxVersion(boxId, version))
 });
 
 const ConnectedCreateVersionContainer = connect(mapStateToProps, mapDispatchToProps)(CreateVersionContainer);

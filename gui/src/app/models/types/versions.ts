@@ -9,7 +9,7 @@ import {
     Modified
 } from '../';
 
-export interface CreateVersion {
+export interface ModifyVersion {
     name: string;
     description?: string;
 }

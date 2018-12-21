@@ -1,21 +1,19 @@
 package no.acntech.api.resource;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-
+import no.acntech.common.model.Box;
+import no.acntech.common.model.ModifyBox;
 import no.acntech.common.model.ModifyVersion;
-import no.acntech.common.model.Provider;
+import no.acntech.common.model.Version;
+import no.acntech.service.service.BoxService;
+import no.acntech.service.service.VersionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import no.acntech.common.model.Box;
-import no.acntech.common.model.Version;
-import no.acntech.service.service.BoxService;
-import no.acntech.service.service.VersionService;
-
 import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 @RequestMapping(path = "api/boxes")
 @RestController
@@ -41,6 +39,13 @@ public class BoxResource {
     public ResponseEntity delete(@PathVariable(name = "id") final Long boxId) {
         boxService.delete(boxId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "{id}")
+    public ResponseEntity<Box> put(@PathVariable(name = "id") final Long boxId,
+                                   @Valid @RequestBody final ModifyBox modifyBox) {
+        Box box = boxService.update(boxId, modifyBox);
+        return ResponseEntity.ok(box);
     }
 
     @GetMapping(path = "{id}/versions")

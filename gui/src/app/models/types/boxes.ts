@@ -9,7 +9,7 @@ import {
     Modified
 } from '../';
 
-export interface CreateBox {
+export interface ModifyBox {
     name: string;
     description?: string;
 }
