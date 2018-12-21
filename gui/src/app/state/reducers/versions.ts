@@ -10,10 +10,12 @@ import {
     GetVersionActionType,
     FindVersionsAction,
     FindVersionsActionType,
+    UpdateVersionAction,
+    UpdateVersionActionType,
     EntityType,
     ActionType
 } from '../../models';
-import {initialVersionState} from '../store/initial-state';
+import { initialVersionState } from '../store/initial-state';
 
 export function reducer(state: VersionState = initialVersionState, action: VersionAction): VersionState {
     switch (action.type) {
@@ -33,6 +35,10 @@ export function reducer(state: VersionState = initialVersionState, action: Versi
         case GetVersionActionType.SUCCESS:
         case GetVersionActionType.ERROR:
             return getVersion(state, action);
+        case UpdateVersionActionType.LOADING:
+        case UpdateVersionActionType.SUCCESS:
+        case UpdateVersionActionType.ERROR:
+            return updateVersion(state, action);
         default:
             return state;
     }
@@ -157,6 +163,40 @@ const getVersion = (state: VersionState = initialVersionState, action: GetVersio
             const { versions } = state;
             const { data } = action.error.response;
             const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.GET };
+            return { ...initialVersionState, versions: versions, error: error };
+        }
+
+        default: {
+            return state;
+        }
+    }
+};
+
+const updateVersion = (state: VersionState = initialVersionState, action: UpdateVersionAction): VersionState => {
+    switch (action.type) {
+        case UpdateVersionActionType.LOADING: {
+            const { versions } = state;
+            const { loading } = action;
+            return { ...initialVersionState, versions: versions, loading: loading };
+        }
+
+        case UpdateVersionActionType.SUCCESS: {
+            let { versions } = state;
+            const { payload } = action;
+            let modified;
+
+            if (payload) {
+                versions = replaceOrAppend(versions, payload);
+                modified = { id: payload.id, entityType: EntityType.VERSION, actionType: ActionType.UPDATE };
+            }
+
+            return { ...initialVersionState, versions: versions, modified: modified };
+        }
+
+        case UpdateVersionActionType.ERROR: {
+            const { versions } = state;
+            const { data } = action.error.response;
+            const error = { ...data, entityType: EntityType.VERSION, actionType: ActionType.UPDATE };
             return { ...initialVersionState, versions: versions, error: error };
         }
 

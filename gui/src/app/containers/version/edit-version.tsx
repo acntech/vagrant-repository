@@ -14,7 +14,7 @@ import {
 } from 'semantic-ui-react';
 
 import { ModifyVersion, VersionState, RootState, ActionType } from '../../models';
-import { createBoxVersion, findBoxVersions } from '../../state/actions';
+import { findBoxVersions, updateVersion } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface RouteProps {
@@ -27,7 +27,7 @@ interface ComponentStateProps {
 
 interface ComponentDispatchProps {
     findBoxVersions: (boxId: number) => Promise<any>;
-    createBoxVersion: (boxId: number, version: ModifyVersion) => Promise<any>;
+    updateVersion: (versionId: number, version: ModifyVersion) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
@@ -40,11 +40,13 @@ interface FormData {
 }
 
 interface ComponentState {
+    versionFound: boolean;
     cancel: boolean;
     formData: FormData;
 }
 
 const initialState: ComponentState = {
+    versionFound: false,
     cancel: false,
     formData: {
         formError: false,
@@ -52,7 +54,7 @@ const initialState: ComponentState = {
     }
 };
 
-class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
+class EditVersionContainer extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
@@ -62,6 +64,26 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
     componentDidMount() {
         const { boxId } = this.props.match.params;
         this.props.findBoxVersions(boxId);
+    }
+
+    public componentDidUpdate() {
+        const { versionFound } = this.state;
+        if (!versionFound) {
+            const { versionId } = this.props.match.params;
+            const { versions } = this.props.versionState;
+            const version = versions.find((version) => version.id == versionId);
+            if (version) {
+                const { name, description } = version;
+                this.setState({
+                    versionFound: true,
+                    formData: {
+                        formError: false,
+                        formNameValue: name,
+                        formDescriptionValue: description
+                    }
+                });
+            }
+        }
     }
 
     public render(): ReactNode {
@@ -74,11 +96,11 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
-        } else if (modified && modified.actionType == ActionType.CREATE) {
+        } else if (modified && modified.actionType == ActionType.UPDATE) {
             const { id: versionId } = modified;
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />
         } else {
-            return <CreateVersionFragment
+            return <EditVersionFragment
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}
                 onFormInputChange={this.onFormInputChange}
@@ -88,7 +110,6 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
     }
 
     private onFormSubmit = () => {
-        const { boxId } = this.props.match.params;
         const { formData } = this.state;
         const { formNameValue, formDescriptionValue } = formData;
         if (!formNameValue || formNameValue.length < 1) {
@@ -108,10 +129,12 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
                 }
             })
         } else {
-            this.props.createBoxVersion(boxId, {
+            const { versionId } = this.props.match.params;
+            const version = {
                 name: formNameValue,
                 description: formDescriptionValue
-            });
+            };
+            this.props.updateVersion(versionId, version);
         }
     };
 
@@ -146,7 +169,7 @@ class CreateVersionContainer extends Component<ComponentProps, ComponentState> {
     }
 }
 
-interface CreateVersionFragmentProps {
+interface EditVersionFragmentProps {
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
@@ -154,7 +177,7 @@ interface CreateVersionFragmentProps {
     formData: FormData;
 }
 
-const CreateVersionFragment: SFC<CreateVersionFragmentProps> = (props) => {
+const EditVersionFragment: SFC<EditVersionFragmentProps> = (props) => {
     const {
         onCancelButtonClick,
         onFormSubmit,
@@ -172,7 +195,7 @@ const CreateVersionFragment: SFC<CreateVersionFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Create Version</SecondaryHeader>
+            <SecondaryHeader>Edit Version</SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>
@@ -194,7 +217,7 @@ const CreateVersionFragment: SFC<CreateVersionFragmentProps> = (props) => {
                     </Form.Group>
                     <Form.Group>
                         <Form.Button
-                            primary size='tiny'><Icon name='cube' />Create Version</Form.Button>
+                            primary size='tiny'><Icon name='cube' />Update Version</Form.Button>
                         <Button
                             secondary size='tiny'
                             onClick={onCancelButtonClick}><Icon name='cancel' />Cancel</Button>
@@ -212,9 +235,9 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId)),
-    createBoxVersion: (boxId: number, version: ModifyVersion) => dispatch(createBoxVersion(boxId, version))
+    updateVersion: (versionId: number, version: ModifyVersion) => dispatch(updateVersion(versionId, version))
 });
 
-const ConnectedCreateVersionContainer = connect(mapStateToProps, mapDispatchToProps)(CreateVersionContainer);
+const ConnectedEditVersionContainer = connect(mapStateToProps, mapDispatchToProps)(EditVersionContainer);
 
-export { ConnectedCreateVersionContainer as CreateVersionContainer };
+export { ConnectedEditVersionContainer as EditVersionContainer };
