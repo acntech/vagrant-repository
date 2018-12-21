@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { InjectedIntlProps } from 'react-intl';
 import {
     Button,
     Container,
@@ -13,30 +14,24 @@ import {
     Segment
 } from 'semantic-ui-react';
 
-import {
-    ModifyGroup,
-    GroupState,
-    RootState,
-    ActionType
-} from '../../models';
-import { getGroup, updateGroup } from '../../state/actions';
+import { ModifyBox, BoxState, RootState, ActionType } from '../../models';
+import { findGroupBoxes, updateBox } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
-import { NotFoundErrorContainer } from '..';
 
 interface RouteProps {
     match: any;
 }
 
 interface ComponentStateProps {
-    groupState: GroupState;
+    boxState: BoxState;
 }
 
 interface ComponentDispatchProps {
-    getGroup: (groupId: number) => Promise<any>;
-    updateGroup: (groupId: number, group: ModifyGroup) => Promise<any>;
+    findGroupBoxes: (groupId: number) => Promise<any>;
+    updateBox: (boxId: number, box: ModifyBox) => Promise<any>;
 }
 
-type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
+type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
 
 interface FormData {
     formError: boolean;
@@ -46,13 +41,13 @@ interface FormData {
 }
 
 interface ComponentState {
-    groupFound: boolean;
+    boxFound: boolean;
     cancel: boolean;
     formData: FormData;
 }
 
 const initialState: ComponentState = {
-    groupFound: false,
+    boxFound: false,
     cancel: false,
     formData: {
         formError: false,
@@ -60,28 +55,28 @@ const initialState: ComponentState = {
     }
 };
 
-class EditGroupContainer extends Component<ComponentProps, ComponentState> {
+class EditBoxContainer extends Component<ComponentProps, ComponentState> {
 
     constructor(props: ComponentProps) {
         super(props);
         this.state = initialState;
     }
 
-    public componentDidMount() {
+    componentDidMount() {
         const { groupId } = this.props.match.params;
-        this.props.getGroup(groupId);
+        this.props.findGroupBoxes(groupId);
     }
 
     public componentDidUpdate() {
-        const { groupFound } = this.state;
-        if (!groupFound) {
-            const { groupId } = this.props.match.params;
-            const { groups } = this.props.groupState;
-            const group = groups.find((group) => group.id == groupId);
-            if (group) {
-                const { name, description } = group;
+        const { boxFound } = this.state;
+        if (!boxFound) {
+            const { boxId } = this.props.match.params;
+            const { boxes } = this.props.boxState;
+            const box = boxes.find((box) => box.id == boxId);
+            if (box) {
+                const { name, description } = box;
                 this.setState({
-                    groupFound: true,
+                    boxFound: true,
                     formData: {
                         formError: false,
                         formNameValue: name,
@@ -94,25 +89,19 @@ class EditGroupContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId } = this.props.match.params;
-        const { groupFound, cancel, formData } = this.state;
-        const { groupState } = this.props;
-        const { loading, modified } = groupState;
+        const { cancel, formData } = this.state;
+        const { boxState } = this.props;
+        const { loading, modified } = boxState;
 
-        if (loading) {
-            return <LoadingIndicator />;
-        } else if (cancel) {
+        if (cancel) {
             return <Redirect to={`/group/${groupId}`} />;
+        } else if (loading) {
+            return <LoadingIndicator />;
         } else if (modified && modified.actionType == ActionType.UPDATE) {
-            const { id: modifiedGroupId } = modified;
-            return <Redirect to={`/group/${modifiedGroupId}`} />
-        } else if (!groupFound) {
-            return <NotFoundErrorContainer
-                header
-                icon='warning sign'
-                heading='No group found'
-                content={`Could not find group for ID ${groupId}`} />;
+            const { id: boxId } = modified;
+            return <Redirect to={`/group/${groupId}/box/${boxId}`} />
         } else {
-            return <EditGroupFragment
+            return <EditBoxFragment
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}
                 onFormInputChange={this.onFormInputChange}
@@ -129,7 +118,7 @@ class EditGroupContainer extends Component<ComponentProps, ComponentState> {
                 formData: {
                     ...formData,
                     formError: true,
-                    formErrorMessage: 'Group name must be at least 2 letters long'
+                    formErrorMessage: 'Box name must be at least 2 letters long'
                 }
             });
         } else if (/\s/.test(formNameValue)) {
@@ -137,16 +126,16 @@ class EditGroupContainer extends Component<ComponentProps, ComponentState> {
                 formData: {
                     ...formData,
                     formError: true,
-                    formErrorMessage: 'Group name cannot contain any spaces'
+                    formErrorMessage: 'Box name cannot contain any spaces'
                 }
             })
         } else {
-            const { groupId } = this.props.match.params;
-            const group = {
+            const { boxId } = this.props.match.params;
+            const box = {
                 name: formNameValue,
                 description: formDescriptionValue
             };
-            this.props.updateGroup(groupId, group);
+            this.props.updateBox(boxId, box);
         }
     };
 
@@ -181,7 +170,7 @@ class EditGroupContainer extends Component<ComponentProps, ComponentState> {
     }
 }
 
-interface EditGroupFragmentProps {
+interface EditBoxFragmentProps {
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
@@ -189,7 +178,7 @@ interface EditGroupFragmentProps {
     formData: FormData;
 }
 
-const EditGroupFragment: SFC<EditGroupFragmentProps> = (props) => {
+const EditBoxFragment: SFC<EditBoxFragmentProps> = (props) => {
     const {
         onCancelButtonClick,
         onFormSubmit,
@@ -207,29 +196,29 @@ const EditGroupFragment: SFC<EditGroupFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Edit Group</SecondaryHeader>
+            <SecondaryHeader>Edit Box</SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>
                         <Form.Input
                             error={formError}
                             width={10}
-                            label='Group Name'
-                            placeholder='Enter group name...'
+                            label='Box Name'
+                            placeholder='Enter box name...'
                             value={formNameValue}
                             onChange={onFormInputChange} />
                     </Form.Group>
                     <Form.Group>
                         <Form.TextArea
                             width={10}
-                            label='Group Description'
-                            placeholder='Enter group description...'
+                            label='Box Description'
+                            placeholder='Enter box description...'
                             value={formDescriptionValue}
                             onChange={onFormTextAreaChange} />
                     </Form.Group>
                     <Form.Group>
                         <Form.Button
-                            primary size='tiny'><Icon name='group' />Update Group</Form.Button>
+                            primary size='tiny'><Icon name='cube' />Update Box</Form.Button>
                         <Button
                             secondary size='tiny'
                             onClick={onCancelButtonClick}><Icon name='cancel' />Cancel</Button>
@@ -242,14 +231,14 @@ const EditGroupFragment: SFC<EditGroupFragmentProps> = (props) => {
 };
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
-    groupState: state.groupState
+    boxState: state.boxState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
-    getGroup: (groupId: number) => dispatch(getGroup(groupId)),
-    updateGroup: (groupId: number, group: ModifyGroup) => dispatch(updateGroup(groupId, group))
+    findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
+    updateBox: (boxId: number, box: ModifyBox) => dispatch(updateBox(boxId, box))
 });
 
-const ConnectedEditGroupContainer = connect(mapStateToProps, mapDispatchToProps)(EditGroupContainer);
+const ConnectedEditBoxContainer = connect(mapStateToProps, mapDispatchToProps)(EditBoxContainer);
 
-export { ConnectedEditGroupContainer as EditGroupContainer };
+export { ConnectedEditBoxContainer as EditBoxContainer };

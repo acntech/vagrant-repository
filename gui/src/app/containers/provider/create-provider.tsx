@@ -15,7 +15,7 @@ import {
 } from 'semantic-ui-react';
 
 import {
-    CreateProvider,
+    ModifyProvider,
     ProviderState,
     ProviderType,
     RootState,
@@ -34,7 +34,7 @@ interface ComponentStateProps {
 
 interface ComponentDispatchProps {
     findVersionProviders: (versionId: number) => Promise<any>;
-    createVersionProvider: (versionId: number, provider: CreateProvider) => Promise<any>;
+    createVersionProvider: (versionId: number, provider: ModifyProvider) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
@@ -166,7 +166,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     findVersionProviders: (versionId: number) => dispatch(findVersionProviders(versionId)),
-    createVersionProvider: (versionId: number, provider: CreateProvider) => dispatch(createVersionProvider(versionId, provider))
+    createVersionProvider: (versionId: number, provider: ModifyProvider) => dispatch(createVersionProvider(versionId, provider))
 });
 
 const ConnectedCreateProviderContainer = connect(mapStateToProps, mapDispatchToProps)(CreateProviderContainer);

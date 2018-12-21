@@ -10,13 +10,14 @@ import {
     CreateGroupContainer,
     CreateProviderContainer,
     CreateVersionContainer,
-    HomeContainer,
     BoxContainer,
     GroupContainer,
+    HomeContainer,
+    EditBoxContainer,
+    EditGroupContainer,
     PageNotFoundErrorContainer,
     ProviderContainer,
     VersionContainer,
-    EditGroupContainer,
     UpdateProviderContainer
 } from '../';
 
@@ -38,6 +39,7 @@ class RootContainer extends Component<ComponentProps> {
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/provider/:providerId?" exact component={ProviderContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/create" exact component={CreateProviderContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?" exact component={VersionContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?/edit" exact component={EditBoxContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/create" exact component={CreateVersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?" exact component={BoxContainer} />
                     <Route path="/group/:groupId?/edit" exact component={EditGroupContainer} />

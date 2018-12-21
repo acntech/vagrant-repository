@@ -25,7 +25,7 @@ import {
     findGroups,
     findGroupBoxes
 } from '../../state/actions';
-import {ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader} from '../../components';
+import { ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -52,12 +52,14 @@ interface ComponentState {
     box?: Box;
     versionId?: number;
     createVersion: boolean;
+    editBox: boolean;
     deleteBoxConfirmed: boolean;
     openDeleteBoxConfirmModal: boolean;
 }
 
 const initialState: ComponentState = {
     createVersion: false,
+    editBox: false,
     deleteBoxConfirmed: false,
     openDeleteBoxConfirmModal: false
 };
@@ -104,6 +106,7 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
             group,
             box,
             createVersion,
+            editBox,
             deleteBoxConfirmed,
             openDeleteBoxConfirmModal
         } = this.state;
@@ -116,6 +119,8 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
             return <LoadingIndicator />;
         } else if (createVersion) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/create`} />;
+        } else if (editBox) {
+            return <Redirect to={`/group/${groupId}/box/${boxId}/edit`} />;
         } else if (deleteBoxConfirmed) {
             return <Redirect to={`/group/${groupId}`} />
         } else if (!group) {
@@ -139,6 +144,7 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
                 versions={boxVersions}
                 onTableRowClick={this.onTableRowClick}
                 onCreateVersionButtonClick={this.onCreateVersionButtonClick}
+                onEditBoxButtonClick={this.onEditBoxButtonClick}
                 openDeleteBoxConfirmModal={openDeleteBoxConfirmModal}
                 onDeleteBoxButtonClick={this.onDeleteBoxButtonClick}
                 onDeleteBoxModalClose={this.onDeleteBoxModalClose}
@@ -152,6 +158,10 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
 
     private onCreateVersionButtonClick = () => {
         this.setState({ createVersion: true });
+    };
+
+    private onEditBoxButtonClick = () => {
+        this.setState({ editBox: true });
     };
 
     private onDeleteBoxButtonClick = () => {
@@ -180,6 +190,7 @@ interface BoxFragmentProps {
     versions: Version[];
     onTableRowClick: (versionId: number) => void;
     onCreateVersionButtonClick: () => void;
+    onEditBoxButtonClick: () => void;
     openDeleteBoxConfirmModal: boolean;
     onDeleteBoxButtonClick: () => void;
     onDeleteBoxModalClose: (event: React.MouseEvent<HTMLElement>, data: ModalProps) => void;
@@ -193,6 +204,7 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
         versions,
         onTableRowClick,
         onCreateVersionButtonClick,
+        onEditBoxButtonClick,
         openDeleteBoxConfirmModal,
         onDeleteBoxButtonClick,
         onDeleteBoxModalClose,
@@ -219,6 +231,7 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
                 versions={versions}
                 onTableRowClick={onTableRowClick}
                 onCreateVersionButtonClick={onCreateVersionButtonClick}
+                onEditBoxButtonClick={onEditBoxButtonClick}
                 onDeleteBoxButtonClick={onDeleteBoxButtonClick} />
         </Container>
     );
@@ -228,6 +241,7 @@ interface VersionsFragmentProps {
     versions: Version[];
     onTableRowClick: (versionId: number) => void;
     onCreateVersionButtonClick: () => void;
+    onEditBoxButtonClick: () => void;
     onDeleteBoxButtonClick: () => void;
 }
 
@@ -236,6 +250,7 @@ const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
         versions,
         onTableRowClick,
         onCreateVersionButtonClick,
+        onEditBoxButtonClick,
         onDeleteBoxButtonClick
     } = props;
 
@@ -244,6 +259,11 @@ const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
             <Button.Group>
                 <Button primary size='tiny' onClick={onCreateVersionButtonClick}>
                     <Icon name='tag' />New Version
+                </Button>
+            </Button.Group>
+            <Button.Group>
+                <Button primary size='small' onClick={onEditBoxButtonClick}>
+                    <Icon name='pencil' />Edit Box
                 </Button>
             </Button.Group>
             <Button.Group>
