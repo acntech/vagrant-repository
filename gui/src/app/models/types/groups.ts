@@ -8,12 +8,7 @@ import {
     Modified
 } from '../';
 
-export interface CreateGroup {
-    name: string;
-    description?: string;
-}
-
-export interface UpdateGroup {
+export interface ModifyGroup {
     name: string;
     description?: string;
 }

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,6 +105,24 @@ public class BoxService {
             fileService.deleteDirectory(
                     group.getName(),
                     box.getName());
+        } else {
+            throw new IllegalStateException("No box found for ID " + boxId);
+        }
+    }
+
+    @Transactional
+    public Box update(final Long boxId,
+                      @Valid final ModifyBox modifyBox) {
+        LOGGER.info("Update box with ID {}", boxId);
+        Optional<Box> boxOptional = boxRepository.findById(boxId);
+
+        if (boxOptional.isPresent()) {
+            String sanitizedName = modifyBox.getName().toLowerCase();
+            Box box = boxOptional.get();
+            box.setName(sanitizedName);
+            box.setDescription(modifyBox.getDescription());
+
+            return boxRepository.save(box);
         } else {
             throw new IllegalStateException("No box found for ID " + boxId);
         }

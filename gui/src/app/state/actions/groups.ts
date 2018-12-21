@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 import {
-    CreateGroup,
-    UpdateGroup,
+    ModifyGroup,
     Group,
     CreateGroupActionType,
     CreateGroupErrorAction,
@@ -49,7 +48,7 @@ const updateGroupError = (error: any): UpdateGroupErrorAction => ({ type: Update
 
 const groupsRootPath = '/api/groups';
 
-export function createGroup(group: CreateGroup) {
+export function createGroup(group: ModifyGroup) {
     return (dispatch) => {
         dispatch(createGroupLoading(true));
         const url = `${groupsRootPath}`;
@@ -111,7 +110,7 @@ export function deleteGroup(groupId: number) {
     };
 }
 
-export function updateGroup(groupId: number, group: UpdateGroup) {
+export function updateGroup(groupId: number, group: ModifyGroup) {
     return (dispatch) => {
         dispatch(updateGroupLoading(true));
         const url = `${groupsRootPath}/${groupId}`;

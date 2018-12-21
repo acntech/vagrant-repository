@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 import {
-    CreateProvider,
     Provider,
+    ModifyProvider,
     CreateProviderActionType,
     CreateProviderErrorAction,
     CreateProviderLoadingAction,
@@ -91,7 +91,7 @@ export function findVersionProviders(versionId: number) {
     };
 }
 
-export function createVersionProvider(versionId: number, provider: CreateProvider) {
+export function createVersionProvider(versionId: number, provider: ModifyProvider) {
     return (dispatch) => {
         dispatch(createProviderLoading(true));
         const url = `${versionsRootPath}/${versionId}/providers`;

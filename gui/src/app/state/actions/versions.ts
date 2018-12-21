@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 import {
-    CreateVersion,
     Version,
+    ModifyVersion,
     CreateVersionActionType,
     CreateVersionErrorAction,
     CreateVersionLoadingAction,
@@ -83,7 +83,7 @@ export function findBoxVersions(boxId: number) {
     };
 }
 
-export function createBoxVersion(boxId: number, version: CreateVersion) {
+export function createBoxVersion(boxId: number, version: ModifyVersion) {
     return (dispatch) => {
         dispatch(createVersionLoading(true));
         const url = `${boxesRootPath}/${boxId}/versions`;

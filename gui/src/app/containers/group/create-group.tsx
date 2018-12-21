@@ -13,7 +13,7 @@ import {
     Segment
 } from 'semantic-ui-react';
 
-import { CreateGroup, GroupState, RootState, ActionType } from '../../models';
+import { ModifyGroup, GroupState, RootState, ActionType } from '../../models';
 import { createGroup } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
@@ -22,7 +22,7 @@ interface ComponentStateProps {
 }
 
 interface ComponentDispatchProps {
-    createGroup: (createGroup: CreateGroup) => Promise<any>;
+    createGroup: (group: ModifyGroup) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps;
@@ -199,7 +199,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
-    createGroup: (group: CreateGroup) => dispatch(createGroup(group))
+    createGroup: (group: ModifyGroup) => dispatch(createGroup(group))
 });
 
 const ConnectedCreateGroupContainer = connect(mapStateToProps, mapDispatchToProps)(CreateGroupContainer);
