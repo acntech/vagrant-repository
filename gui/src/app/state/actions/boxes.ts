@@ -136,7 +136,7 @@ export function updateBox(boxId: number, box: ModifyBox) {
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error update group', message));
+                dispatch(showError('Error updating group', message));
                 return dispatch(updateBoxError(error));
             });
     };

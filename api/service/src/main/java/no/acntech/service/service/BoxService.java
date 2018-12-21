@@ -112,7 +112,7 @@ public class BoxService {
 
     @Transactional
     public Box update(final Long boxId,
-                      @Valid final ModifyBox modifyBox) {
+                      final ModifyBox modifyBox) {
         LOGGER.info("Update box with ID {}", boxId);
         Optional<Box> boxOptional = boxRepository.findById(boxId);
 

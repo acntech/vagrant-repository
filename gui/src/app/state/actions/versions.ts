@@ -19,6 +19,10 @@ import {
     FindVersionsErrorAction,
     FindVersionsLoadingAction,
     FindVersionsSuccessAction,
+    UpdateVersionActionType,
+    UpdateVersionErrorAction,
+    UpdateVersionLoadingAction,
+    UpdateVersionSuccessAction
 } from '../../models';
 import { showError, showSuccess } from '../actions';
 
@@ -37,6 +41,10 @@ const createVersionError = (error: any): CreateVersionErrorAction => ({ type: Cr
 const deleteVersionLoading = (loading: boolean): DeleteVersionLoadingAction => ({ type: DeleteVersionActionType.LOADING, loading });
 const deleteVersionSuccess = (versionId: number): DeleteVersionSuccessAction => ({ type: DeleteVersionActionType.SUCCESS, versionId });
 const deleteVersionError = (error: any): DeleteVersionErrorAction => ({ type: DeleteVersionActionType.ERROR, error });
+
+const updateVersionLoading = (loading: boolean): UpdateVersionLoadingAction => ({ type: UpdateVersionActionType.LOADING, loading });
+const updateVersionSuccess = (payload: Version): UpdateVersionSuccessAction => ({ type: UpdateVersionActionType.SUCCESS, payload });
+const updateVersionError = (error: any): UpdateVersionErrorAction => ({ type: UpdateVersionActionType.ERROR, error });
 
 const versionsRootPath = '/api/versions';
 const boxesRootPath = '/api/boxes';
@@ -113,6 +121,23 @@ export function deleteVersion(versionId: number) {
                 const { message } = error.response.data;
                 dispatch(showError('Error deleting version', message));
                 return dispatch(deleteVersionError(error));
+            });
+    };
+}
+
+export function updateVersion(versionId: number, version: ModifyVersion) {
+    return (dispatch) => {
+        dispatch(updateVersionLoading(true));
+        const url = `${versionsRootPath}/${versionId}`;
+        return axios.put(url, version)
+            .then((response) => {
+                dispatch(showSuccess('Version updated successfully'));
+                return dispatch(updateVersionSuccess(response.data));
+            })
+            .catch((error) => {
+                const { message } = error.response.data;
+                dispatch(showError('Error updating version', message));
+                return dispatch(updateVersionError(error));
             });
     };
 }

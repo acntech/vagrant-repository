@@ -15,6 +15,7 @@ import {
     HomeContainer,
     EditBoxContainer,
     EditGroupContainer,
+    EditVersionContainer,
     PageNotFoundErrorContainer,
     ProviderContainer,
     VersionContainer,
@@ -37,6 +38,7 @@ class RootContainer extends Component<ComponentProps> {
                 <Switch>
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/provider/:providerId?/update" exact component={UpdateProviderContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/provider/:providerId?" exact component={ProviderContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/edit" exact component={EditVersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/create" exact component={CreateProviderContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?" exact component={VersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/edit" exact component={EditBoxContainer} />

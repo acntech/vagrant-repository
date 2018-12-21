@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +49,7 @@ public class VersionService {
     }
 
     @Transactional
-    public Version create(final Long boxId, @Valid final ModifyVersion modifyVersion) {
+    public Version create(final Long boxId, final ModifyVersion modifyVersion) {
         String sanitizedName = modifyVersion.getName().toLowerCase();
         LOGGER.info("Create version with name {} for box-ID {}", sanitizedName, boxId);
         Optional<Box> boxOptional = boxRepository.findById(boxId);
@@ -95,6 +94,24 @@ public class VersionService {
                     group.getName(),
                     box.getName(),
                     version.getName());
+        } else {
+            throw new IllegalStateException("No version found for ID " + versionId);
+        }
+    }
+
+    @Transactional
+    public Version update(final Long versionId,
+                          final ModifyVersion modifyVersion) {
+        LOGGER.info("Update version with ID {}", versionId);
+        Optional<Version> versionOptional = versionRepository.findById(versionId);
+
+        if (versionOptional.isPresent()) {
+            String sanitizedName = modifyVersion.getName().toLowerCase();
+            Version version = versionOptional.get();
+            version.setName(sanitizedName);
+            version.setDescription(modifyVersion.getDescription());
+
+            return versionRepository.save(version);
         } else {
             throw new IllegalStateException("No version found for ID " + versionId);
         }

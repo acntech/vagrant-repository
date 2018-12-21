@@ -1,9 +1,6 @@
 package no.acntech.api.resource;
 
-import no.acntech.common.model.CreateProvider;
-import no.acntech.common.model.Provider;
-import no.acntech.common.model.ProviderType;
-import no.acntech.common.model.Version;
+import no.acntech.common.model.*;
 import no.acntech.service.service.ProviderService;
 import no.acntech.service.service.VersionService;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +36,13 @@ public class VersionResource {
     public ResponseEntity delete(@PathVariable(name = "id") final Long versionId) {
         versionService.delete(versionId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "{id}")
+    public ResponseEntity<Version> put(@PathVariable(name = "id") final Long versionId,
+                                       @Valid @RequestBody final ModifyVersion modifyVersion) {
+        Version version = versionService.update(versionId, modifyVersion);
+        return ResponseEntity.ok(version);
     }
 
     @GetMapping(path = "{id}/providers")

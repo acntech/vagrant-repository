@@ -65,12 +65,14 @@ interface ComponentState {
     version?: Version;
     providerId?: number;
     createProvider: boolean;
+    editVersion: boolean;
     openDeleteVersionConfirmModal: boolean;
     deleteVersionConfirmed: boolean;
 }
 
 const initialState: ComponentState = {
     createProvider: false,
+    editVersion: false,
     openDeleteVersionConfirmModal: false,
     deleteVersionConfirmed: false
 };
@@ -127,6 +129,7 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
             box,
             version,
             providerId,
+            editVersion,
             openDeleteVersionConfirmModal,
             deleteVersionConfirmed
         } = this.state;
@@ -139,6 +142,8 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
             return <LoadingIndicator />;
         } else if (createProvider) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/create`} />;
+        } else if (editVersion) {
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/edit`} />;
         } else if (deleteVersionConfirmed) {
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />
         } else if (!group) {
@@ -169,10 +174,11 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
                 providers={versionProviders}
                 onTableRowClick={this.onTableRowClick}
                 onCreateProviderButtonClick={this.onCreateProviderButtonClick}
+                onEditVersionButtonClick={this.onEditVersionButtonClick}
                 openDeleteVersionConfirmModal={openDeleteVersionConfirmModal}
                 onDeleteVersionButtonClick={this.onDeleteVersionButtonClick}
                 onDeleteVersionModalClose={this.onDeleteVersionModalClose}
-                onDeleteVersionModalCloseButtonClick={this.onDeleteVersionModalCloseButtonClick}/>;
+                onDeleteVersionModalCloseButtonClick={this.onDeleteVersionModalCloseButtonClick} />;
         }
     }
 
@@ -186,6 +192,10 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
 
     private onDeleteVersionButtonClick = () => {
         this.setState({ openDeleteVersionConfirmModal: true });
+    };
+
+    private onEditVersionButtonClick = () => {
+        this.setState({ editVersion: true });
     };
 
     private onDeleteVersionModalClose = () => {
@@ -212,6 +222,7 @@ interface VersionFragmentProps {
     onTableRowClick: (providerId: number) => void;
     onCreateProviderButtonClick: () => void;
     openDeleteVersionConfirmModal: boolean;
+    onEditVersionButtonClick: () => void;
     onDeleteVersionButtonClick: () => void;
     onDeleteVersionModalClose: (event: React.MouseEvent<HTMLElement>, data: ModalProps) => void;
     onDeleteVersionModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
@@ -225,6 +236,7 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
         providers,
         onTableRowClick,
         onCreateProviderButtonClick,
+        onEditVersionButtonClick,
         onDeleteVersionButtonClick,
         openDeleteVersionConfirmModal,
         onDeleteVersionModalClose,
@@ -253,7 +265,8 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
                 providers={providers}
                 onTableRowClick={onTableRowClick}
                 onCreateProviderButtonClick={onCreateProviderButtonClick}
-                onDeleteVersionButtonClick={onDeleteVersionButtonClick}/>
+                onDeleteVersionButtonClick={onDeleteVersionButtonClick}
+                onEditVersionButtonClick={onEditVersionButtonClick} />
         </Container>
     );
 };
@@ -263,16 +276,28 @@ interface ProvidersFragmentProps {
     onTableRowClick: (providerId: number) => void;
     onCreateProviderButtonClick: () => void;
     onDeleteVersionButtonClick: () => void;
+    onEditVersionButtonClick: () => void;
 }
 
 const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
-    const { providers, onTableRowClick, onCreateProviderButtonClick, onDeleteVersionButtonClick } = props;
+    const {
+        providers,
+        onTableRowClick,
+        onCreateProviderButtonClick,
+        onEditVersionButtonClick,
+        onDeleteVersionButtonClick
+    } = props;
 
     return (
         <Segment basic>
             <Button.Group>
                 <Button primary size='tiny' onClick={onCreateProviderButtonClick}>
                     <Icon name='file' />New Provider
+                </Button>
+            </Button.Group>
+            <Button.Group>
+                <Button primary size='small' onClick={onEditVersionButtonClick}>
+                    <Icon name='pencil' />Edit Version
                 </Button>
             </Button.Group>
             <Button.Group>
