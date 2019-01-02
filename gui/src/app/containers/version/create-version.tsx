@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 import { InjectedIntlProps } from 'react-intl';
 import {
     Button,
@@ -172,7 +173,10 @@ const CreateVersionFragment: SFC<CreateVersionFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Create Version</SecondaryHeader>
+            <SecondaryHeader>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <i>Create Version</i>
+            </SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

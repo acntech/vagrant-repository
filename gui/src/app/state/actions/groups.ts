@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import { globalConfig } from '../../core/config';
 import {
     ModifyGroup,
     Group,
@@ -25,6 +26,9 @@ import {
     UpdateGroupSuccessAction
 } from '../../models';
 import { showError, showSuccess } from '../actions';
+
+const { timeout: successTimeout } = globalConfig.notifications.success;
+const { timeout: errorTimeout } = globalConfig.notifications.error;
 
 const createGroupLoading = (loading: boolean): CreateGroupLoadingAction => ({ type: CreateGroupActionType.LOADING, loading });
 const createGroupSuccess = (payload: Group): CreateGroupSuccessAction => ({ type: CreateGroupActionType.SUCCESS, payload });
@@ -54,12 +58,14 @@ export function createGroup(group: ModifyGroup) {
         const url = `${groupsRootPath}`;
         return axios.post(url, group)
             .then((response) => {
-                dispatch(showSuccess('Group created successfully'));
+                const notification = { title: 'Group created successfully', timeout: successTimeout };
+                dispatch(showSuccess(notification));
                 return dispatch(createGroupSuccess(response.data));
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error creating group', message));
+                const notification = { title: 'Error creating group', content: message, timeout: errorTimeout };
+                dispatch(showError(notification));
                 return dispatch(createGroupError(error));
             });
     };
@@ -99,12 +105,14 @@ export function deleteGroup(groupId: number) {
         const url = `${groupsRootPath}/${groupId}`;
         return axios.delete(url)
             .then(() => {
-                dispatch(showSuccess('Group deleted successfully'));
+                const notification = { title: 'Group deleted successfully', timeout: successTimeout };
+                dispatch(showSuccess(notification));
                 return dispatch(deleteGroupSuccess(groupId));
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error deleting group', message));
+                const notification = { title: 'Error deleting group', content: message, timeout: errorTimeout };
+                dispatch(showError(notification));
                 return dispatch(deleteGroupError(error));
             });
     };
@@ -116,12 +124,14 @@ export function updateGroup(groupId: number, group: ModifyGroup) {
         const url = `${groupsRootPath}/${groupId}`;
         return axios.put(url, group)
             .then((response) => {
-                dispatch(showSuccess('Group updated successfully'));
+                const notification = { title: 'Group updated successfully', timeout: successTimeout };
+                dispatch(showSuccess(notification));
                 return dispatch(updateGroupSuccess(response.data));
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error updating group', message));
+                const notification = { title: 'Error updating group', content: message, timeout: errorTimeout };
+                dispatch(showError(notification));
                 return dispatch(updateGroupError(error));
             });
     };

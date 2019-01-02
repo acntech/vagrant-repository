@@ -11,9 +11,24 @@ import {
     Segment,
     Table
 } from 'semantic-ui-react';
-import { Box, BoxState, Group, GroupState, RootState } from '../../models';
-import { deleteGroup, findGroups, findGroupBoxes } from '../../state/actions';
-import { ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import {
+    Box,
+    BoxState,
+    Group,
+    GroupState,
+    RootState
+} from '../../models';
+import {
+    deleteGroup,
+    getGroup,
+    findGroupBoxes
+} from '../../state/actions';
+import {
+    ConfirmModal,
+    LoadingIndicator,
+    PrimaryHeader,
+    SecondaryHeader
+} from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -27,7 +42,7 @@ interface ComponentStateProps {
 
 interface ComponentDispatchProps {
     deleteGroup: (groupId: number) => Promise<any>;
-    findGroups: (name?: string) => Promise<any>;
+    getGroup: (groupId: number) => Promise<any>;
     findGroupBoxes: (groupId: number) => Promise<any>;
 }
 
@@ -58,26 +73,27 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
 
     componentDidMount() {
         const { groupId } = this.props.match.params;
-        this.props.findGroups();
-        this.props.findGroupBoxes(Number(groupId));
+        groupId && this.props.getGroup(groupId);
+        groupId && this.props.findGroupBoxes(groupId);
     }
 
     componentDidUpdate() {
         const { groupId } = this.props.match.params;
-        const { group } = this.state;
+        let { group } = this.state;
 
         if (!group) {
             const { groups } = this.props.groupState;
-            const currentGroup = groups.find((group) => group.id == groupId);
-            if (currentGroup) {
-                this.setState({ group: currentGroup });
+            group = groups.find((group) => group.id == groupId);
+            if (group) {
+                this.setState({ group: group });
             }
         }
     }
 
     public render(): ReactNode {
         const { groupId } = this.props.match.params;
-        const { boxes, loading } = this.props.boxState;
+        const { loading: groupLoading } = this.props.groupState;
+        const { boxes, loading: boxLoading } = this.props.boxState;
         const {
             boxId,
             group,
@@ -89,7 +105,7 @@ class GroupContainer extends Component<ComponentProps, ComponentState> {
 
         if (boxId) {
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />;
-        } else if (loading) {
+        } else if (groupLoading || boxLoading) {
             return <LoadingIndicator />;
         } else if (createBox) {
             return <Redirect to={`/group/${groupId}/create`} />;
@@ -270,7 +286,7 @@ const mapStateToProps = (state: RootState): ComponentStateProps => ({
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     deleteGroup: (groupId: number) => dispatch(deleteGroup(groupId)),
-    findGroups: (name?: string) => dispatch(findGroups(name)),
+    getGroup: (groupId: number) => dispatch(getGroup(groupId)),
     findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId))
 });
 

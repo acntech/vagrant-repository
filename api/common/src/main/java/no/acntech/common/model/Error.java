@@ -2,7 +2,7 @@ package no.acntech.common.model;
 
 import java.time.ZonedDateTime;
 
-public class ApiError {
+public class Error {
 
     private ZonedDateTime timestamp;
     private int status;
@@ -64,14 +64,14 @@ public class ApiError {
             return this;
         }
 
-        public ApiError build() {
-            ApiError apiError = new ApiError();
-            apiError.timestamp = ZonedDateTime.now();
-            apiError.error = this.error;
-            apiError.status = this.status;
-            apiError.message = this.message;
-            apiError.path = this.path;
-            return apiError;
+        public Error build() {
+            Error error = new Error();
+            error.timestamp = ZonedDateTime.now();
+            error.error = this.error;
+            error.status = this.status;
+            error.message = this.message;
+            error.path = this.path;
+            return error;
         }
     }
 }

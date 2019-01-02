@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 import { InjectedIntlProps } from 'react-intl';
 import {
     Button,
@@ -82,7 +83,7 @@ class CreateProviderContainer extends Component<ComponentProps, ComponentState> 
             return <LoadingIndicator />;
         } else if (modified && modified.actionType == ActionType.CREATE) {
             const { id: providerId } = modified;
-            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}/update`} />;
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}/edit`} />;
         } else {
             return <CreateBoxFragment
                 onCancelButtonClick={this.onCancelButtonClick}
@@ -134,7 +135,10 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Create Provider</SecondaryHeader>
+            <SecondaryHeader>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <i>Create Provider</i>
+            </SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

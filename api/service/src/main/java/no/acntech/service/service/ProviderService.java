@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProviderService {
@@ -46,15 +46,15 @@ public class ProviderService {
     }
 
     @Transactional
-    public Provider create(final Long versionId, @Valid final CreateProvider createProvider) {
-        LOGGER.info("Create provider with type {} for version-ID {}", createProvider.getProviderType(), versionId);
+    public Provider create(final Long versionId, final ModifyProvider modifyProvider) {
+        LOGGER.info("Create provider with type {} for version-ID {}", modifyProvider.getProviderType(), versionId);
         Optional<Version> versionOptional = versionRepository.findById(versionId);
 
         if (versionOptional.isPresent()) {
             Version version = versionOptional.get();
             List<Provider> providers = providerRepository.findByVersionId(version.getId());
             Provider saveProvider = Provider.builder()
-                    .providerType(createProvider.getProviderType())
+                    .providerType(modifyProvider.getProviderType())
                     .version(version)
                     .build();
 
@@ -70,8 +70,8 @@ public class ProviderService {
     }
 
     @Transactional
-    public Optional<Provider> update(final Long providerId,
-                                     final MultipartFile file) {
+    public Provider update(final Long providerId,
+                           final MultipartFile file) {
         LOGGER.info("Update provider with ID {}", providerId);
         Optional<Provider> providerOptional = providerRepository.findById(providerId);
 
@@ -92,7 +92,7 @@ public class ProviderService {
             provider.setChecksumType(providerFile.getChecksumType());
             provider.setChecksum(providerFile.getChecksum());
 
-            return Optional.of(providerRepository.save(provider));
+            return providerRepository.save(provider);
         } else {
             throw new IllegalStateException("No provider found for ID " + providerId);
         }
@@ -116,6 +116,29 @@ public class ProviderService {
                     box.getName(),
                     version.getName(),
                     provider.getProviderType());
+        } else {
+            throw new IllegalStateException("No provider found for ID " + providerId);
+        }
+    }
+
+    public List<ProviderFile> findFiles(final Long providerId) {
+        LOGGER.info("Get provider with ID {}", providerId);
+        Optional<Provider> providerOptional = providerRepository.findById(providerId);
+
+        if (providerOptional.isPresent()) {
+            Provider provider = providerOptional.get();
+            Version version = provider.getVersion();
+            Box box = version.getBox();
+            Group group = box.getGroup();
+
+            List<ProviderFile> providerFiles = fileService.findDirectoryFiles(
+                    group.getName(),
+                    box.getName(),
+                    version.getName(),
+                    provider.getProviderType());
+            return providerFiles.stream()
+                    .peek(providerFile -> providerFile.setProviderId(providerId))
+                    .collect(Collectors.toList());
         } else {
             throw new IllegalStateException("No provider found for ID " + providerId);
         }

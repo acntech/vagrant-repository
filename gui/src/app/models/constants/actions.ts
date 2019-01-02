@@ -123,3 +123,9 @@ export enum UpdateProviderActionType {
     SUCCESS = '[providers] UPDATE SUCCESS',
     ERROR = '[providers] UPDATE ERROR'
 }
+
+export enum FindFilesActionType {
+    LOADING = '[files] FIND LOADING',
+    SUCCESS = '[files] FIND SUCCESS',
+    ERROR = '[files] FIND ERROR'
+}

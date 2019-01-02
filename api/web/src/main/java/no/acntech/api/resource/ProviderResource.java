@@ -1,11 +1,13 @@
 package no.acntech.api.resource;
 
 import no.acntech.common.model.Provider;
+import no.acntech.common.model.ProviderFile;
 import no.acntech.service.service.ProviderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequestMapping(path = "api/providers")
@@ -26,16 +28,21 @@ public class ProviderResource {
     }
 
     @PostMapping(path = "{id}")
-    public ResponseEntity<Provider> postFile(@PathVariable(name = "id") final Long providerId,
-                                             @RequestParam("file") final MultipartFile file) {
-        Optional<Provider> provider = providerService.update(providerId, file);
-        return provider.map(ResponseEntity.ok()::body)
-                .orElseGet(ResponseEntity.noContent()::build);
+    public ResponseEntity<Provider> post(@PathVariable(name = "id") final Long providerId,
+                                         @RequestParam("file") final MultipartFile file) {
+        Provider provider = providerService.update(providerId, file);
+        return ResponseEntity.ok(provider);
     }
 
     @DeleteMapping(path = "{id}")
     public ResponseEntity delete(@PathVariable(name = "id") final Long providerId) {
         providerService.delete(providerId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(path = "{id}/files")
+    public ResponseEntity<List<ProviderFile>> getFiles(@PathVariable(name = "id") final Long providerId) {
+        List<ProviderFile> providerFiles = providerService.findFiles(providerId);
+        return ResponseEntity.ok(providerFiles);
     }
 }

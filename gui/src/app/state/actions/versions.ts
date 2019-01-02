@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import { globalConfig } from '../../core/config';
 import {
     Version,
     ModifyVersion,
@@ -25,6 +26,9 @@ import {
     UpdateVersionSuccessAction
 } from '../../models';
 import { showError, showSuccess } from '../actions';
+
+const { timeout: successTimeout } = globalConfig.notifications.success;
+const { timeout: errorTimeout } = globalConfig.notifications.error;
 
 const getVersionLoading = (loading: boolean): GetVersionLoadingAction => ({ type: GetVersionActionType.LOADING, loading });
 const getVersionSuccess = (payload: Version): GetVersionSuccessAction => ({ type: GetVersionActionType.SUCCESS, payload });
@@ -97,12 +101,14 @@ export function createBoxVersion(boxId: number, version: ModifyVersion) {
         const url = `${boxesRootPath}/${boxId}/versions`;
         return axios.post(url, version)
             .then((response) => {
-                dispatch(showSuccess('Version created successfully'));
+                const notification = { title: 'Version created successfully', timeout: successTimeout };
+                dispatch(showSuccess(notification));
                 return dispatch(createVersionSuccess(response.data));
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error creating version', message));
+                const notification = { title: 'Error creating version', content: message, timeout: errorTimeout };
+                dispatch(showError(notification));
                 return dispatch(createVersionError(error));
             });
     };
@@ -114,12 +120,14 @@ export function deleteVersion(versionId: number) {
         const url = `${versionsRootPath}/${versionId}`;
         return axios.delete(url)
             .then(() => {
-                dispatch(showSuccess('Version deleted successfully'));
+                const notification = { title: 'Version deleted successfully', timeout: successTimeout };
+                dispatch(showSuccess(notification));
                 return dispatch(deleteVersionSuccess(versionId));
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error deleting version', message));
+                const notification = { title: 'Error deleting version', content: message, timeout: errorTimeout };
+                dispatch(showError(notification));
                 return dispatch(deleteVersionError(error));
             });
     };
@@ -131,12 +139,14 @@ export function updateVersion(versionId: number, version: ModifyVersion) {
         const url = `${versionsRootPath}/${versionId}`;
         return axios.put(url, version)
             .then((response) => {
-                dispatch(showSuccess('Version updated successfully'));
+                const notification = { title: 'Version updated successfully', timeout: successTimeout };
+                dispatch(showSuccess(notification));
                 return dispatch(updateVersionSuccess(response.data));
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error updating version', message));
+                const notification = { title: 'Error updating version', content: message, timeout: errorTimeout };
+                dispatch(showError(notification));
                 return dispatch(updateVersionError(error));
             });
     };

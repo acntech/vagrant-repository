@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 import {
     Button,
     Container,
@@ -160,7 +161,10 @@ const CreateGroupFragment: SFC<CreateGroupFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Create Group</SecondaryHeader>
+            <SecondaryHeader>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <i>Create Group</i>
+            </SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

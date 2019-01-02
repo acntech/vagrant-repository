@@ -15,11 +15,11 @@ import {
     HomeContainer,
     EditBoxContainer,
     EditGroupContainer,
+    EditProviderContainer,
     EditVersionContainer,
     PageNotFoundErrorContainer,
     ProviderContainer,
-    VersionContainer,
-    UpdateProviderContainer
+    VersionContainer
 } from '../';
 
 interface ComponentStateProps {
@@ -36,7 +36,7 @@ class RootContainer extends Component<ComponentProps> {
         return (
             <BrowserRouter>
                 <Switch>
-                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/provider/:providerId?/update" exact component={UpdateProviderContainer} />
+                    <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/provider/:providerId?/edit" exact component={EditProviderContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/provider/:providerId?" exact component={ProviderContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/edit" exact component={EditVersionContainer} />
                     <Route path="/group/:groupId?/box/:boxId?/version/:versionId?/create" exact component={CreateProviderContainer} />

@@ -11,8 +11,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
 @Service
@@ -75,25 +78,6 @@ public class FileService {
         return fileHandler.readFile(filePath, fileName);
     }
 
-    public void deleteFile(String groupName,
-                           String boxName,
-                           String versionName,
-                           ProviderType providerType) {
-        String fileName = applicationProperties.getFile().getDefaultFileName();
-
-        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
-                .resolve(groupName)
-                .resolve(boxName)
-                .resolve(versionName)
-                .resolve(providerType.getName())
-                .toAbsolutePath()
-                .normalize();
-
-        LOGGER.info("Deleting file {} from path {}", fileName, filePath);
-
-        fileHandler.deleteFile(filePath, fileName);
-    }
-
     public void deleteDirectory(String groupName) {
 
         Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
@@ -152,5 +136,32 @@ public class FileService {
         LOGGER.info("Deleting directory from path {}", filePath);
 
         fileHandler.deleteDirectory(filePath);
+    }
+
+    public List<ProviderFile> findDirectoryFiles(String groupName,
+                                                 String boxName,
+                                                 String versionName,
+                                                 ProviderType providerType) {
+
+        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
+                .resolve(groupName)
+                .resolve(boxName)
+                .resolve(versionName)
+                .resolve(providerType.getName())
+                .toAbsolutePath()
+                .normalize();
+
+        LOGGER.info("Find directory files from path {}", filePath);
+
+        List<File> files = fileHandler.listFiles(filePath);
+
+        return files.stream()
+                .filter(File::isFile)
+                .map(file -> ProviderFile.builder()
+                        .providerType(providerType)
+                        .fileName(file.getName())
+                        .fileSize(file.length())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

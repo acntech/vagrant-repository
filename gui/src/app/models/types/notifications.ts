@@ -5,6 +5,7 @@ export interface ShowNotification {
     severity: 'info' | 'warning' | 'error' | 'success';
     title: string;
     content?: string | ReactNode;
+    timeout?: number;
 }
 
 export interface Notification {
@@ -12,6 +13,7 @@ export interface Notification {
     uuid: string;
     title: string;
     content?: string | ReactNode;
+    timeout?: number;
 }
 
 export interface NotificationState {

@@ -2,10 +2,24 @@ package no.acntech.common.model;
 
 public class ProviderFile {
 
+    private Long providerId;
+    private ProviderType providerType;
     private String fileName;
-    private long fileSize;
+    private Long fileSize;
     private ChecksumType checksumType;
     private String checksum;
+
+    public Long getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(Long providerId) {
+        this.providerId = providerId;
+    }
+
+    public ProviderType getProviderType() {
+        return providerType;
+    }
 
     public String getFileName() {
         return fileName;
@@ -28,12 +42,19 @@ public class ProviderFile {
     }
 
     public static final class Builder {
+
+        private ProviderType providerType;
         private String fileName;
-        private long fileSize;
+        private Long fileSize;
         private ChecksumType checksumType;
         private String checksum;
 
         private Builder() {
+        }
+
+        public Builder providerType(ProviderType providerType) {
+            this.providerType = providerType;
+            return this;
         }
 
         public Builder fileName(String fileName) {
@@ -41,7 +62,7 @@ public class ProviderFile {
             return this;
         }
 
-        public Builder fileSize(long fileSize) {
+        public Builder fileSize(Long fileSize) {
             this.fileSize = fileSize;
             return this;
         }
@@ -58,6 +79,7 @@ public class ProviderFile {
 
         public ProviderFile build() {
             ProviderFile providerFile = new ProviderFile();
+            providerFile.providerType = this.providerType;
             providerFile.fileName = this.fileName;
             providerFile.checksumType = this.checksumType;
             providerFile.fileSize = this.fileSize;

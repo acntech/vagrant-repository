@@ -3,43 +3,9 @@ import { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Header, Segment, Message } from 'semantic-ui-react'
 
+import { globalConfig } from '../../core/config';
 import { Notification, NotificationState, RootState } from '../../models';
 import { clearNotifications, dismissNotification } from '../../state/actions';
-
-const notificationDetails = {
-    info: {
-        icon: 'info circle',
-        info: true,
-        warning: false,
-        error: false,
-        success: false,
-        timeout: 5000
-    },
-    warning: {
-        icon: 'warning circle',
-        info: false,
-        warning: true,
-        error: false,
-        success: false,
-        timeout: 2000
-    },
-    error: {
-        icon: 'ban',
-        info: false,
-        warning: false,
-        error: true,
-        success: false,
-        timeout: 5000
-    },
-    success: {
-        icon: 'check circle',
-        info: false,
-        warning: false,
-        error: false,
-        success: true,
-        timeout: 2000
-    }
-};
 
 interface ComponentStateProps {
     notificationState: NotificationState;
@@ -59,6 +25,10 @@ interface ComponentFieldProps {
 type ComponentProps = ComponentFieldProps & ComponentDispatchProps & ComponentStateProps;
 
 class SecondaryHeaderComponent extends Component<ComponentProps> {
+
+    componentWillUnmount() {
+        this.props.clearNotifications();
+    }
 
     public render(): ReactNode {
         const { title, subtitle, children } = this.props;
@@ -106,17 +76,18 @@ const MessagesFragment: React.SFC<MessagesFragmentProps> = (props) => {
         return (
             <Segment basic className="secondary-header">
                 {notifications.map((notification, index) => {
-                    const { uuid, severity, title, content } = notification;
+                    const { uuid, severity, title, content, timeout } = notification;
                     const {
                         icon,
                         info,
                         warning,
                         error,
-                        success,
-                        timeout
-                    } = notificationDetails[severity];
+                        success
+                    } = globalConfig.notifications[severity];
 
-                    window.setTimeout(() => onDismissMessage(uuid), timeout);
+                    if (timeout) {
+                        window.setTimeout(() => onDismissMessage(uuid), timeout);
+                    }
 
                     return <Message
                         key={index}

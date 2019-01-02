@@ -16,6 +16,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class FileHandler {
@@ -62,6 +64,20 @@ public class FileHandler {
             return new UrlResource(filePath.toUri());
         } catch (MalformedURLException e) {
             throw new FileStorageException("File does not exist", e);
+        }
+    }
+
+    public List<File> listFiles(Path directory) {
+        if (!Files.exists(directory)) {
+            throw new FileStorageException("Directory does not exist");
+        }
+
+        try {
+            return Files.walk(directory)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new FileStorageException("Could not list files in file directory", e);
         }
     }
 

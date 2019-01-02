@@ -1,6 +1,7 @@
 import { IntlState } from 'react-intl-redux';
 import {
     BoxState,
+    FileState,
     GroupState,
     NotificationState,
     ProviderState,
@@ -14,6 +15,7 @@ export interface RootState {
     boxState: BoxState;
     versionState: VersionState;
     providerState: ProviderState;
+    fileState: FileState;
 }
 
 export interface Error {
@@ -45,4 +47,11 @@ export enum ActionType {
     CREATE = 'create',
     UPDATE = 'update',
     DELETE = 'delete'
+}
+
+export interface NamedFormData {
+    formError: boolean;
+    formErrorMessage?: string;
+    formNameValue: string;
+    formDescriptionValue?: string;
 }

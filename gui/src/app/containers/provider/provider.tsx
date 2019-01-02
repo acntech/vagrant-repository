@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 import { InjectedIntlProps } from 'react-intl';
 import {
     Button,
@@ -15,53 +16,42 @@ import {
 
 import { formatBytes } from '../../core/utils';
 import {
-    Box,
-    BoxState,
-    Group,
-    GroupState,
     Provider,
     ProviderState,
     ProviderType,
-    Version,
-    VersionState,
     RootState
 } from '../../models';
-import { deleteProvider, getBox, getGroup, getProvider, getVersion } from '../../state/actions';
+import {
+    deleteProvider,
+    getProvider,
+} from '../../state/actions';
 import { ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
-import { Link } from 'react-router-dom';
-import { NotFoundErrorContainer } from '../error';
+import { NotFoundErrorContainer } from '..';
 
 interface RouteProps {
     match: any;
 }
 
 interface ComponentStateProps {
-    groupState: GroupState;
-    boxState: BoxState;
-    versionState: VersionState;
     providerState: ProviderState;
 }
 
 interface ComponentDispatchProps {
     deleteProvider: (providerId: number) => Promise<any>;
-    getGroup: (groupId: number) => Promise<any>;
-    getBox: (boxId: number) => Promise<any>;
-    getVersion: (versionId: number) => Promise<any>;
     getProvider: (providerId: number) => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
 
 interface ComponentState {
-    group?: Group;
-    box?: Box;
-    version?: Version;
     provider?: Provider;
+    editProvider: boolean;
     openDeleteProviderConfirmModal: boolean;
     deleteProviderConfirmed: boolean;
 }
 
 const initialState: ComponentState = {
+    editProvider: false,
     openDeleteProviderConfirmModal: false,
     deleteProviderConfirmed: false
 };
@@ -74,40 +64,13 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
     }
 
     componentDidMount() {
-        const { groupId, boxId, versionId, providerId } = this.props.match.params;
-        groupId && this.props.getGroup(groupId);
-        boxId && this.props.getBox(boxId);
-        versionId && this.props.getVersion(versionId);
+        const { providerId } = this.props.match.params;
         providerId && this.props.getProvider(providerId);
     }
 
     componentDidUpdate() {
-        const { groupId, boxId, versionId, providerId } = this.props.match.params;
-        let { group, box, version, provider } = this.state;
-
-        if (!group) {
-            const { groups } = this.props.groupState;
-            group = groups.find(g => g.id == groupId);
-            if (group) {
-                this.setState({ group: group });
-            }
-        }
-
-        if (!box) {
-            const { boxes } = this.props.boxState;
-            box = boxes.find(b => b.id == boxId);
-            if (box) {
-                this.setState({ box: box });
-            }
-        }
-
-        if (!version) {
-            const { versions } = this.props.versionState;
-            version = versions.find(v => v.id == versionId);
-            if (version) {
-                this.setState({ version: version });
-            }
-        }
+        const { providerId } = this.props.match.params;
+        let { provider } = this.state;
 
         if (!provider) {
             const { providers } = this.props.providerState;
@@ -120,35 +83,20 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId, boxId, versionId, providerId } = this.props.match.params;
-        const { group, box, version, provider, openDeleteProviderConfirmModal, deleteProviderConfirmed } = this.state;
-        const { groupState, boxState, versionState, providerState } = this.props;
-        const { loading: groupLoading } = groupState;
-        const { loading: boxLoading } = boxState;
-        const { loading: versionLoading } = versionState;
-        const { loading: providerLoading, modified } = providerState;
+        const {
+            provider,
+            editProvider,
+            openDeleteProviderConfirmModal,
+            deleteProviderConfirmed
+        } = this.state;
+        const { loading, modified } = this.props.providerState;
 
-        if (groupLoading || boxLoading || versionLoading || providerLoading) {
+        if (loading) {
             return <LoadingIndicator />;
         } else if (modified || deleteProviderConfirmed) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />
-        } else if (!group) {
-            return <NotFoundErrorContainer
-                header
-                icon='warning sign'
-                heading='No group found'
-                content={`Could not find group for ID ${groupId}`} />;
-        } else if (!box) {
-            return <NotFoundErrorContainer
-                header
-                icon='warning sign'
-                heading='No box found'
-                content={`Could not find box for ID ${boxId}`} />;
-        } else if (!version) {
-            return <NotFoundErrorContainer
-                header
-                icon='warning sign'
-                heading='No version found'
-                content={`Could not find version for ID ${versionId}`} />;
+        } else if (editProvider) {
+            return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}/edit`} />
         } else if (!provider) {
             return <NotFoundErrorContainer
                 header
@@ -156,16 +104,18 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
                 heading='No provider found'
                 content={`Could not find provider for ID ${providerId}`} />;
         } else {
-            return <ViewProviderFragment
-                group={group}
-                box={box}
-                version={version}
+            return <ProviderFragment
                 provider={provider}
-                openDeleteProviderConfirmModal={openDeleteProviderConfirmModal}
+                onEditProviderButtonClick={this.onEditProviderButtonClick}
                 onDeleteProviderButtonClick={this.onDeleteProviderButtonClick}
+                openDeleteProviderConfirmModal={openDeleteProviderConfirmModal}
                 onDeleteProviderModalClose={this.onDeleteProviderModalClose}
                 onDeleteProviderModalCloseButtonClick={this.onDeleteProviderModalCloseButtonClick} />
         }
+    };
+
+    private onEditProviderButtonClick = () => {
+        this.setState({ editProvider: true });
     };
 
     private onDeleteProviderButtonClick = () => {
@@ -183,36 +133,33 @@ class ProviderContainer extends Component<ComponentProps, ComponentState> {
             this.props.deleteProvider(providerId);
             this.setState({ openDeleteProviderConfirmModal: false, deleteProviderConfirmed: true });
         } else {
-            this.setState({openDeleteProviderConfirmModal: false});
+            this.setState({ openDeleteProviderConfirmModal: false });
         }
     };
 }
 
-interface ViewProviderFragmentProps {
-    group: Group;
-    box: Box;
-    version: Version;
+interface ProviderFragmentProps {
     provider: Provider;
-    openDeleteProviderConfirmModal: boolean;
+    onEditProviderButtonClick: () => void;
     onDeleteProviderButtonClick: () => void;
+    openDeleteProviderConfirmModal: boolean;
     onDeleteProviderModalClose: (event: React.MouseEvent<HTMLElement>, data: ModalProps) => void;
     onDeleteProviderModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
-const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
+const ProviderFragment: SFC<ProviderFragmentProps> = (props) => {
     const {
-        group,
-        box,
-        version,
         provider,
-        openDeleteProviderConfirmModal,
+        onEditProviderButtonClick,
         onDeleteProviderButtonClick,
+        openDeleteProviderConfirmModal,
         onDeleteProviderModalClose,
         onDeleteProviderModalCloseButtonClick
     } = props;
+    const { version } = provider;
+    const { id: versionId, name: versionName, box } = version;
+    const { id: boxId, name: boxName, group } = box;
     const { id: groupId, name: groupName } = group;
-    const { id: boxId, name: boxName } = box;
-    const { id: versionId, name: versionName } = version;
     const { id: providerId, providerType, size, checksumType, checksum } = provider;
     const formattedBytes = formatBytes(size, 0);
     const formattedChecksum = checksum ? `${checksumType}: ${checksum}` : undefined;
@@ -234,6 +181,11 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
                 <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`}>{ProviderType[providerType]}</Link>
             </SecondaryHeader>
             <Segment basic>
+                <Button.Group>
+                    <Button primary size='small' onClick={onEditProviderButtonClick}>
+                        <Icon name='pencil' />Edit Provider
+                    </Button>
+                </Button.Group>
                 <Button.Group>
                     <Button primary size='small' onClick={onDeleteProviderButtonClick}>
                         <Icon name='delete' />Delete Provider
@@ -261,17 +213,11 @@ const ViewProviderFragment: SFC<ViewProviderFragmentProps> = (props) => {
 };
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
-    groupState: state.groupState,
-    boxState: state.boxState,
-    versionState: state.versionState,
-    providerState: state.providerState
+    providerState: state.providerState,
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     deleteProvider: (providerId: number) => dispatch(deleteProvider(providerId)),
-    getGroup: (groupId: number) => dispatch(getGroup(groupId)),
-    getBox: (boxId: number) => dispatch(getBox(boxId)),
-    getVersion: (versionId: number) => dispatch(getVersion(versionId)),
     getProvider: (providerId: number) => dispatch(getProvider(providerId))
 });
 

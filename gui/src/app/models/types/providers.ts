@@ -18,6 +18,7 @@ export interface ModifyProvider {
 export interface Provider {
     id: number;
     providerType: ProviderType;
+    fileName: string;
     size: number;
     checksumType: ChecksumType;
     checksum: string;

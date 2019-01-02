@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 import { InjectedIntlProps } from 'react-intl';
 import {
     Button,
@@ -14,7 +15,13 @@ import {
     Segment
 } from 'semantic-ui-react';
 
-import { ModifyBox, BoxState, RootState, ActionType } from '../../models';
+import {
+    ActionType,
+    BoxState,
+    Group,
+    ModifyBox,
+    RootState
+} from '../../models';
 import { createGroupBox, findGroupBoxes } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 
@@ -43,6 +50,7 @@ interface FormData {
 interface ComponentState {
     cancel: boolean;
     formData: FormData;
+    group?: Group;
 }
 
 const initialState: ComponentState = {
@@ -170,7 +178,10 @@ const CreateBoxFragment: SFC<CreateBoxFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Create Box</SecondaryHeader>
+            <SecondaryHeader>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <i>Create Box</i>
+            </SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

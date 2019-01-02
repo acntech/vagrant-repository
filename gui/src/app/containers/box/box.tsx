@@ -13,8 +13,6 @@ import {
 import {
     Box,
     BoxState,
-    Group,
-    GroupState,
     RootState,
     Version,
     VersionState
@@ -22,7 +20,6 @@ import {
 import {
     deleteBox,
     findBoxVersions,
-    findGroups,
     findGroupBoxes
 } from '../../state/actions';
 import { ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
@@ -33,14 +30,12 @@ interface RouteProps {
 }
 
 interface ComponentStateProps {
-    groupState: GroupState;
     boxState: BoxState;
     versionState: VersionState;
 }
 
 interface ComponentDispatchProps {
     deleteBox: (boxId: number) => Promise<any>;
-    findGroups: (name?: string) => Promise<any>;
     findGroupBoxes: (groupId: number) => Promise<any>;
     findBoxVersions: (boxId: number) => Promise<any>;
 }
@@ -48,7 +43,6 @@ interface ComponentDispatchProps {
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
 
 interface ComponentState {
-    group?: Group;
     box?: Box;
     versionId?: number;
     createVersion: boolean;
@@ -73,22 +67,13 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
 
     componentDidMount() {
         const { groupId, boxId } = this.props.match.params;
-        this.props.findGroups();
         this.props.findGroupBoxes(Number(groupId));
         this.props.findBoxVersions(Number(boxId));
     }
 
     componentDidUpdate() {
-        const { groupId, boxId } = this.props.match.params;
-        const { group, box } = this.state;
-
-        if (!group) {
-            const { groups } = this.props.groupState;
-            const currentGroup = groups.find((group) => group.id == groupId);
-            if (currentGroup) {
-                this.setState({ group: currentGroup });
-            }
-        }
+        const { boxId } = this.props.match.params;
+        const { box } = this.state;
 
         if (!box) {
             const { boxes } = this.props.boxState;
@@ -103,19 +88,18 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
         const { groupId, boxId } = this.props.match.params;
         const {
             versionId,
-            group,
             box,
             createVersion,
             editBox,
             deleteBoxConfirmed,
             openDeleteBoxConfirmModal
         } = this.state;
-        const { versionState } = this.props;
-        const { versions, loading } = versionState;
+        const { loading: boxLoading } = this.props.boxState;
+        const { versions, loading: versionLoading } = this.props.versionState;
 
         if (versionId) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />;
-        } else if (loading) {
+        } else if (boxLoading || versionLoading) {
             return <LoadingIndicator />;
         } else if (createVersion) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/create`} />;
@@ -123,12 +107,6 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
             return <Redirect to={`/group/${groupId}/box/${boxId}/edit`} />;
         } else if (deleteBoxConfirmed) {
             return <Redirect to={`/group/${groupId}`} />
-        } else if (!group) {
-            return <NotFoundErrorContainer
-                header
-                icon='warning sign'
-                heading='No group found'
-                content={`Could not find group for ID ${groupId}`} />;
         } else if (!box) {
             return <NotFoundErrorContainer
                 header
@@ -139,7 +117,6 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
             const boxVersions = versions.filter(version => version.box.id == boxId);
 
             return <BoxFragment
-                group={group}
                 box={box}
                 versions={boxVersions}
                 onTableRowClick={this.onTableRowClick}
@@ -185,7 +162,6 @@ class BoxContainer extends Component<ComponentProps, ComponentState> {
 }
 
 interface BoxFragmentProps {
-    group: Group;
     box: Box;
     versions: Version[];
     onTableRowClick: (versionId: number) => void;
@@ -199,7 +175,6 @@ interface BoxFragmentProps {
 
 const BoxFragment: SFC<BoxFragmentProps> = (props) => {
     const {
-        group,
         box,
         versions,
         onTableRowClick,
@@ -210,8 +185,8 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
         onDeleteBoxModalClose,
         onDeleteBoxModalCloseButtonClick
     } = props;
+    const { id: boxId, name: boxName, description: boxDescription, group } = box;
     const { id: groupId, name: groupName } = group;
-    const { id: boxId, name: boxName, description } = box;
 
     return (
         <Container>
@@ -222,7 +197,7 @@ const BoxFragment: SFC<BoxFragmentProps> = (props) => {
                 onClose={onDeleteBoxModalClose}
                 onClick={onDeleteBoxModalCloseButtonClick} />
             <PrimaryHeader />
-            <SecondaryHeader subtitle={description}>
+            <SecondaryHeader subtitle={boxDescription}>
                 <Link to='/'><Icon name='home' /></Link>{'/ '}
                 <Link to={`/group/${groupId}`}>{groupName}</Link>{' / '}
                 <Link to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>
@@ -295,14 +270,12 @@ const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
 };
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
-    groupState: state.groupState,
     boxState: state.boxState,
     versionState: state.versionState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     deleteBox: (boxId: number) => dispatch(deleteBox(boxId)),
-    findGroups: (name?: string) => dispatch(findGroups(name)),
     findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
     findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId))
 });

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 import { InjectedIntlProps } from 'react-intl';
 import {
     Button,
@@ -14,9 +15,17 @@ import {
     Segment
 } from 'semantic-ui-react';
 
-import { ModifyBox, BoxState, RootState, ActionType } from '../../models';
+import {
+    ActionType,
+    Box,
+    BoxState,
+    ModifyBox,
+    NamedFormData,
+    RootState
+} from '../../models';
 import { findGroupBoxes, updateBox } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { NotFoundErrorContainer } from '..';
 
 interface RouteProps {
     match: any;
@@ -33,21 +42,13 @@ interface ComponentDispatchProps {
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
 
-interface FormData {
-    formError: boolean;
-    formErrorMessage?: string;
-    formNameValue: string;
-    formDescriptionValue?: string;
-}
-
 interface ComponentState {
-    boxFound: boolean;
+    box?: Box;
     cancel: boolean;
-    formData: FormData;
+    formData: NamedFormData;
 }
 
 const initialState: ComponentState = {
-    boxFound: false,
     cancel: false,
     formData: {
         formError: false,
@@ -68,15 +69,15 @@ class EditBoxContainer extends Component<ComponentProps, ComponentState> {
     }
 
     public componentDidUpdate() {
-        const { boxFound } = this.state;
-        if (!boxFound) {
+        let { box } = this.state;
+        if (!box) {
             const { boxId } = this.props.match.params;
             const { boxes } = this.props.boxState;
-            const box = boxes.find((box) => box.id == boxId);
+            box = boxes.find((box) => box.id == boxId);
             if (box) {
                 const { name, description } = box;
                 this.setState({
-                    boxFound: true,
+                    box: box,
                     formData: {
                         formError: false,
                         formNameValue: name,
@@ -88,20 +89,25 @@ class EditBoxContainer extends Component<ComponentProps, ComponentState> {
     }
 
     public render(): ReactNode {
-        const { groupId } = this.props.match.params;
-        const { cancel, formData } = this.state;
-        const { boxState } = this.props;
-        const { loading, modified } = boxState;
+        const { boxId, groupId } = this.props.match.params;
+        const { box, cancel, formData } = this.state;
+        const { loading, modified } = this.props.boxState;
 
         if (cancel) {
             return <Redirect to={`/group/${groupId}`} />;
         } else if (loading) {
             return <LoadingIndicator />;
         } else if (modified && modified.actionType == ActionType.UPDATE) {
-            const { id: boxId } = modified;
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />
+        } else if (!box) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No box found'
+                content={`Could not find box for ID ${boxId}`} />;
         } else {
             return <EditBoxFragment
+                box={box}
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}
                 onFormInputChange={this.onFormInputChange}
@@ -171,21 +177,25 @@ class EditBoxContainer extends Component<ComponentProps, ComponentState> {
 }
 
 interface EditBoxFragmentProps {
+    box: Box;
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
     onFormTextAreaChange: (event: React.SyntheticEvent<HTMLTextAreaElement>, data: TextAreaProps) => void;
-    formData: FormData;
+    formData: NamedFormData;
 }
 
 const EditBoxFragment: SFC<EditBoxFragmentProps> = (props) => {
     const {
+        box,
         onCancelButtonClick,
         onFormSubmit,
         onFormInputChange,
         onFormTextAreaChange,
         formData
     } = props;
+    const { id: boxId, name: boxName, group } = box;
+    const { id: groupId, name: groupName } = group;
     const {
         formError,
         formErrorMessage,
@@ -196,7 +206,12 @@ const EditBoxFragment: SFC<EditBoxFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Edit Box</SecondaryHeader>
+            <SecondaryHeader>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <Link to={`/group/${groupId}`}>{groupName}</Link>{' / '}
+                <Link to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{' / '}
+                <i>Edit Box</i>
+            </SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>
