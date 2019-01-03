@@ -27,6 +27,13 @@
         </developer>
     </developers>
 
+    <scm>
+        <tag>GitHub</tag>
+        <url>https://github.com/acntech/vagrant-repository</url>
+        <connection>git@github.com:acntech/vagrant-repository.git</connection>
+        <developerConnection>git@github.com:acntech/vagrant-repository.git</developerConnection>
+    </scm>
+
     <!-- PROPERTIES -->
     <properties>
         <!-- Dependencies -->

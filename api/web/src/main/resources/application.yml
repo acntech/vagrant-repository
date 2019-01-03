@@ -1,3 +1,13 @@
+#########################
+# ACNTECH Configuration #
+#########################
+acntech:
+  api:
+    client-context-path: /api/vagrant/boxes
+  file:
+    default-file-name: image.box
+    upload-dir: /tmp/vagrant-repository/uploads
+
 ########################
 # SPRING Configuration #
 ########################
@@ -40,12 +50,16 @@ logging:
     org.springframework: INFO
     no.acntech: DEBUG
 
-#########################
-# ACNTECH Configuration #
-#########################
-acntech:
-  api:
-    client-context-path: /api/vagrant/boxes
-  file:
-    default-file-name: image.box
-    upload-dir: /tmp/vagrant-repository/uploads
+# Actuator
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /management
+      exposure:
+        include: ["info", "health"]
+  endpoint:
+    health:
+      enabled: true
+    info:
+      enabled: true
