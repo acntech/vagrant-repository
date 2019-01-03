@@ -10,20 +10,26 @@ const showNotificationAction = (notification: ShowNotification): ShowNotificatio
 const dismissNotificationAction = (uuid: string): DismissNotificationAction => ({ type: NotificationActionType.DISMISS, uuid: uuid });
 const clearNotificationsAction = (): ClearNotificationsAction => ({ type: NotificationActionType.CLEAR });
 
-export function showInfo(title: string, message?: string) {
-    return showNotification({ severity: 'info', title: title, content: message });
+interface Notification {
+    title: string;
+    content?: string;
+    timeout?: number;
 }
 
-export function showWarning(title: string, message?: string) {
-    return showNotification({ severity: 'warning', title: title, content: message });
+export function showInfo(notification: Notification) {
+    return showNotification({ ...notification, severity: 'info' });
 }
 
-export function showError(title: string, message?: string) {
-    return showNotification({ severity: 'error', title: title, content: message });
+export function showWarning(notification: Notification) {
+    return showNotification({ ...notification, severity: 'warning' });
 }
 
-export function showSuccess(title: string, message?: string) {
-    return showNotification({ severity: 'success', title: title, content: message });
+export function showError(notification: Notification) {
+    return showNotification({ ...notification, severity: 'error' });
+}
+
+export function showSuccess(notification: Notification) {
+    return showNotification({ ...notification, severity: 'success' });
 }
 
 export function showNotification(notification: ShowNotification) {

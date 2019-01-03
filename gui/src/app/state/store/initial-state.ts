@@ -4,6 +4,7 @@ import { IntlState } from 'react-intl-redux';
 import {
     BoxState,
     GroupState,
+    FileState,
     NotificationState,
     ProviderState,
     VersionState,
@@ -34,6 +35,11 @@ export const initialProviderState: ProviderState = {
     providers: []
 };
 
+export const initialFileState: FileState = {
+    loading: false,
+    files: []
+};
+
 const INITIAL_STATE_MESSAGES = {
     mainTitle: 'Whatever'
 };
@@ -53,5 +59,6 @@ export const initialRootState: RootState = {
     groupState: initialGroupState,
     boxState: initialBoxState,
     versionState: initialVersionState,
-    providerState: initialProviderState
+    providerState: initialProviderState,
+    fileState: initialFileState
 };

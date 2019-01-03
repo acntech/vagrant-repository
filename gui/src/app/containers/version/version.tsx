@@ -13,10 +13,6 @@ import {
 } from 'semantic-ui-react';
 import { formatBytes } from '../../core/utils';
 import {
-    Box,
-    BoxState,
-    Group,
-    GroupState,
     Provider,
     ProviderState,
     RootState,
@@ -26,8 +22,6 @@ import {
 import {
     deleteVersion,
     findBoxVersions,
-    findGroups,
-    findGroupBoxes,
     findVersionProviders
 } from '../../state/actions';
 import {
@@ -43,16 +37,12 @@ interface RouteProps {
 }
 
 interface ComponentStateProps {
-    groupState: GroupState;
-    boxState: BoxState;
     versionState: VersionState;
     providerState: ProviderState;
 }
 
 interface ComponentDispatchProps {
     deleteVersion: (versionId: number) => Promise<any>;
-    findGroups: (name?: string) => Promise<any>;
-    findGroupBoxes: (groupId: number) => Promise<any>;
     findBoxVersions: (boxId: number) => Promise<any>;
     findVersionProviders: (versionId: number) => Promise<any>;
 }
@@ -60,8 +50,6 @@ interface ComponentDispatchProps {
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
 
 interface ComponentState {
-    group?: Group;
-    box?: Box;
     version?: Version;
     providerId?: number;
     createProvider: boolean;
@@ -85,32 +73,14 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
     }
 
     componentDidMount() {
-        const { groupId, boxId, versionId } = this.props.match.params;
-        this.props.findGroups();
-        this.props.findGroupBoxes(Number(groupId));
+        const { boxId, versionId } = this.props.match.params;
         this.props.findBoxVersions(Number(boxId));
         this.props.findVersionProviders(Number(versionId));
     }
 
     componentDidUpdate() {
-        const { groupId, boxId, versionId } = this.props.match.params;
-        const { group, box, version } = this.state;
-
-        if (!group) {
-            const { groups } = this.props.groupState;
-            const currentGroup = groups.find((group) => group.id == groupId);
-            if (currentGroup) {
-                this.setState({ group: currentGroup });
-            }
-        }
-
-        if (!box) {
-            const { boxes } = this.props.boxState;
-            const currentBox = boxes.find((box) => box.id == boxId);
-            if (currentBox) {
-                this.setState({ box: currentBox });
-            }
-        }
+        const { versionId } = this.props.match.params;
+        const { version } = this.state;
 
         if (!version) {
             const { versions } = this.props.versionState;
@@ -125,20 +95,18 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
         const { groupId, boxId, versionId } = this.props.match.params;
         const {
             createProvider,
-            group,
-            box,
             version,
             providerId,
             editVersion,
             openDeleteVersionConfirmModal,
             deleteVersionConfirmed
         } = this.state;
-        const { providerState } = this.props;
-        const { providers, loading } = providerState;
+        const { loading: versionLoading } = this.props.versionState;
+        const { providers, loading: providerLoading } = this.props.providerState;
 
         if (providerId) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`} />;
-        } else if (loading) {
+        } else if (versionLoading || providerLoading) {
             return <LoadingIndicator />;
         } else if (createProvider) {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/create`} />;
@@ -146,18 +114,6 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}/edit`} />;
         } else if (deleteVersionConfirmed) {
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />
-        } else if (!group) {
-            return <NotFoundErrorContainer
-                header
-                icon='warning sign'
-                heading='No group found'
-                content={`Could not find group for ID ${groupId}`} />;
-        } else if (!box) {
-            return <NotFoundErrorContainer
-                header
-                icon='warning sign'
-                heading='No box found'
-                content={`Could not find box for ID ${boxId}`} />;
         } else if (!version) {
             return <NotFoundErrorContainer
                 header
@@ -168,8 +124,6 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
             const versionProviders = providers.filter(provider => provider.version.id == versionId);
 
             return <VersionFragment
-                group={group}
-                box={box}
                 version={version}
                 providers={versionProviders}
                 onTableRowClick={this.onTableRowClick}
@@ -215,8 +169,6 @@ class VersionContainer extends Component<ComponentProps, ComponentState> {
 }
 
 interface VersionFragmentProps {
-    group: Group;
-    box: Box;
     version: Version;
     providers: Provider[];
     onTableRowClick: (providerId: number) => void;
@@ -230,8 +182,6 @@ interface VersionFragmentProps {
 
 const VersionFragment: SFC<VersionFragmentProps> = (props) => {
     const {
-        group,
-        box,
         version,
         providers,
         onTableRowClick,
@@ -242,9 +192,9 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
         onDeleteVersionModalClose,
         onDeleteVersionModalCloseButtonClick
     } = props;
+    const { id: versionId, name: versionName, description: versionDescription, box } = version;
+    const { id: boxId, name: boxName, group } = box;
     const { id: groupId, name: groupName } = group;
-    const { id: boxId, name: boxName } = box;
-    const { id: versionId, name: versionName, description } = version;
 
     return (
         <Container>
@@ -255,7 +205,7 @@ const VersionFragment: SFC<VersionFragmentProps> = (props) => {
                 onClose={onDeleteVersionModalClose}
                 onClick={onDeleteVersionModalCloseButtonClick} />
             <PrimaryHeader />
-            <SecondaryHeader subtitle={description}>
+            <SecondaryHeader subtitle={versionDescription}>
                 <Link to='/'><Icon name='home' /></Link>{'/ '}
                 <Link to={`/group/${groupId}`}>{groupName}</Link>{' / '}
                 <Link to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{' / '}
@@ -333,16 +283,12 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
 };
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
-    groupState: state.groupState,
-    boxState: state.boxState,
     versionState: state.versionState,
     providerState: state.providerState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     deleteVersion: (versionId: number) => dispatch(deleteVersion(versionId)),
-    findGroups: (name?: string) => dispatch(findGroups(name)),
-    findGroupBoxes: (groupId: number) => dispatch(findGroupBoxes(groupId)),
     findBoxVersions: (boxId: number) => dispatch(findBoxVersions(boxId)),
     findVersionProviders: (versionId: number) => dispatch(findVersionProviders(versionId))
 });

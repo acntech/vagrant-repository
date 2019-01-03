@@ -7,6 +7,7 @@ import * as groups from './groups';
 import * as boxes from './boxes';
 import * as versions from './versions';
 import * as providers from './providers';
+import * as files from './files';
 
 const { reducer: intlReducer } = intl;
 const { reducer: notificationsReducer } = notifications;
@@ -14,6 +15,7 @@ const { reducer: groupsReducer } = groups;
 const { reducer: boxesReducer } = boxes;
 const { reducer: versionsReducer } = versions;
 const { reducer: providersReducer } = providers;
+const { reducer: filesReducer } = files;
 
 export const rootReducer = combineReducers<RootState>({
     intl: intlReducer,
@@ -21,5 +23,6 @@ export const rootReducer = combineReducers<RootState>({
     groupState: groupsReducer,
     boxState: boxesReducer,
     versionState: versionsReducer,
-    providerState: providersReducer
+    providerState: providersReducer,
+    fileState: filesReducer
 });

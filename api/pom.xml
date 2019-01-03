@@ -13,7 +13,7 @@
 
     <groupId>no.acntech</groupId>
     <artifactId>vagrant-repository</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.10</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -26,6 +26,13 @@
             <email>thomas.johansen@accenture.com</email>
         </developer>
     </developers>
+
+    <scm>
+        <tag>GitHub</tag>
+        <url>https://github.com/acntech/vagrant-repository</url>
+        <connection>git@github.com:acntech/vagrant-repository.git</connection>
+        <developerConnection>git@github.com:acntech/vagrant-repository.git</developerConnection>
+    </scm>
 
     <!-- PROPERTIES -->
     <properties>

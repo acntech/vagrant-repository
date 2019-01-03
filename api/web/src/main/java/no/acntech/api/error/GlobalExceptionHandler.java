@@ -1,7 +1,7 @@
 package no.acntech.api.error;
 
 import no.acntech.common.exception.UnknownProviderException;
-import no.acntech.common.model.ApiError;
+import no.acntech.common.model.Error;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -91,14 +91,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> handleException(Exception exception, HttpHeaders headers, HttpStatus httpStatus, WebRequest request) {
-        ApiError apiError = ApiError.builder()
+        Error error = Error.builder()
                 .status(httpStatus.value())
                 .error(httpStatus.getReasonPhrase())
                 .message(exception.getLocalizedMessage())
                 .path(findRequestPath(request))
                 .build();
         LOGGER.error(exception.getLocalizedMessage(), exception);
-        return handleExceptionInternal(exception, apiError, headers, httpStatus, request);
+        return handleExceptionInternal(exception, error, headers, httpStatus, request);
     }
 
     private String findRequestPath(WebRequest request) {

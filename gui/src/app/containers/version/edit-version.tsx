@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 import { InjectedIntlProps } from 'react-intl';
 import {
     Button,
@@ -13,9 +14,17 @@ import {
     Segment
 } from 'semantic-ui-react';
 
-import { ModifyVersion, VersionState, RootState, ActionType } from '../../models';
+import {
+    ActionType,
+    ModifyVersion,
+    NamedFormData,
+    Version,
+    VersionState,
+    RootState
+} from '../../models';
 import { findBoxVersions, updateVersion } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { NotFoundErrorContainer } from '..';
 
 interface RouteProps {
     match: any;
@@ -32,21 +41,13 @@ interface ComponentDispatchProps {
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & InjectedIntlProps & RouteProps;
 
-interface FormData {
-    formError: boolean;
-    formErrorMessage?: string;
-    formNameValue: string;
-    formDescriptionValue?: string;
-}
-
 interface ComponentState {
-    versionFound: boolean;
+    version?: Version;
     cancel: boolean;
-    formData: FormData;
+    formData: NamedFormData;
 }
 
 const initialState: ComponentState = {
-    versionFound: false,
     cancel: false,
     formData: {
         formError: false,
@@ -67,15 +68,15 @@ class EditVersionContainer extends Component<ComponentProps, ComponentState> {
     }
 
     public componentDidUpdate() {
-        const { versionFound } = this.state;
-        if (!versionFound) {
+        let { version } = this.state;
+        if (!version) {
             const { versionId } = this.props.match.params;
             const { versions } = this.props.versionState;
-            const version = versions.find((version) => version.id == versionId);
+            version = versions.find((version) => version.id == versionId);
             if (version) {
                 const { name, description } = version;
                 this.setState({
-                    versionFound: true,
+                    version: version,
                     formData: {
                         formError: false,
                         formNameValue: name,
@@ -87,10 +88,9 @@ class EditVersionContainer extends Component<ComponentProps, ComponentState> {
     }
 
     public render(): ReactNode {
-        const { boxId, groupId } = this.props.match.params;
-        const { cancel, formData } = this.state;
-        const { versionState } = this.props;
-        const { loading, modified } = versionState;
+        const { boxId, groupId, versionId } = this.props.match.params;
+        const { cancel, formData, version } = this.state;
+        const { loading, modified } = this.props.versionState;
 
         if (cancel) {
             return <Redirect to={`/group/${groupId}/box/${boxId}`} />;
@@ -99,8 +99,15 @@ class EditVersionContainer extends Component<ComponentProps, ComponentState> {
         } else if (modified && modified.actionType == ActionType.UPDATE) {
             const { id: versionId } = modified;
             return <Redirect to={`/group/${groupId}/box/${boxId}/version/${versionId}`} />
+        } else if (!version) {
+            return <NotFoundErrorContainer
+                header
+                icon='warning sign'
+                heading='No version found'
+                content={`Could not find version for ID ${versionId}`} />;
         } else {
             return <EditVersionFragment
+                version={version}
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}
                 onFormInputChange={this.onFormInputChange}
@@ -170,21 +177,26 @@ class EditVersionContainer extends Component<ComponentProps, ComponentState> {
 }
 
 interface EditVersionFragmentProps {
+    version: Version;
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
     onFormTextAreaChange: (event: React.SyntheticEvent<HTMLTextAreaElement>, data: TextAreaProps) => void;
-    formData: FormData;
+    formData: NamedFormData;
 }
 
 const EditVersionFragment: SFC<EditVersionFragmentProps> = (props) => {
     const {
+        version,
         onCancelButtonClick,
         onFormSubmit,
         onFormInputChange,
         onFormTextAreaChange,
         formData
     } = props;
+    const { id: versionId, name: versionName, box } = version;
+    const { id: boxId, name: boxName, group } = box;
+    const { id: groupId, name: groupName } = group;
     const {
         formError,
         formErrorMessage,
@@ -195,7 +207,13 @@ const EditVersionFragment: SFC<EditVersionFragmentProps> = (props) => {
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Edit Version</SecondaryHeader>
+            <SecondaryHeader>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <Link to={`/group/${groupId}`}>{groupName}</Link>{' / '}
+                <Link to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{' / '}
+                <Link to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>{' / '}
+                <i>Edit Version</i>
+            </SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

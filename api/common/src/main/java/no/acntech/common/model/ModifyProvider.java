@@ -4,7 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @Valid
-public class CreateProvider {
+public class ModifyProvider {
 
     @NotNull
     private ProviderType providerType;

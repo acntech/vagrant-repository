@@ -54,9 +54,9 @@ public class VersionResource {
 
     @PostMapping(path = "{id}/providers")
     public ResponseEntity<Provider> post(@PathVariable(name = "id") final Long versionId,
-                                         @Valid @RequestBody final CreateProvider createProvider,
+                                         @Valid @RequestBody final ModifyProvider modifyProvider,
                                          final UriComponentsBuilder uriBuilder) {
-        Provider createdProvider = providerService.create(versionId, createProvider);
+        Provider createdProvider = providerService.create(versionId, modifyProvider);
         URI uri = uriBuilder.path("providers/{id}").buildAndExpand(createdProvider.getId()).toUri();
         return ResponseEntity.created(uri).body(createdProvider);
     }

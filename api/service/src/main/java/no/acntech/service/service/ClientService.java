@@ -13,7 +13,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -157,21 +156,31 @@ public class ClientService {
         if (applicationProperties.getProxy().isSet()) {
             String scheme = applicationProperties.getProxy().getScheme();
             String host = applicationProperties.getProxy().getHost();
-            int port = applicationProperties.getProxy().getPort();
-            URI uri = uriBuilder
-                    .scheme(scheme)
-                    .host(host)
-                    .port(port)
-                    .path("{contextPath}/{groupName}/{boxName}/{versionName}/{providerName}/{fileName}")
-                    .buildAndExpand(contextPath, groupName, boxName, versionName, providerName, fileName)
-                    .toUri();
-            return uri.toString();
+            Integer port = applicationProperties.getProxy().getPort();
+            if (port == 80) {
+                return UriComponentsBuilder.newInstance()
+                        .scheme(scheme)
+                        .host(host)
+                        .path("{contextPath}/{groupName}/{boxName}/{versionName}/{providerName}/{fileName}")
+                        .buildAndExpand(contextPath, groupName, boxName, versionName, providerName, fileName)
+                        .toUri()
+                        .toString();
+            } else {
+                return UriComponentsBuilder.newInstance()
+                        .scheme(scheme)
+                        .host(host)
+                        .port(port)
+                        .path("{contextPath}/{groupName}/{boxName}/{versionName}/{providerName}/{fileName}")
+                        .buildAndExpand(contextPath, groupName, boxName, versionName, providerName, fileName)
+                        .toUri()
+                        .toString();
+            }
         } else {
-            URI uri = uriBuilder
+            return uriBuilder
                     .path("{contextPath}/{groupName}/{boxName}/{versionName}/{providerName}/{fileName}")
                     .buildAndExpand(contextPath, groupName, boxName, versionName, providerName, fileName)
-                    .toUri();
-            return uri.toString();
+                    .toUri()
+                    .toString();
         }
     }
 }

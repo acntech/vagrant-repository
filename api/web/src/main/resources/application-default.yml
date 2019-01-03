@@ -19,3 +19,12 @@ spring:
     locations:
       - classpath:db/vendor/h2
       - classpath:db/migration
+
+# Actuator
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"
+

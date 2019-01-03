@@ -1,3 +1,3 @@
 export * from './provider';
 export * from './create-provider';
-export * from './update-provider';
+export * from './edit-provider';

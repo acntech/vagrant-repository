@@ -14,14 +14,17 @@ import {
 } from 'semantic-ui-react';
 
 import {
-    ModifyGroup,
+    ActionType,
+    Group,
     GroupState,
-    RootState,
-    ActionType
+    ModifyGroup,
+    NamedFormData,
+    RootState
 } from '../../models';
 import { getGroup, updateGroup } from '../../state/actions';
 import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '..';
+import { Link } from 'react-router-dom';
 
 interface RouteProps {
     match: any;
@@ -38,21 +41,13 @@ interface ComponentDispatchProps {
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps & RouteProps;
 
-interface FormData {
-    formError: boolean;
-    formErrorMessage?: string;
-    formNameValue: string;
-    formDescriptionValue?: string;
-}
-
 interface ComponentState {
-    groupFound: boolean;
+    group?: Group;
     cancel: boolean;
-    formData: FormData;
+    formData: NamedFormData;
 }
 
 const initialState: ComponentState = {
-    groupFound: false,
     cancel: false,
     formData: {
         formError: false,
@@ -73,15 +68,15 @@ class EditGroupContainer extends Component<ComponentProps, ComponentState> {
     }
 
     public componentDidUpdate() {
-        const { groupFound } = this.state;
-        if (!groupFound) {
+        const { group } = this.state;
+        if (!group) {
             const { groupId } = this.props.match.params;
             const { groups } = this.props.groupState;
             const group = groups.find((group) => group.id == groupId);
             if (group) {
                 const { name, description } = group;
                 this.setState({
-                    groupFound: true,
+                    group: group,
                     formData: {
                         formError: false,
                         formNameValue: name,
@@ -94,9 +89,8 @@ class EditGroupContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId } = this.props.match.params;
-        const { groupFound, cancel, formData } = this.state;
-        const { groupState } = this.props;
-        const { loading, modified } = groupState;
+        const { group, cancel, formData } = this.state;
+        const { loading, modified } = this.props.groupState;
 
         if (loading) {
             return <LoadingIndicator />;
@@ -105,7 +99,7 @@ class EditGroupContainer extends Component<ComponentProps, ComponentState> {
         } else if (modified && modified.actionType == ActionType.UPDATE) {
             const { id: modifiedGroupId } = modified;
             return <Redirect to={`/group/${modifiedGroupId}`} />
-        } else if (!groupFound) {
+        } else if (!group) {
             return <NotFoundErrorContainer
                 header
                 icon='warning sign'
@@ -113,6 +107,7 @@ class EditGroupContainer extends Component<ComponentProps, ComponentState> {
                 content={`Could not find group for ID ${groupId}`} />;
         } else {
             return <EditGroupFragment
+                group={group}
                 onCancelButtonClick={this.onCancelButtonClick}
                 onFormSubmit={this.onFormSubmit}
                 onFormInputChange={this.onFormInputChange}
@@ -182,15 +177,17 @@ class EditGroupContainer extends Component<ComponentProps, ComponentState> {
 }
 
 interface EditGroupFragmentProps {
+    group: Group;
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
     onFormInputChange: (event: React.SyntheticEvent<HTMLInputElement>, data: InputOnChangeData) => void;
     onFormTextAreaChange: (event: React.SyntheticEvent<HTMLTextAreaElement>, data: TextAreaProps) => void;
-    formData: FormData;
+    formData: NamedFormData;
 }
 
 const EditGroupFragment: SFC<EditGroupFragmentProps> = (props) => {
     const {
+        group,
         onCancelButtonClick,
         onFormSubmit,
         onFormInputChange,
@@ -203,11 +200,16 @@ const EditGroupFragment: SFC<EditGroupFragmentProps> = (props) => {
         formNameValue,
         formDescriptionValue
     } = formData;
+    const { id, name } = group;
 
     return (
         <Container>
             <PrimaryHeader />
-            <SecondaryHeader>Edit Group</SecondaryHeader>
+            <SecondaryHeader>
+                <Link to='/'><Icon name='home' /></Link>{'/ '}
+                <Link to={`/group/${id}`}>{name}</Link>{' / '}
+                <i>Edit Group</i>
+            </SecondaryHeader>
             <Segment basic>
                 <Form onSubmit={onFormSubmit} error={formError}>
                     <Form.Group>

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import { globalConfig } from '../../core/config';
 import {
     Provider,
     ModifyProvider,
@@ -25,6 +26,9 @@ import {
     UpdateProviderSuccessAction,
 } from '../../models';
 import { showError, showSuccess } from '../actions';
+
+const { timeout: successTimeout } = globalConfig.notifications.success;
+const { timeout: errorTimeout } = globalConfig.notifications.error;
 
 const getProviderLoading = (loading: boolean): GetProviderLoadingAction => ({ type: GetProviderActionType.LOADING, loading });
 const getProviderSuccess = (payload: Provider): GetProviderSuccessAction => ({ type: GetProviderActionType.SUCCESS, payload });
@@ -97,12 +101,14 @@ export function createVersionProvider(versionId: number, provider: ModifyProvide
         const url = `${versionsRootPath}/${versionId}/providers`;
         return axios.post(url, provider)
             .then((response) => {
-                dispatch(showSuccess('Provider created successfully'));
+                const notification = { title: 'Provider created successfully', timeout: successTimeout };
+                dispatch(showSuccess(notification));
                 return dispatch(createProviderSuccess(response.data));
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error creating provider', message));
+                const notification = { title: 'Error creating provider', content: message, timeout: errorTimeout };
+                dispatch(showError(notification));
                 return dispatch(createProviderError(error));
             });
     };
@@ -121,13 +127,15 @@ export function updateProvider(providerId: number, file: any) {
         };
         return axios.post(url, formData, config)
             .then((response) => {
-                dispatch(showSuccess('Provider updated successfully'));
+                const notification = { title: 'Provider updated successfully', timeout: successTimeout };
+                dispatch(showSuccess(notification));
                 console.log(response);
                 return dispatch(updateProviderSuccess(response.data));
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error updating provider', message));
+                const notification = { title: 'Error updating provider', content: message, timeout: errorTimeout };
+                dispatch(showError(notification));
                 return dispatch(updateProviderError(error));
             });
     };
@@ -139,12 +147,14 @@ export function deleteProvider(providerId: number) {
         const url = `${providersRootPath}/${providerId}`;
         return axios.delete(url)
             .then(() => {
-                dispatch(showSuccess('Provider deleted successfully'));
+                const notification = { title: 'Provider deleted successfully', timeout: successTimeout };
+                dispatch(showSuccess(notification));
                 return dispatch(deleteProviderSuccess(providerId));
             })
             .catch((error) => {
                 const { message } = error.response.data;
-                dispatch(showError('Error deleting provider', message));
+                const notification = { title: 'Error deleting provider', content: message, timeout: errorTimeout };
+                dispatch(showError(notification));
                 return dispatch(deleteProviderError(error));
             });
     };
