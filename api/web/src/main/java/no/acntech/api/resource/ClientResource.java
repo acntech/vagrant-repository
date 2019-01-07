@@ -14,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
-@RequestMapping(path = "api/vagrant/boxes")
+@RequestMapping(path = "vagrant/boxes")
 @RestController
 public class ClientResource {
 

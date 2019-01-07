@@ -3,11 +3,13 @@
 #
 FROM openjdk:8
 
+ARG BUILD_REVISION=${SOURCE_COMMIT}
+
 WORKDIR /tmp
 
 COPY . .
 
-RUN ./mvnw clean package --quiet -DskipTests \
+RUN ./mvnw clean package --quiet -DskipTests -Dbuild.revision=${BUILD_REVISION} \
     && cp ./web/target/vagrant-repository-web.war ./api.war
 
 #

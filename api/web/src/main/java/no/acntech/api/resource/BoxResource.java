@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping(path = "api/boxes")
+@RequestMapping(path = "boxes")
 @RestController
 public class BoxResource {
 

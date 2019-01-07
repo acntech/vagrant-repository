@@ -3,7 +3,7 @@
 #########################
 acntech:
   api:
-    client-context-path: /api/vagrant/boxes
+    client-context-path: /vagrant/boxes
   file:
     default-file-name: image.box
     upload-dir: /tmp/vagrant-repository/uploads
@@ -32,6 +32,7 @@ spring:
   aop:
     proxy-target-class: true
   jpa:
+    open-in-view: false
     properties:
       hibernate:
         jdbc:
@@ -63,3 +64,8 @@ management:
       enabled: true
     info:
       enabled: true
+
+# Server
+server:
+  servlet:
+    context-path: /api

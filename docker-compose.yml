@@ -17,7 +17,10 @@ services:
       - vagrant_repository
 
   api:
-    build: api
+    build:
+      context: api
+      args:
+        - BUILD_REVISION=UNKNOWN
     image: acntechie/vagrant-repository-api:latest
     container_name: vagrant-repository-api
     hostname: api

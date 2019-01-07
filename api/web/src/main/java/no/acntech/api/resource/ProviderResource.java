@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping(path = "api/providers")
+@RequestMapping(path = "providers")
 @RestController
 public class ProviderResource {
 

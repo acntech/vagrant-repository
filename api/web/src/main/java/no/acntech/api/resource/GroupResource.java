@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping(path = "api/groups")
+@RequestMapping(path = "groups")
 @RestController
 public class GroupResource {
 
