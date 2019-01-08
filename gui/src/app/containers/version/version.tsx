@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, ReactNode, SFC } from 'react';
+import { Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -180,7 +180,7 @@ interface VersionFragmentProps {
     onDeleteVersionModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
-const VersionFragment: SFC<VersionFragmentProps> = (props) => {
+const VersionFragment: FunctionComponent<VersionFragmentProps> = (props) => {
     const {
         version,
         providers,
@@ -229,7 +229,7 @@ interface ProvidersFragmentProps {
     onEditVersionButtonClick: () => void;
 }
 
-const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
+const ProvidersFragment: FunctionComponent<ProvidersFragmentProps> = (props) => {
     const {
         providers,
         onTableRowClick,
@@ -246,12 +246,12 @@ const ProvidersFragment: SFC<ProvidersFragmentProps> = (props) => {
                 </Button>
             </Button.Group>
             <Button.Group>
-                <Button primary size='small' onClick={onEditVersionButtonClick}>
+                <Button primary size='tiny' onClick={onEditVersionButtonClick}>
                     <Icon name='pencil' />Edit Version
                 </Button>
             </Button.Group>
             <Button.Group>
-                <Button primary size='small' onClick={onDeleteVersionButtonClick}>
+                <Button primary size='tiny' onClick={onDeleteVersionButtonClick}>
                     <Icon name='delete' />Delete Version
                 </Button>
             </Button.Group>

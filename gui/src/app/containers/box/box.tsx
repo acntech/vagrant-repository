@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, ReactNode, SFC } from 'react';
+import { Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -173,7 +173,7 @@ interface BoxFragmentProps {
     onDeleteBoxModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
-const BoxFragment: SFC<BoxFragmentProps> = (props) => {
+const BoxFragment: FunctionComponent<BoxFragmentProps> = (props) => {
     const {
         box,
         versions,
@@ -220,7 +220,7 @@ interface VersionsFragmentProps {
     onDeleteBoxButtonClick: () => void;
 }
 
-const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
+const VersionsFragment: FunctionComponent<VersionsFragmentProps> = (props) => {
     const {
         versions,
         onTableRowClick,
@@ -237,12 +237,12 @@ const VersionsFragment: SFC<VersionsFragmentProps> = (props) => {
                 </Button>
             </Button.Group>
             <Button.Group>
-                <Button primary size='small' onClick={onEditBoxButtonClick}>
+                <Button primary size='tiny' onClick={onEditBoxButtonClick}>
                     <Icon name='pencil' />Edit Box
                 </Button>
             </Button.Group>
             <Button.Group>
-                <Button primary size='small' onClick={onDeleteBoxButtonClick}>
+                <Button primary size='tiny' onClick={onDeleteBoxButtonClick}>
                     <Icon name='delete' />Delete Box
                 </Button>
             </Button.Group>

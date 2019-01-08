@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
+import { ChangeEventHandler, Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import {
@@ -185,7 +185,7 @@ interface EditGroupFragmentProps {
     formData: NamedFormData;
 }
 
-const EditGroupFragment: SFC<EditGroupFragmentProps> = (props) => {
+const EditGroupFragment: FunctionComponent<EditGroupFragmentProps> = (props) => {
     const {
         group,
         onCancelButtonClick,

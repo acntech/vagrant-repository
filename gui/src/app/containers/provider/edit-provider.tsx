@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, ReactNode, SFC } from 'react';
+import { Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
@@ -108,8 +108,7 @@ class EditProviderContainer extends Component<ComponentProps, ComponentState> {
         if (this.showExistingFileNotification()) {
             this.props.showWarning(
                 'Provider file exists',
-                'There already exists a provider file for given provider. ' +
-                'Please delete provider in order to upload new provider file.');
+                'Uploading a new provider file will overwrite existing provider file.');
         }
     }
 
@@ -186,18 +185,13 @@ class EditProviderContainer extends Component<ComponentProps, ComponentState> {
 
     private onCancelButtonClick = () => {
         this.setState({ cancel: true });
-    }
+    };
 
     private showExistingFileNotification = () => {
-        const { loading: providerLoading } = this.props.providerState;
-        const { loading: filesLoading } = this.props.fileState;
-        const { provider, files } = this.state;
-        if (!providerLoading && !filesLoading && files && files.length && provider) {
-            const { size, checksumType, checksum } = provider;
-            return !size || !checksumType || !checksum;
-        } else {
-            return false;
-        }
+        const {loading: providerLoading} = this.props.providerState;
+        const {loading: filesLoading} = this.props.fileState;
+        const {provider, files} = this.state;
+        return !providerLoading && !filesLoading && files && files.length && provider;
     }
 }
 
@@ -210,10 +204,9 @@ interface EditProviderFragmentProps {
     formData: FormData;
 }
 
-const EditProviderFragment: SFC<EditProviderFragmentProps> = (props) => {
+const EditProviderFragment: FunctionComponent<EditProviderFragmentProps> = (props) => {
     const {
         provider,
-        files,
         onFormInputChange,
         onCancelButtonClick,
         onFormSubmit,
@@ -230,28 +223,6 @@ const EditProviderFragment: SFC<EditProviderFragmentProps> = (props) => {
     const { id: boxId, name: boxName, group } = box;
     const { id: groupId, name: groupName } = group;
 
-    if (files && files.length) {
-        return (
-            <Container>
-                <PrimaryHeader />
-                <SecondaryHeader>
-                    <Link to='/'><Icon name='home' /></Link>{'/ '}
-                    <Link className="header-link" to={`/group/${groupId}`}>{groupName}</Link>{' / '}
-                    <Link className="header-link" to={`/group/${groupId}/box/${boxId}`}>{boxName}</Link>{' / '}
-                    <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}`}>{versionName}</Link>{' / '}
-                    <Link className="header-link" to={`/group/${groupId}/box/${boxId}/version/${versionId}/provider/${providerId}`}>{ProviderType[providerType]}</Link>{' / '}
-                    <i>Edit Provider</i>
-                </SecondaryHeader>
-                <Segment basic>
-                    <Button.Group>
-                        <Button primary size='tiny' onClick={onCancelButtonClick}>
-                            <Icon name='arrow left' />Back
-                        </Button>
-                    </Button.Group>
-                </Segment>
-            </Container>
-        );
-    } else {
         return (
             <Container>
                 <PrimaryHeader />
@@ -287,7 +258,6 @@ const EditProviderFragment: SFC<EditProviderFragmentProps> = (props) => {
                 </Segment>
             </Container>
         );
-    }
 };
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({

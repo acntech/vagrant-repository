@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
+import { ChangeEventHandler, Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -155,7 +155,7 @@ interface CreateVersionFragmentProps {
     formData: FormData;
 }
 
-const CreateVersionFragment: SFC<CreateVersionFragmentProps> = (props) => {
+const CreateVersionFragment: FunctionComponent<CreateVersionFragmentProps> = (props) => {
     const {
         onCancelButtonClick,
         onFormSubmit,

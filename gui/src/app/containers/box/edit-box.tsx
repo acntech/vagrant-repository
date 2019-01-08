@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChangeEventHandler, Component, ReactNode, SFC } from 'react';
+import { ChangeEventHandler, Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -185,7 +185,7 @@ interface EditBoxFragmentProps {
     formData: NamedFormData;
 }
 
-const EditBoxFragment: SFC<EditBoxFragmentProps> = (props) => {
+const EditBoxFragment: FunctionComponent<EditBoxFragmentProps> = (props) => {
     const {
         box,
         onCancelButtonClick,

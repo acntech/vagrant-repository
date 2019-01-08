@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, ReactNode, SFC } from 'react';
+import { Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { InjectedIntlProps } from 'react-intl';
@@ -75,7 +75,7 @@ interface GroupsFragmentProps {
     onCreateGroupButtonClick: () => void;
 }
 
-const GroupsFragment: SFC<GroupsFragmentProps> = (props) => {
+const GroupsFragment: FunctionComponent<GroupsFragmentProps> = (props) => {
     const { groups, onTableRowClick, onCreateGroupButtonClick } = props;
 
     return (

@@ -1,12 +1,12 @@
 package no.acntech.common.config;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "acntech")
@@ -104,6 +104,8 @@ public class ApplicationProperties {
         private String uploadDir;
         @NotBlank
         private String defaultFileName;
+        @NotNull
+        private Boolean overwriteExistingFiles;
 
         public String getUploadDir() {
             return uploadDir;
@@ -119,6 +121,14 @@ public class ApplicationProperties {
 
         public void setDefaultFileName(String defaultFileName) {
             this.defaultFileName = defaultFileName;
+        }
+
+        public Boolean getOverwriteExistingFiles() {
+            return overwriteExistingFiles;
+        }
+
+        public void setOverwriteExistingFiles(Boolean overwriteExistingFiles) {
+            this.overwriteExistingFiles = overwriteExistingFiles;
         }
     }
 }

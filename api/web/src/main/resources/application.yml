@@ -7,6 +7,7 @@ acntech:
   file:
     default-file-name: image.box
     upload-dir: /tmp/vagrant-repository/uploads
+    overwrite-existing-files: true
 
 ########################
 # SPRING Configuration #

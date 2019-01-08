@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, ReactNode, SFC } from 'react';
+import { Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -147,7 +147,7 @@ interface ProviderFragmentProps {
     onDeleteProviderModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
-const ProviderFragment: SFC<ProviderFragmentProps> = (props) => {
+const ProviderFragment: FunctionComponent<ProviderFragmentProps> = (props) => {
     const {
         provider,
         onEditProviderButtonClick,
@@ -182,12 +182,12 @@ const ProviderFragment: SFC<ProviderFragmentProps> = (props) => {
             </SecondaryHeader>
             <Segment basic>
                 <Button.Group>
-                    <Button primary size='small' onClick={onEditProviderButtonClick}>
+                    <Button primary size='tiny' onClick={onEditProviderButtonClick}>
                         <Icon name='pencil' />Edit Provider
                     </Button>
                 </Button.Group>
                 <Button.Group>
-                    <Button primary size='small' onClick={onDeleteProviderButtonClick}>
+                    <Button primary size='tiny' onClick={onDeleteProviderButtonClick}>
                         <Icon name='delete' />Delete Provider
                     </Button>
                 </Button.Group>

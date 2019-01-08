@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, ReactNode, SFC } from 'react';
+import { Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -179,7 +179,7 @@ interface GroupFragmentProps {
     onDeleteGroupModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
-const GroupFragment: SFC<GroupFragmentProps> = (props) => {
+const GroupFragment: FunctionComponent<GroupFragmentProps> = (props) => {
     const {
         group,
         boxes,
@@ -224,7 +224,7 @@ interface BoxesFragmentProps {
     onDeleteGroupButtonClick: () => void;
 }
 
-const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
+const BoxesFragment: FunctionComponent<BoxesFragmentProps> = (props) => {
     const {
         boxes,
         onTableRowClick,
@@ -241,12 +241,12 @@ const BoxesFragment: SFC<BoxesFragmentProps> = (props) => {
                 </Button>
             </Button.Group>
             <Button.Group>
-                <Button primary size='small' onClick={onEditGroupButtonClick}>
+                <Button primary size='tiny' onClick={onEditGroupButtonClick}>
                     <Icon name='pencil' />Edit Group
                 </Button>
             </Button.Group>
             <Button.Group>
-                <Button primary size='small' onClick={onDeleteGroupButtonClick}>
+                <Button primary size='tiny' onClick={onDeleteGroupButtonClick}>
                     <Icon name='delete' />Delete Group
                 </Button>
             </Button.Group>

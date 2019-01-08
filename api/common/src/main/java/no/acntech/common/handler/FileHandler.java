@@ -1,14 +1,5 @@
 package no.acntech.common.handler;
 
-import no.acntech.common.exception.FileStorageException;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,10 +10,27 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import no.acntech.common.config.ApplicationProperties;
+import no.acntech.common.exception.FileStorageException;
+
 @Component
 public class FileHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileHandler.class);
+
+    private final ApplicationProperties applicationProperties;
+
+    public FileHandler(final ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
 
     public long saveFile(MultipartFile file, Path directory, String fileName) {
         if (Files.exists(directory)) {
@@ -39,7 +47,11 @@ public class FileHandler {
         Path filePath = directory.resolve(fileName);
 
         if (Files.exists(filePath)) {
-            throw new FileStorageException("File already exists");
+            if (applicationProperties.getFile().getOverwriteExistingFiles()) {
+                LOGGER.warn("Overwriting exiting file {}", filePath.toString());
+            } else {
+                throw new FileStorageException("File already exists");
+            }
         }
 
         try {

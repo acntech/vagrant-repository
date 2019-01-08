@@ -65,6 +65,7 @@
                         <configuration>
                             <additionalProperties>
                                 <number>${build.number}</number>
+                                <scm.url>${project.parent.scm.url}</scm.url>
                                 <scm.revision>${build.revision}</scm.revision>
                                 <scm.revisionUrl>${project.parent.scm.url}/commits/${build.revision}</scm.revisionUrl>
                             </additionalProperties>
