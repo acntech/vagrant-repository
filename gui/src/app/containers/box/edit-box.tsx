@@ -24,7 +24,7 @@ import {
     RootState
 } from '../../models';
 import { findGroupBoxes, updateBox } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '..';
 
 interface RouteProps {
@@ -185,7 +185,7 @@ interface EditBoxFragmentProps {
     formData: NamedFormData;
 }
 
-const EditBoxFragment: FunctionComponent<EditBoxFragmentProps> = (props) => {
+const EditBoxFragment: FunctionComponent<EditBoxFragmentProps> = (props: EditBoxFragmentProps) => {
     const {
         box,
         onCancelButtonClick,
@@ -241,6 +241,7 @@ const EditBoxFragment: FunctionComponent<EditBoxFragmentProps> = (props) => {
                     <Message error><Icon name='ban' /> {formErrorMessage}</Message>
                 </Form>
             </Segment>
+            <PrimaryFooter />
         </Container>
     );
 };

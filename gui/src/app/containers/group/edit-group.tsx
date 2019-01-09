@@ -22,7 +22,7 @@ import {
     RootState
 } from '../../models';
 import { getGroup, updateGroup } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '..';
 import { Link } from 'react-router-dom';
 
@@ -185,7 +185,7 @@ interface EditGroupFragmentProps {
     formData: NamedFormData;
 }
 
-const EditGroupFragment: FunctionComponent<EditGroupFragmentProps> = (props) => {
+const EditGroupFragment: FunctionComponent<EditGroupFragmentProps> = (props: EditGroupFragmentProps) => {
     const {
         group,
         onCancelButtonClick,
@@ -239,6 +239,7 @@ const EditGroupFragment: FunctionComponent<EditGroupFragmentProps> = (props) => 
                     <Message error><Icon name='ban' /> {formErrorMessage}</Message>
                 </Form>
             </Segment>
+            <PrimaryFooter />
         </Container>
     );
 };

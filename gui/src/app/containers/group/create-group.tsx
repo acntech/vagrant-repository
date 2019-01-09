@@ -16,7 +16,7 @@ import {
 
 import { ModifyGroup, GroupState, RootState, ActionType } from '../../models';
 import { createGroup } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface ComponentStateProps {
     groupState: GroupState;
@@ -143,7 +143,7 @@ interface CreateGroupFragmentProps {
     formData: FormData;
 }
 
-const CreateGroupFragment: FunctionComponent<CreateGroupFragmentProps> = (props) => {
+const CreateGroupFragment: FunctionComponent<CreateGroupFragmentProps> = (props: CreateGroupFragmentProps) => {
     const {
         onCancelButtonClick,
         onFormSubmit,
@@ -194,6 +194,7 @@ const CreateGroupFragment: FunctionComponent<CreateGroupFragmentProps> = (props)
                     <Message error><Icon name='ban' /> {formErrorMessage}</Message>
                 </Form>
             </Segment>
+            <PrimaryFooter />
         </Container>
     );
 };

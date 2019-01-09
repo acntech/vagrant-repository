@@ -4,6 +4,12 @@ export enum NotificationActionType {
     CLEAR = '[notifications] CLEAR'
 }
 
+export enum GetManagementInfoActionType {
+    LOADING = '[management.info] GET LOADING',
+    SUCCESS = '[management.info] GET SUCCESS',
+    ERROR = '[management.info] GET ERROR'
+}
+
 export enum CreateGroupActionType {
     LOADING = '[groups] CREATE LOADING',
     SUCCESS = '[groups] CREATE SUCCESS',

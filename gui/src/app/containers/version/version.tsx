@@ -27,6 +27,7 @@ import {
 import {
     ConfirmModal,
     LoadingIndicator,
+    PrimaryFooter,
     PrimaryHeader,
     SecondaryHeader
 } from '../../components';
@@ -180,7 +181,7 @@ interface VersionFragmentProps {
     onDeleteVersionModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
-const VersionFragment: FunctionComponent<VersionFragmentProps> = (props) => {
+const VersionFragment: FunctionComponent<VersionFragmentProps> = (props: VersionFragmentProps) => {
     const {
         version,
         providers,
@@ -217,6 +218,7 @@ const VersionFragment: FunctionComponent<VersionFragmentProps> = (props) => {
                 onCreateProviderButtonClick={onCreateProviderButtonClick}
                 onDeleteVersionButtonClick={onDeleteVersionButtonClick}
                 onEditVersionButtonClick={onEditVersionButtonClick} />
+            <PrimaryFooter />
         </Container>
     );
 };
@@ -229,7 +231,7 @@ interface ProvidersFragmentProps {
     onEditVersionButtonClick: () => void;
 }
 
-const ProvidersFragment: FunctionComponent<ProvidersFragmentProps> = (props) => {
+const ProvidersFragment: FunctionComponent<ProvidersFragmentProps> = (props: ProvidersFragmentProps) => {
     const {
         providers,
         onTableRowClick,

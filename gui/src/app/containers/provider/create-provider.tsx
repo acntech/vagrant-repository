@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { ChangeEventHandler, Component, FunctionComponent, ReactNode } from 'react';
+import {
+    ChangeEventHandler,
+    Component,
+    FunctionComponent,
+    ReactNode,
+    SyntheticEvent
+} from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -23,7 +29,7 @@ import {
     ActionType
 } from '../../models';
 import { createVersionProvider, findVersionProviders } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface RouteProps {
     match: any;
@@ -115,12 +121,17 @@ class CreateProviderContainer extends Component<ComponentProps, ComponentState> 
 interface CreateBoxFragmentProps {
     onCancelButtonClick: () => void;
     onFormSubmit: () => void;
-    onFormSelectChange: (event: React.SyntheticEvent<HTMLInputElement>, data: DropdownProps) => void;
+    onFormSelectChange: (event: SyntheticEvent<HTMLInputElement>, data: DropdownProps) => void;
     formData: FormData;
 }
 
-const CreateBoxFragment: FunctionComponent<CreateBoxFragmentProps> = (props) => {
-    const { onCancelButtonClick, onFormSubmit, onFormSelectChange, formData } = props;
+const CreateBoxFragment: FunctionComponent<CreateBoxFragmentProps> = (props: CreateBoxFragmentProps) => {
+    const {
+        onCancelButtonClick,
+        onFormSubmit,
+        onFormSelectChange,
+        formData
+    } = props;
     const {
         formError,
         formErrorMessage,
@@ -160,6 +171,7 @@ const CreateBoxFragment: FunctionComponent<CreateBoxFragmentProps> = (props) => 
                     <Message error><Icon name='ban' /> {formErrorMessage}</Message>
                 </Form>
             </Segment>
+            <PrimaryFooter />
         </Container>
     );
 };

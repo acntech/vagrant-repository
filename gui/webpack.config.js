@@ -1,19 +1,16 @@
 // Modules
-const path = require('path');
-const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
-const PostCssFlexbugsFixes = require('postcss-flexbugs-fixes');
+var path = require('path');
+var webpack = require('webpack');
+var AutoPrefixer = require('autoprefixer');
+var PostCssFlexbugsFixes = require('postcss-flexbugs-fixes');
 // Plugins
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var WebpackCleanupPlugin = require('webpack-cleanup-plugin');
+var ManifestPlugin = require("webpack-manifest-plugin");
 // Variables
-const outputDir = 'dist';
-const publicDir = 'public';
-const outputPath = path.resolve(__dirname, outputDir);
-const indexFile = path.resolve(__dirname, publicDir, 'index.html');
-const devServerHost = process.env.NODE_PUBLIC_HOST || 'localhost:3000';
-const apiServerUrl = process.env.API_URL || 'http://localhost:8080';
-const mode = process.env.NODE_ENV || 'development';
+var devServerHost = process.env.NODE_PUBLIC_HOST || 'localhost:3000';
+var apiServerUrl = process.env.API_URL || 'http://localhost:8080';
+var mode = process.env.NODE_ENV || 'development';
 
 module.exports = {
     entry: {
@@ -22,7 +19,7 @@ module.exports = {
     },
     output: {
         filename: 'main.bundle.js',
-        path: outputPath,
+        path: path.resolve(__dirname, 'dist'),
         publicPath: '/'
     },
     resolve: {
@@ -56,9 +53,9 @@ module.exports = {
                             // Necessary for external CSS imports to work
                             // https://github.com/facebookincubator/create-react-app/issues/2677
                             ident: 'postcss',
-                            plugins: () => [
+                            plugins: [
                                 PostCssFlexbugsFixes,
-                                autoprefixer({
+                                AutoPrefixer({
                                     browsers: [
                                         '>1%',
                                         'last 4 versions',
@@ -73,7 +70,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(png|jpg|gif|ttf|eot|svg|woff2?)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                test: /\.(png|jpg|gif|ico|ttf|eot|svg|woff2?)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'file-loader'
             },
             {
@@ -106,7 +103,11 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new WebpackCleanupPlugin(),
         new HtmlWebpackPlugin({
-            template: indexFile
+            template: 'public/index.html',
+            favicon: 'public/favicon.ico'
+        }),
+        new ManifestPlugin({
+            fileName: "manifest.json"
         })
     ]
 };

@@ -7,7 +7,7 @@ import {
     Error,
     Group,
     Modified
-} from '../';
+} from '..';
 
 export interface ModifyBox {
     name: string;

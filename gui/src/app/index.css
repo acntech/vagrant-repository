@@ -21,3 +21,8 @@
 .sub.header {
     margin-top: 1.1rem;
 }
+
+.application-details, .application-details a {
+    color: #ddd;
+    font-size: 0.8rem;
+}

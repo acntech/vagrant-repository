@@ -2,6 +2,7 @@ import {
     ClearNotificationsAction,
     DismissNotificationAction,
     NotificationActionType,
+    NotificationType,
     ShowNotificationAction,
     ShowNotification
 } from '../../models';
@@ -11,25 +12,30 @@ const dismissNotificationAction = (uuid: string): DismissNotificationAction => (
 const clearNotificationsAction = (): ClearNotificationsAction => ({ type: NotificationActionType.CLEAR });
 
 interface Notification {
+    type?: NotificationType;
     title: string;
     content?: string;
     timeout?: number;
 }
 
 export function showInfo(notification: Notification) {
-    return showNotification({ ...notification, severity: 'info' });
+    const { type } = notification;
+    return showNotification({ ...notification, severity: 'info', type: type || NotificationType.GENERIC_INFO });
 }
 
 export function showWarning(notification: Notification) {
-    return showNotification({ ...notification, severity: 'warning' });
+    const { type } = notification;
+    return showNotification({ ...notification, severity: 'warning', type: type || NotificationType.GENERIC_WARNING });
 }
 
 export function showError(notification: Notification) {
-    return showNotification({ ...notification, severity: 'error' });
+    const { type } = notification;
+    return showNotification({ ...notification, severity: 'error', type: type || NotificationType.GENERIC_ERROR });
 }
 
 export function showSuccess(notification: Notification) {
-    return showNotification({ ...notification, severity: 'success' });
+    const { type } = notification;
+    return showNotification({ ...notification, severity: 'success', type: type || NotificationType.GENERIC_SUCCESS });
 }
 
 export function showNotification(notification: ShowNotification) {

@@ -7,7 +7,7 @@ import {
     Box,
     Error,
     Modified
-} from '../';
+} from '..';
 
 export interface ModifyVersion {
     name: string;

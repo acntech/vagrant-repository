@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 
-import { RootState } from '../../models';
+import { ManagementState, RootState } from '../../models';
+import { getManagementInfo } from '../../state/actions';
 import {
     CreateBoxContainer,
     CreateGroupContainer,
@@ -20,17 +21,27 @@ import {
     PageNotFoundErrorContainer,
     ProviderContainer,
     VersionContainer
-} from '../';
+} from '..';
 
 interface ComponentStateProps {
+    managementState: ManagementState;
 }
 
 interface ComponentDispatchProps {
+    getManagementInfo: () => Promise<any>;
 }
 
 type ComponentProps = ComponentDispatchProps & ComponentStateProps;
 
 class RootContainer extends Component<ComponentProps> {
+
+    componentDidMount() {
+        const { info, loading } = this.props.managementState;
+
+        if (!loading && !info) {
+            this.props.getManagementInfo();
+        }
+    }
 
     public render(): ReactNode {
         return (
@@ -57,9 +68,11 @@ class RootContainer extends Component<ComponentProps> {
 }
 
 const mapStateToProps = (state: RootState): ComponentStateProps => ({
+    managementState: state.managementState
 });
 
 const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
+    getManagementInfo: () => dispatch(getManagementInfo())
 });
 
 const ConnectedRootContainer = connect(mapStateToProps, mapDispatchToProps)(RootContainer);

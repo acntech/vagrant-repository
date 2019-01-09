@@ -16,7 +16,7 @@ import {
 
 import { ModifyVersion, VersionState, RootState, ActionType } from '../../models';
 import { createBoxVersion, findBoxVersions } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface RouteProps {
     match: any;
@@ -155,7 +155,7 @@ interface CreateVersionFragmentProps {
     formData: FormData;
 }
 
-const CreateVersionFragment: FunctionComponent<CreateVersionFragmentProps> = (props) => {
+const CreateVersionFragment: FunctionComponent<CreateVersionFragmentProps> = (props: CreateVersionFragmentProps) => {
     const {
         onCancelButtonClick,
         onFormSubmit,
@@ -206,6 +206,7 @@ const CreateVersionFragment: FunctionComponent<CreateVersionFragmentProps> = (pr
                     <Message error><Icon name='ban' /> {formErrorMessage}</Message>
                 </Form>
             </Segment>
+            <PrimaryFooter />
         </Container>
     );
 };

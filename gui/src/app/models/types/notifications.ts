@@ -1,15 +1,23 @@
 import { ReactNode } from 'react';
-import { NotificationActionType } from '../';
+import { NotificationType, NotificationActionType } from '..';
+
+export type Severity =
+    | 'info'
+    | 'warning'
+    | 'error'
+    | 'success';
 
 export interface ShowNotification {
-    severity: 'info' | 'warning' | 'error' | 'success';
+    severity: Severity;
+    type: NotificationType;
     title: string;
     content?: string | ReactNode;
     timeout?: number;
 }
 
 export interface Notification {
-    severity: 'info' | 'warning' | 'error' | 'success';
+    severity: Severity;
+    type: NotificationType;
     uuid: string;
     title: string;
     content?: string | ReactNode;

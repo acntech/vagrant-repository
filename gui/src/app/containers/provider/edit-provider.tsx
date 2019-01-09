@@ -15,6 +15,7 @@ import {
 import {
     File,
     FileState,
+    NotificationType,
     Provider,
     ProviderState,
     ProviderType,
@@ -27,7 +28,7 @@ import {
     updateProvider,
     showWarning
 } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 import { Link } from 'react-router-dom';
 import { NotFoundErrorContainer } from '../error';
 
@@ -204,7 +205,7 @@ interface EditProviderFragmentProps {
     formData: FormData;
 }
 
-const EditProviderFragment: FunctionComponent<EditProviderFragmentProps> = (props) => {
+const EditProviderFragment: FunctionComponent<EditProviderFragmentProps> = (props: EditProviderFragmentProps) => {
     const {
         provider,
         onFormInputChange,
@@ -256,6 +257,7 @@ const EditProviderFragment: FunctionComponent<EditProviderFragmentProps> = (prop
                         <Message warning><Icon name='warning sign' /> {formWarningMessage}</Message>
                     </Form>
                 </Segment>
+                <PrimaryFooter />
             </Container>
         );
 };
@@ -269,7 +271,7 @@ const mapDispatchToProps = (dispatch): ComponentDispatchProps => ({
     findFiles: (providerId: number) => dispatch(findFiles(providerId)),
     getProvider: (providerId: number) => dispatch(getProvider(providerId)),
     updateProvider: (providerId: number, file: any) => dispatch(updateProvider(providerId, file)),
-    showWarning: (title: string, content: string) => dispatch(showWarning({ title: title, content: content }))
+    showWarning: (title: string, content: string) => dispatch(showWarning({ type: NotificationType.GENERIC_IDEMPOTENT_WARNING, title: title, content: content }))
 });
 
 const ConnectedEditProviderContainer = connect(mapStateToProps, mapDispatchToProps)(EditProviderContainer);

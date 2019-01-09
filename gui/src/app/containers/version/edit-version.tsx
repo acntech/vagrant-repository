@@ -23,7 +23,7 @@ import {
     RootState
 } from '../../models';
 import { findBoxVersions, updateVersion } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '..';
 
 interface RouteProps {
@@ -185,7 +185,7 @@ interface EditVersionFragmentProps {
     formData: NamedFormData;
 }
 
-const EditVersionFragment: FunctionComponent<EditVersionFragmentProps> = (props) => {
+const EditVersionFragment: FunctionComponent<EditVersionFragmentProps> = (props: EditVersionFragmentProps) => {
     const {
         version,
         onCancelButtonClick,
@@ -243,6 +243,7 @@ const EditVersionFragment: FunctionComponent<EditVersionFragmentProps> = (props)
                     <Message error><Icon name='ban' /> {formErrorMessage}</Message>
                 </Form>
             </Segment>
+            <PrimaryFooter />
         </Container>
     );
 };

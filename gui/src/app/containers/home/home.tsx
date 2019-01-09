@@ -7,7 +7,7 @@ import { Button, Container, Icon, Segment, Table } from 'semantic-ui-react';
 
 import { Group, GroupState, RootState } from '../../models';
 import { findGroups } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader } from '../../components';
+import { LoadingIndicator, PrimaryFooter, PrimaryHeader } from '../../components';
 
 interface ComponentStateProps {
     groupState: GroupState;
@@ -41,8 +41,7 @@ class HomeContainer extends Component<ComponentProps, ComponentState> {
 
     public render(): ReactNode {
         const { groupId, createGroup } = this.state;
-        const { groupState } = this.props;
-        const { groups, loading } = groupState;
+        const { groups, loading } = this.props.groupState;
 
         if (groupId) {
             return <Redirect to={`/group/${groupId}`} />;
@@ -75,7 +74,7 @@ interface GroupsFragmentProps {
     onCreateGroupButtonClick: () => void;
 }
 
-const GroupsFragment: FunctionComponent<GroupsFragmentProps> = (props) => {
+const GroupsFragment: FunctionComponent<GroupsFragmentProps> = (props: GroupsFragmentProps) => {
     const { groups, onTableRowClick, onCreateGroupButtonClick } = props;
 
     return (
@@ -107,6 +106,7 @@ const GroupsFragment: FunctionComponent<GroupsFragmentProps> = (props) => {
                     </Table.Body>
                 </Table>
             </Segment>
+            <PrimaryFooter />
         </Container>
     );
 };

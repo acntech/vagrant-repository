@@ -1,4 +1,5 @@
 export * from './notifications';
+export * from './management';
 export * from './groups';
 export * from './boxes';
 export * from './versions';

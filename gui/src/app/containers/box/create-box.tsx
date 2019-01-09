@@ -23,7 +23,7 @@ import {
     RootState
 } from '../../models';
 import { createGroupBox, findGroupBoxes } from '../../state/actions';
-import { LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 
 interface RouteProps {
     match: any;
@@ -160,7 +160,7 @@ interface CreateBoxFragmentProps {
     formData: FormData;
 }
 
-const CreateBoxFragment: FunctionComponent<CreateBoxFragmentProps> = (props) => {
+const CreateBoxFragment: FunctionComponent<CreateBoxFragmentProps> = (props: CreateBoxFragmentProps) => {
     const {
         onCancelButtonClick,
         onFormSubmit,
@@ -211,6 +211,7 @@ const CreateBoxFragment: FunctionComponent<CreateBoxFragmentProps> = (props) => 
                     <Message error><Icon name='ban' /> {formErrorMessage}</Message>
                 </Form>
             </Segment>
+            <PrimaryFooter />
         </Container>
     );
 };

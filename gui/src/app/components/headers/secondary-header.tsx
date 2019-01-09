@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, ReactNode } from 'react';
+import { Component, FunctionComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Header, Segment, Message } from 'semantic-ui-react'
 
@@ -53,7 +53,7 @@ interface HeaderFragmentProps {
     children?: string | ReactNode;
 }
 
-const HeaderFragment: React.SFC<HeaderFragmentProps> = (props) => {
+const HeaderFragment: FunctionComponent<HeaderFragmentProps> = (props: HeaderFragmentProps) => {
     const { title, subtitle, children } = props;
 
     return (
@@ -69,7 +69,7 @@ interface MessagesFragmentProps {
     onDismissMessage: (uuid: string) => void;
 }
 
-const MessagesFragment: React.SFC<MessagesFragmentProps> = (props) => {
+const MessagesFragment: FunctionComponent<MessagesFragmentProps> = (props) => {
     const { notifications, onDismissMessage } = props;
 
     if (notifications && notifications.length > 0) {

@@ -6,7 +6,7 @@ import {
     UpdateGroupActionType,
     Error,
     Modified
-} from '../';
+} from '..';
 
 export interface ModifyGroup {
     name: string;

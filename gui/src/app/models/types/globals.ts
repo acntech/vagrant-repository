@@ -4,13 +4,15 @@ import {
     FileState,
     GroupState,
     NotificationState,
+    ManagementState,
     ProviderState,
     VersionState
-} from './';
+} from '.';
 
 export interface RootState {
     intl: IntlState;
     notificationState: NotificationState;
+    managementState: ManagementState;
     groupState: GroupState;
     boxState: BoxState;
     versionState: VersionState;
@@ -35,6 +37,7 @@ export interface Modified {
 }
 
 export enum EntityType {
+    MANAGEMENT = 'management',
     GROUP = 'group',
     BOX = 'box',
     VERSION = 'version',

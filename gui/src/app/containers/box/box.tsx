@@ -22,7 +22,7 @@ import {
     findBoxVersions,
     findGroupBoxes
 } from '../../state/actions';
-import { ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { ConfirmModal, LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '../';
 
 interface RouteProps {
@@ -173,7 +173,7 @@ interface BoxFragmentProps {
     onDeleteBoxModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
-const BoxFragment: FunctionComponent<BoxFragmentProps> = (props) => {
+const BoxFragment: FunctionComponent<BoxFragmentProps> = (props: BoxFragmentProps) => {
     const {
         box,
         versions,
@@ -208,6 +208,7 @@ const BoxFragment: FunctionComponent<BoxFragmentProps> = (props) => {
                 onCreateVersionButtonClick={onCreateVersionButtonClick}
                 onEditBoxButtonClick={onEditBoxButtonClick}
                 onDeleteBoxButtonClick={onDeleteBoxButtonClick} />
+            <PrimaryFooter />
         </Container>
     );
 };
@@ -220,7 +221,7 @@ interface VersionsFragmentProps {
     onDeleteBoxButtonClick: () => void;
 }
 
-const VersionsFragment: FunctionComponent<VersionsFragmentProps> = (props) => {
+const VersionsFragment: FunctionComponent<VersionsFragmentProps> = (props: VersionsFragmentProps) => {
     const {
         versions,
         onTableRowClick,

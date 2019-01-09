@@ -25,7 +25,7 @@ import {
     deleteProvider,
     getProvider,
 } from '../../state/actions';
-import { ConfirmModal, LoadingIndicator, PrimaryHeader, SecondaryHeader } from '../../components';
+import { ConfirmModal, LoadingIndicator, PrimaryFooter, PrimaryHeader, SecondaryHeader } from '../../components';
 import { NotFoundErrorContainer } from '..';
 
 interface RouteProps {
@@ -147,7 +147,7 @@ interface ProviderFragmentProps {
     onDeleteProviderModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
-const ProviderFragment: FunctionComponent<ProviderFragmentProps> = (props) => {
+const ProviderFragment: FunctionComponent<ProviderFragmentProps> = (props: ProviderFragmentProps) => {
     const {
         provider,
         onEditProviderButtonClick,
@@ -208,6 +208,7 @@ const ProviderFragment: FunctionComponent<ProviderFragmentProps> = (props) => {
                     </Table.Body>
                 </Table>
             </Segment>
+            <PrimaryFooter />
         </Container>
     );
 };

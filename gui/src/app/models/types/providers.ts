@@ -9,7 +9,7 @@ import {
     Error,
     Modified,
     Version
-} from '../';
+} from '..';
 
 export interface ModifyProvider {
     providerType: ProviderType;

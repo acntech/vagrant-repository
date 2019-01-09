@@ -25,7 +25,7 @@ import {
     UpdateVersionLoadingAction,
     UpdateVersionSuccessAction
 } from '../../models';
-import { showError, showSuccess } from '../actions';
+import { showError, showSuccess } from '.';
 
 const { timeout: successTimeout } = globalConfig.notifications.success;
 const { timeout: errorTimeout } = globalConfig.notifications.error;

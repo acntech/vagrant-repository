@@ -26,6 +26,7 @@ import {
 import {
     ConfirmModal,
     LoadingIndicator,
+    PrimaryFooter,
     PrimaryHeader,
     SecondaryHeader
 } from '../../components';
@@ -179,7 +180,7 @@ interface GroupFragmentProps {
     onDeleteGroupModalCloseButtonClick: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void;
 }
 
-const GroupFragment: FunctionComponent<GroupFragmentProps> = (props) => {
+const GroupFragment: FunctionComponent<GroupFragmentProps> = (props: GroupFragmentProps) => {
     const {
         group,
         boxes,
@@ -212,6 +213,7 @@ const GroupFragment: FunctionComponent<GroupFragmentProps> = (props) => {
                 onCreateBoxButtonClick={onCreateBoxButtonClick}
                 onEditGroupButtonClick={onEditGroupButtonClick}
                 onDeleteGroupButtonClick={onDeleteGroupButtonClick} />
+            <PrimaryFooter />
         </Container>
     );
 };
@@ -224,7 +226,7 @@ interface BoxesFragmentProps {
     onDeleteGroupButtonClick: () => void;
 }
 
-const BoxesFragment: FunctionComponent<BoxesFragmentProps> = (props) => {
+const BoxesFragment: FunctionComponent<BoxesFragmentProps> = (props: BoxesFragmentProps) => {
     const {
         boxes,
         onTableRowClick,

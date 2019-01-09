@@ -2,9 +2,12 @@ import uuidv4 from 'uuid/v4';
 import {
     ClearNotificationsAction,
     DismissNotificationAction,
+    Notification,
     NotificationAction,
     NotificationState,
     NotificationActionType,
+    NotificationType,
+    ShowNotification,
     ShowNotificationAction
 } from '../../models';
 import { initialNotificationState } from '../store/initial-state';
@@ -27,7 +30,7 @@ const show = (state: NotificationState = initialNotificationState, action: ShowN
         case NotificationActionType.SHOW: {
             let { notifications } = state;
             const { notification } = action;
-            notifications = notifications.concat({ ...notification, uuid: uuidv4() });
+            notifications = appendNotification(notifications, notification);
             return { ...initialNotificationState, notifications: notifications };
         }
 
@@ -62,4 +65,21 @@ const clear = (state: NotificationState = initialNotificationState, action: Clea
             return state;
         }
     }
+};
+
+const appendNotification = (notifications: Notification[], notification: ShowNotification): Notification[] => {
+    switch (notification.type) {
+        case NotificationType.GENERIC_IDEMPOTENT_WARNING:
+            return idempotentAppendNotification(notifications, notification);
+        default:
+            return notifications.concat({ ...notification, uuid: uuidv4() });
+    }
+};
+
+const idempotentAppendNotification = (notifications: Notification[], notification: ShowNotification): Notification[] => {
+    const { type } = notification;
+    if (!notifications.find(n => n.type === type)) {
+        notifications = notifications.concat({ ...notification, uuid: uuidv4() });
+    }
+    return notifications;
 };
