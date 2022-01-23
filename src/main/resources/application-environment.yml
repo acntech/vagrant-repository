@@ -1,0 +1,36 @@
+########################
+# SPRING Configuration #
+########################
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+# Actuator
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /management
+      exposure:
+        include:
+          - info
+          - health
+  endpoint:
+    health:
+      enabled: true
+    info:
+      enabled: true
+
+# Logging
+logging:
+  level:
+    org.springframework: ERROR
+    no.acntech: WARN

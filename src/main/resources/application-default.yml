@@ -1,0 +1,29 @@
+########################
+# SPRING Configuration #
+########################
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/vagrant-repository
+    username: vagrant-repository
+    password: 64nd4lf
+
+# Actuator
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: /management
+      exposure:
+        include: "*"
+
+# Logging
+logging:
+  level:
+    org.springframework: INFO
+    no.acntech: DEBUG

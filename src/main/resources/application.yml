@@ -1,0 +1,52 @@
+#########################
+# ACNTECH Configuration #
+#########################
+acntech:
+  api:
+    client-context-path: /vagrant/boxes
+  file:
+    default-file-name: image.box
+    upload-dir: /tmp/vagrant-repository/uploads
+    overwrite-existing-files: true
+
+########################
+# SPRING Configuration #
+########################
+spring:
+  application:
+    name: vagrant-repository
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10GB
+      max-request-size: 10GB
+      file-size-threshold: 2KB
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+    default-property-inclusion: NON_NULL
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      adjust-dates-to-context-time-zone: false
+  jmx:
+    enabled: false
+  aop:
+    proxy-target-class: true
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+### SpringDoc ###
+springdoc:
+  info:
+    title: NextGenCMS Request Service
+    description: NextGenCMS Request Management Microservice
+    version: v1
+  api-docs:
+    path: /api/docs
+  swagger-ui:
+    path: /api/docs.html

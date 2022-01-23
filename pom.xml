@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- PROJECT -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.3</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>no.acntech</groupId>
+    <artifactId>vagrant-repository</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>vagrant-repository</name>
+    <description>Vagrant Repository</description>
+
+    <developers>
+        <developer>
+            <id>thomas.johansen</id>
+            <name>Thomas Johansen</name>
+            <email>thomas.johansen@accenture.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <tag>GitHub</tag>
+        <url>https://github.com/acntech/vagrant-repository</url>
+        <connection>git@github.com:acntech/vagrant-repository.git</connection>
+        <developerConnection>git@github.com:acntech/vagrant-repository.git</developerConnection>
+    </scm>
+
+    <!-- PROPERTIES -->
+    <properties>
+        <!-- Dependencies -->
+        <spring-native.version>0.11.1</spring-native.version>
+        <springdoc.version>1.6.4</springdoc.version>
+        <!-- Maven Plugins -->
+        <native-maven-plugin.version>0.9.9</native-maven-plugin.version>
+
+        <!-- Build information for Spring Boot Maven Plugin -->
+        <build.number>UNKNOWN</build.number>
+        <build.revision>UNKNOWN</build.revision>
+
+        <!-- General -->
+        <java.version>17</java.version>
+        <project.encoding>UTF-8</project.encoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>${project.encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
+        <downloadSources>true</downloadSources>
+        <downloadJavadocs>true</downloadJavadocs>
+    </properties>
+
+    <!-- DEPENDENCIES -->
+    <dependencies>
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring Native -->
+        <dependency>
+            <groupId>org.springframework.experimental</groupId>
+            <artifactId>spring-native</artifactId>
+            <version>${spring-native.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.experimental</groupId>
+            <artifactId>spring-aot</artifactId>
+            <version>${spring-native.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <!-- BUILD -->
+    <build>
+        <!-- PLUGINS -->
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <classifier/>
+                    <image>
+                        <builder>paketobuildpacks/builder:tiny</builder>
+                        <env>
+                            <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+                        </env>
+                        <pullPolicy>IF_NOT_PRESENT</pullPolicy>
+                    </image>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.experimental</groupId>
+                <artifactId>spring-aot-maven-plugin</artifactId>
+                <version>${spring-native.version}</version>
+                <executions>
+                    <execution>
+                        <id>test-generate</id>
+                        <goals>
+                            <goal>test-generate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- PROFILES -->
+    <profiles>
+        <profile>
+            <id>native</id>
+
+            <!-- BUILD -->
+            <build>
+                <!-- PLUGINS -->
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>${native-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>test-native</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>build-native</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Avoid a clash between Spring Boot repackaging and native-maven-plugin -->
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <classifier>exec</classifier>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <!-- REPOSITORIES -->
+    <repositories>
+        <repository>
+            <id>spring-release-repository</id>
+            <name>Spring Release Repository</name>
+            <url>https://repo.spring.io/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-plugins-release-repository</id>
+            <name>Spring Plugins Release Repository</name>
+            <url>https://repo.spring.io/plugins-release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+</project>

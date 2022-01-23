@@ -1,0 +1,35 @@
+version: '3.5'
+
+services:
+  gui:
+    build: gui
+    image: acntechie/vagrant-repository-gui:latest
+    container_name: vagrant-repository-gui
+    hostname: gui
+    domainname: vagrant-repository.local
+    depends_on:
+      - api
+    environment:
+      - API_URL=http://api:8080
+    ports:
+      - 80:80
+    networks:
+      - vagrant_repository
+
+  api:
+    build:
+      context: api
+      args:
+        - BUILD_REVISION=UNKNOWN
+    image: acntechie/vagrant-repository-api:latest
+    container_name: vagrant-repository-api
+    hostname: api
+    domainname: vagrant-repository.local
+    ports:
+      - 8080:8080
+    networks:
+      - vagrant_repository
+
+networks:
+  vagrant_repository:
+    name: vagrant-repository
