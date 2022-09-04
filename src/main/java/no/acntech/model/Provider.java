@@ -1,32 +1,20 @@
 package no.acntech.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
-import java.time.ZonedDateTime;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Table(name = "PROVIDERS")
-@Entity
+import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
+
 public class Provider {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
-    @Enumerated(EnumType.STRING)
     private ProviderType providerType;
     private Long size;
-    @Enumerated(EnumType.STRING)
     private ChecksumType checksumType;
     private String checksum;
-    @Transient
     private ZonedDateTime created;
-    @Transient
     private ZonedDateTime modified;
-    @ManyToOne
-    @JoinColumn(name = "VERSION_ID", nullable = false)
     private Version version;
 
     public Long getId() {

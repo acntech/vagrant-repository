@@ -1,5 +1,12 @@
 package no.acntech.resource;
 
+import no.acntech.model.Box;
+import no.acntech.model.ModifyBox;
+import no.acntech.model.ModifyVersion;
+import no.acntech.model.Version;
+import no.acntech.service.BoxService;
+import no.acntech.service.VersionService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,22 +24,15 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-import no.acntech.model.Box;
-import no.acntech.model.ModifyBox;
-import no.acntech.model.ModifyVersion;
-import no.acntech.model.Version;
-import no.acntech.service.BoxService;
-import no.acntech.service.VersionService;
-
-@RequestMapping(path = "boxes")
+@RequestMapping(path = "/api/users")
 @RestController
-public class BoxResource {
+public class UserResource {
 
     private final BoxService boxService;
     private final VersionService versionService;
 
-    public BoxResource(final BoxService boxService,
-                       final VersionService versionService) {
+    public UserResource(final BoxService boxService,
+                        final VersionService versionService) {
         this.boxService = boxService;
         this.versionService = versionService;
     }

@@ -1,35 +1,15 @@
 package no.acntech.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
-
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Table(name = "BOXES")
-@Entity
 public class Box {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
     private String name;
     private String description;
-    @Transient
     private ZonedDateTime created;
-    @Transient
-    private ZonedDateTime modified;
-    @ManyToOne
-    @JoinColumn(name = "GROUP_ID", nullable = false)
     private Group group;
 
     public Long getId() {
@@ -56,15 +36,10 @@ public class Box {
         return created;
     }
 
-    public ZonedDateTime getModified() {
-        return modified;
-    }
-
     public Group getGroup() {
         return group;
     }
 
-    @JsonIgnore
     public static Builder builder() {
         return new Builder();
     }
@@ -94,7 +69,7 @@ public class Box {
         }
 
         public Box build() {
-            Box box = new Box();
+            var box = new Box();
             box.name = this.name;
             box.description = this.description;
             box.group = this.group;

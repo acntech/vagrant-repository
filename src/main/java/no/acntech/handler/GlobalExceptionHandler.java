@@ -1,5 +1,6 @@
 package no.acntech.handler;
 
+import io.micrometer.core.lang.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -34,56 +36,99 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             UnknownProviderException.class,
             ConstraintViolationException.class
     })
-    public ResponseEntity<Object> handleBadRequestException(Exception exception, WebRequest request) {
+    @NonNull
+    public ResponseEntity<Object> handleBadRequestException(@NonNull Exception exception,
+                                                            @NonNull WebRequest request) {
         return handleException(exception, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler({
             IllegalStateException.class
     })
-    public ResponseEntity<Object> handleConflictException(Exception exception, WebRequest request) {
+    @NonNull
+    public ResponseEntity<Object> handleConflictException(@NonNull Exception exception,
+                                                          @NonNull WebRequest request) {
         return handleException(exception, HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler({
+            AuthenticationException.class
+    })
+    @NonNull
+    public ResponseEntity<Object> handleUnauthorizedException(@NonNull Exception exception,
+                                                              @NonNull WebRequest request) {
+        return handleException(exception, HttpStatus.UNAUTHORIZED, request);
     }
 
     @ExceptionHandler({
             Exception.class
     })
-    public ResponseEntity<Object> handleServerErrorException(Exception exception, WebRequest request) {
+    @NonNull
+    public ResponseEntity<Object> handleServerErrorException(@NonNull Exception exception,
+                                                             @NonNull WebRequest request) {
         return handleException(exception, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
+    @NonNull
     @Override
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(@NonNull HttpRequestMethodNotSupportedException exception,
+                                                                         @NonNull HttpHeaders headers,
+                                                                         @NonNull HttpStatus status,
+                                                                         @NonNull WebRequest request) {
         return handleException(exception, headers, status, request);
     }
 
+    @NonNull
     @Override
-    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(@NonNull HttpMediaTypeNotSupportedException exception,
+                                                                     @NonNull HttpHeaders headers,
+                                                                     @NonNull HttpStatus status,
+                                                                     @NonNull WebRequest request) {
         return handleException(exception, headers, status, request);
     }
 
+    @NonNull
     @Override
-    protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(@NonNull HttpMediaTypeNotAcceptableException exception,
+                                                                      @NonNull HttpHeaders headers,
+                                                                      @NonNull HttpStatus status,
+                                                                      @NonNull WebRequest request) {
         return handleException(exception, headers, status, request);
     }
 
+    @NonNull
     @Override
-    protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMissingPathVariable(@NonNull MissingPathVariableException exception,
+                                                               @NonNull HttpHeaders headers,
+                                                               @NonNull HttpStatus status,
+                                                               @NonNull WebRequest request) {
         return handleException(exception, headers, status, request);
     }
 
+    @NonNull
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(@NonNull HttpMessageNotReadableException exception,
+                                                                  @NonNull HttpHeaders headers,
+                                                                  @NonNull HttpStatus status,
+                                                                  @NonNull WebRequest request) {
         return handleException(exception, headers, status, request);
     }
 
+    @NonNull
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotWritable(@NonNull HttpMessageNotWritableException exception,
+                                                                  @NonNull HttpHeaders headers,
+                                                                  @NonNull HttpStatus status,
+                                                                  @NonNull WebRequest request) {
         return handleException(exception, headers, status, request);
     }
 
+    @NonNull
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(@NonNull MethodArgumentNotValidException exception,
+                                                                  @NonNull HttpHeaders headers,
+                                                                  @NonNull HttpStatus status,
+                                                                  @NonNull WebRequest request) {
         return handleException(exception, headers, status, request);
     }
 
@@ -103,8 +148,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private String findRequestPath(WebRequest request) {
-        if (request instanceof ServletWebRequest) {
-            ServletWebRequest servletWebRequest = (ServletWebRequest) request;
+        if (request instanceof ServletWebRequest servletWebRequest) {
             return new UrlPathHelper().getPathWithinApplication(servletWebRequest.getRequest());
         } else {
             return request.getContextPath();

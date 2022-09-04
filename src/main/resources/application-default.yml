@@ -2,15 +2,10 @@
 # SPRING Configuration #
 ########################
 spring:
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: false
-    hibernate:
-      ddl-auto: none
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/vagrant-repository
-    username: vagrant-repository
+    url: jdbc:postgresql://localhost:5432/vagrant_repository
+    username: vagrant_repository
     password: 64nd4lf
 
 # Actuator
@@ -25,5 +20,7 @@ management:
 # Logging
 logging:
   level:
+    root: INFO
     org.springframework: INFO
+    org.jooq.Constants: WARN
     no.acntech: DEBUG

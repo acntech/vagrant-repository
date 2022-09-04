@@ -25,26 +25,19 @@ spring:
     date-format: com.fasterxml.jackson.databind.util.StdDateFormat
     default-property-inclusion: NON_NULL
     serialization:
-      write-dates-as-timestamps: false
+      WRITE_DATES_AS_TIMESTAMPS: false
     deserialization:
-      adjust-dates-to-context-time-zone: false
+      ADJUST_DATES_TO_CONTEXT_TIME_ZONE: false
   jmx:
     enabled: false
   aop:
     proxy-target-class: true
-  jpa:
-    open-in-view: false
-    properties:
-      hibernate:
-        jdbc:
-          lob:
-            non_contextual_creation: true
 
 ### SpringDoc ###
 springdoc:
   info:
-    title: NextGenCMS Request Service
-    description: NextGenCMS Request Management Microservice
+    title: AcnTech Vagrant Repository
+    description: Repository application to manage Vagrant boxes
     version: v1
   api-docs:
     path: /api/docs

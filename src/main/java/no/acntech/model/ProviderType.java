@@ -6,8 +6,8 @@ public enum ProviderType {
 
     VIRTUALBOX("virtualbox", "VirtualBox");
 
-    private String name;
-    private String readable;
+    private final String name;
+    private final String readable;
 
     ProviderType(String name, String readable) {
         this.name = name;

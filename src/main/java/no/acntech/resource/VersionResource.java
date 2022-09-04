@@ -46,7 +46,7 @@ public class VersionResource {
     }
 
     @DeleteMapping(path = "{id}")
-    public ResponseEntity delete(@PathVariable(name = "id") final Long versionId) {
+    public ResponseEntity<Void> delete(@PathVariable(name = "id") final Long versionId) {
         versionService.delete(versionId);
         return ResponseEntity.noContent().build();
     }

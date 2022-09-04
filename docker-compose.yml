@@ -7,8 +7,8 @@ services:
     hostname: database
     domainname: acntech.local
     environment:
-      - POSTGRES_DB=vagrant-repository
-      - POSTGRES_USER=vagrant-repository
+      - POSTGRES_DB=vagrant_repository
+      - POSTGRES_USER=vagrant_repository
       - POSTGRES_PASSWORD=64nd4lf
     ports:
       - "5433:5432"

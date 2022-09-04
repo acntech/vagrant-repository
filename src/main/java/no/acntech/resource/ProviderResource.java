@@ -42,7 +42,7 @@ public class ProviderResource {
     }
 
     @DeleteMapping(path = "{id}")
-    public ResponseEntity delete(@PathVariable(name = "id") final Long providerId) {
+    public ResponseEntity<Void> delete(@PathVariable(name = "id") final Long providerId) {
         providerService.delete(providerId);
         return ResponseEntity.noContent().build();
     }

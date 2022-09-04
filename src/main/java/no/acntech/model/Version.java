@@ -1,35 +1,18 @@
 package no.acntech.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
-
-import java.time.ZonedDateTime;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Table(name = "VERSIONS")
-@Entity
+import javax.validation.constraints.NotBlank;
+import java.time.ZonedDateTime;
+
 public class Version {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
     private String name;
     private String description;
-    @Transient
     private ZonedDateTime created;
-    @Transient
     private ZonedDateTime modified;
-    @ManyToOne
-    @JoinColumn(name = "BOX_ID", nullable = false)
     private Box box;
 
     public Long getId() {

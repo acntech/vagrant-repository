@@ -2,23 +2,16 @@ package no.acntech.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.ZonedDateTime;
 
-@Table(name = "GROUPS")
-@Entity
 public class Group {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
     private String name;
     private String description;
-    @Transient
     private ZonedDateTime created;
-    @Transient
     private ZonedDateTime modified;
 
     public Long getId() {

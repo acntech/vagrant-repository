@@ -59,7 +59,7 @@ public class GroupResource {
     }
 
     @DeleteMapping(path = "{id}")
-    public ResponseEntity delete(@PathVariable(name = "id") final Long groupId) {
+    public ResponseEntity<Void> delete(@PathVariable(name = "id") final Long groupId) {
         groupService.delete(groupId);
         return ResponseEntity.noContent().build();
     }

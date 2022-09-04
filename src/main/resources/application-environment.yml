@@ -2,11 +2,6 @@
 # SPRING Configuration #
 ########################
 spring:
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: false
-    hibernate:
-      ddl-auto: none
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${SPRING_DATASOURCE_URL}
@@ -32,5 +27,7 @@ management:
 # Logging
 logging:
   level:
+    root: WARN
     org.springframework: ERROR
+    org.jooq.Constants: WARN
     no.acntech: WARN

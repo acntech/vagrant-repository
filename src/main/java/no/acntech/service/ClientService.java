@@ -6,10 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import no.acntech.exception.UnknownProviderException;
 import no.acntech.model.Box;
@@ -21,10 +18,6 @@ import no.acntech.model.Provider;
 import no.acntech.model.ProviderType;
 import no.acntech.model.Version;
 import no.acntech.properties.ApplicationProperties;
-import no.acntech.repository.BoxRepository;
-import no.acntech.repository.GroupRepository;
-import no.acntech.repository.ProviderRepository;
-import no.acntech.repository.VersionRepository;
 
 @Service
 public class ClientService {
@@ -32,23 +25,11 @@ public class ClientService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientService.class);
 
     private final ApplicationProperties applicationProperties;
-    private final GroupRepository groupRepository;
-    private final BoxRepository boxRepository;
-    private final VersionRepository versionRepository;
-    private final ProviderRepository providerRepository;
     private final FileService fileService;
 
     public ClientService(final ApplicationProperties applicationProperties,
-                         final GroupRepository groupRepository,
-                         final BoxRepository boxRepository,
-                         final VersionRepository versionRepository,
-                         final ProviderRepository providerRepository,
                          final FileService fileService) {
         this.applicationProperties = applicationProperties;
-        this.groupRepository = groupRepository;
-        this.boxRepository = boxRepository;
-        this.versionRepository = versionRepository;
-        this.providerRepository = providerRepository;
         this.fileService = fileService;
     }
 
@@ -56,12 +37,13 @@ public class ClientService {
                                    String boxName,
                                    final UriComponentsBuilder uriBuilder) {
         LOGGER.info("Getting client information about {}/{}", groupName, boxName);
-        List<Group> groups = groupRepository.findByName(groupName);
+        /*List<Group> groups = groupRepository.findByName(groupName);
 
         return groups.stream()
                 .filter(Objects::nonNull)
                 .findFirst()
-                .map(group -> mapBox(group, boxName, uriBuilder));
+                .map(group -> mapBox(group, boxName, uriBuilder));*/
+        return null;
     }
 
     public Resource getFile(String groupName,
@@ -82,28 +64,29 @@ public class ClientService {
     private ClientBox mapBox(final Group group,
                              String boxName,
                              final UriComponentsBuilder uriBuilder) {
-        List<Box> boxes = boxRepository.findByGroupIdAndName(group.getId(), boxName.toLowerCase());
+        /*List<Box> boxes = boxRepository.findByGroupIdAndName(group.getId(), boxName.toLowerCase());
 
         return boxes.stream()
                 .filter(Objects::nonNull)
                 .findFirst()
                 .map(box -> mapBox(group, box, uriBuilder))
-                .orElse(null);
+                .orElse(null);*/
+        return null;
     }
 
     private ClientBox mapBox(final Group group,
                              final Box box,
                              final UriComponentsBuilder uriBuilder) {
-        List<Version> versions = versionRepository.findByBoxId(box.getId());
+        /*List<Version> versions = versionRepository.findByBoxId(box.getId());
 
         List<ClientVersion> clientVersions = versions.stream()
                 .map(version -> mapVersion(group, box, version, uriBuilder))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
 
         return ClientBox.builder()
                 .name(determineBoxNamespace(group, box))
                 .description(box.getDescription())
-                .versions(clientVersions)
+                .versions(null)
                 .build();
     }
 
@@ -111,17 +94,17 @@ public class ClientService {
                                      final Box box,
                                      final Version version,
                                      final UriComponentsBuilder uriBuilder) {
-        List<Provider> providers = providerRepository.findByVersionId(version.getId());
+        /*List<Provider> providers = providerRepository.findByVersionId(version.getId());
 
         List<ClientProvider> clientProviders = providers.stream()
                 .filter(Objects::nonNull)
                 .filter(this::filterIncompleteProvider)
                 .map(provider -> mapProvider(group, box, version, provider, uriBuilder))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
 
         return ClientVersion.builder()
                 .version(version.getName())
-                .providers(clientProviders)
+                //.providers(clientProviders)
                 .build();
     }
 

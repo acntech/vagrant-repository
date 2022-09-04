@@ -35,9 +35,9 @@ public class FileHandler {
 
     public long saveFile(MultipartFile file, Path directory, String fileName) {
         if (Files.exists(directory)) {
-            LOGGER.info("Directory {} already exists, skipping directory creation", directory.toString());
+            LOGGER.info("Directory {} already exists, skipping directory creation", directory);
         } else {
-            LOGGER.info("Directory {} does not exist, creating directory", directory.toString());
+            LOGGER.info("Directory {} does not exist, creating directory", directory);
             try {
                 Files.createDirectories(directory);
             } catch (IOException e) {
@@ -45,11 +45,11 @@ public class FileHandler {
             }
         }
 
-        Path filePath = directory.resolve(fileName);
+        var filePath = directory.resolve(fileName);
 
         if (Files.exists(filePath)) {
             if (applicationProperties.getFile().getOverwriteExistingFiles()) {
-                LOGGER.warn("Overwriting exiting file {}", filePath.toString());
+                LOGGER.warn("Overwriting exiting file {}", filePath);
             } else {
                 throw new FileStorageException("File already exists");
             }
@@ -67,7 +67,7 @@ public class FileHandler {
             throw new FileStorageException("Directory does not exist");
         }
 
-        Path filePath = directory.resolve(fileName);
+        var filePath = directory.resolve(fileName);
 
         if (!Files.exists(filePath)) {
             throw new FileStorageException("File does not exist");
@@ -85,8 +85,8 @@ public class FileHandler {
             throw new FileStorageException("Directory does not exist");
         }
 
-        try {
-            return Files.walk(directory)
+        try (var paths = Files.walk(directory)) {
+            return paths
                     .map(Path::toFile)
                     .collect(Collectors.toList());
         } catch (IOException e) {
@@ -96,14 +96,14 @@ public class FileHandler {
 
     public void deleteFile(Path directory, String fileName) {
         if (!Files.exists(directory)) {
-            LOGGER.warn("Directory {} does not exist", directory.toString());
+            LOGGER.warn("Directory {} does not exist", directory);
             return;
         }
 
-        Path filePath = directory.resolve(fileName);
+        var filePath = directory.resolve(fileName);
 
         if (!Files.exists(filePath)) {
-            LOGGER.warn("File {} does not exist in directory {}", filePath.toString(), directory.toString());
+            LOGGER.warn("File {} does not exist in directory {}", filePath, directory);
             return;
         }
 
@@ -118,12 +118,12 @@ public class FileHandler {
 
     public void deleteDirectory(Path directory) {
         if (!Files.exists(directory)) {
-            LOGGER.warn("Directory {} does not exist", directory.toString());
+            LOGGER.warn("Directory {} does not exist", directory);
             return;
         }
 
-        try {
-            if (!Files.walk(directory)
+        try (var paths = Files.walk(directory)) {
+            if (!paths
                     .sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .allMatch(File::delete)) {
@@ -135,7 +135,7 @@ public class FileHandler {
     }
 
     public String calculateSha1Checksum(Path directory, String fileName) {
-        Path filePath = directory.resolve(fileName);
+        var filePath = directory.resolve(fileName);
 
         if (Files.exists(filePath)) {
             try (FileInputStream fileInputStream = new FileInputStream(filePath.toFile())) {

@@ -1,19 +1,40 @@
 package no.acntech.config;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.jooq.ConnectionProvider;
+import org.jooq.DSLContext;
+import org.jooq.impl.DataSourceConnectionProvider;
+import org.jooq.impl.DefaultConfiguration;
+import org.jooq.impl.DefaultDSLContext;
+import org.jooq.impl.DefaultExecuteListenerProvider;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import no.acntech.converter.ZonedDateTimeAttributeConverter;
+import javax.sql.DataSource;
 
-@EnableJpaRepositories(basePackages = {"no.acntech.repository"})
-@EntityScan(
-        basePackageClasses = {
-                Jsr310JpaConverters.class,
-                ZonedDateTimeAttributeConverter.class},
-        basePackages = {"no.acntech.model"})
+import no.acntech.listener.ExceptionTranslatorExecuteListener;
+
 @Configuration
 public class DatabaseConfig {
+/*
+    private final DataSource dataSource;
 
+    public DatabaseConfig(final DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Bean
+    public ConnectionProvider connectionProvider() {
+        return new DataSourceConnectionProvider(new TransactionAwareDataSourceProxy(dataSource));
+    }
+
+    @Bean
+    public DSLContext dslContext() {
+        var configuration = new DefaultConfiguration();
+        configuration.set(connectionProvider());
+        configuration.set(new DefaultExecuteListenerProvider(new ExceptionTranslatorExecuteListener()));
+        return new DefaultDSLContext(configuration);
+    }
+
+ */
 }
