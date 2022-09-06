@@ -1,5 +1,5 @@
 package no.acntech.model;
 
-public enum Role {
+public enum UserRole {
     USER, ADMIN
 }

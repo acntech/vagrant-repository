@@ -6,22 +6,19 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
 
-import no.acntech.model.User;
-import no.acntech.model.UserRole;
-import no.acntech.model.tables.records.UsersRecord;
+import no.acntech.model.Organization;
+import no.acntech.model.tables.records.OrganizationsRecord;
 
 @Component
-public class UserConverter implements Converter<UsersRecord, User> {
+public class OrganizationConverter implements Converter<OrganizationsRecord, Organization> {
 
     @NonNull
     @Override
-    public User convert(@NonNull final UsersRecord source) {
-        return new User(
+    public Organization convert(@NonNull final OrganizationsRecord source) {
+        return new Organization(
                 source.getId(),
-                source.getUsername(),
-                UserRole.valueOf(source.getRole()),
-                source.getPasswordHash(),
-                source.getPasswordSalt(),
+                source.getName(),
+                source.getDescription(),
                 source.getCreated().atZone(ZoneId.systemDefault()),
                 source.getModified() == null ? null : source.getModified().atZone(ZoneId.systemDefault()));
     }

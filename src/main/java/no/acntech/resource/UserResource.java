@@ -1,12 +1,5 @@
 package no.acntech.resource;
 
-import no.acntech.model.Box;
-import no.acntech.model.ModifyBox;
-import no.acntech.model.ModifyVersion;
-import no.acntech.model.Version;
-import no.acntech.service.BoxService;
-import no.acntech.service.VersionService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,61 +8,57 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
+import no.acntech.model.CreateUser;
+import no.acntech.model.UpdateUserPassword;
+import no.acntech.model.User;
+import no.acntech.service.UserService;
 
-@RequestMapping(path = "/api/users")
+@RequestMapping(path = "/api/user")
 @RestController
 public class UserResource {
 
-    private final BoxService boxService;
-    private final VersionService versionService;
+    private final UserService userService;
 
-    public UserResource(final BoxService boxService,
-                        final VersionService versionService) {
-        this.boxService = boxService;
-        this.versionService = versionService;
+    public UserResource(final UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping(path = "{id}")
-    public ResponseEntity<Box> get(@PathVariable(name = "id") final Long boxId) {
-        Optional<Box> boxOptional = boxService.get(boxId);
-        return boxOptional.map(ResponseEntity.ok()::body)
-                .orElseGet(ResponseEntity.noContent()::build);
+    @GetMapping(path = "{username}")
+    public ResponseEntity<User> getUser(@PathVariable(name = "username") final String username) {
+        final var user = userService.getUser(username);
+        return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping(path = "{id}")
-    public ResponseEntity<Void> delete(@PathVariable(name = "id") final Long boxId) {
-        boxService.delete(boxId);
-        return ResponseEntity.noContent().build();
+    @PostMapping
+    public ResponseEntity<Void> createUser(@RequestBody final CreateUser createUser,
+                                           final UriComponentsBuilder uriBuilder) {
+        userService.createUser(createUser);
+        final var uri = uriBuilder.path("/api/user/{username}")
+                .buildAndExpand(createUser.username())
+                .toUri();
+        return ResponseEntity.created(uri).build();
     }
 
-    @PutMapping(path = "{id}")
-    public ResponseEntity<Box> put(@PathVariable(name = "id") final Long boxId,
-                                   @Valid @RequestBody final ModifyBox modifyBox) {
-        Box box = boxService.update(boxId, modifyBox);
-        return ResponseEntity.ok(box);
+    @DeleteMapping(path = "{username}")
+    public ResponseEntity<Void> deleteUser(@PathVariable(name = "username") final String username) {
+        userService.deleteUser(username);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping(path = "{id}/versions")
-    public ResponseEntity<List<Version>> findBoxVersions(@PathVariable(name = "id") final Long boxId,
-                                                         @RequestParam(name = "name", required = false) final String name) {
-        List<Version> versions = versionService.find(boxId, name);
-        return ResponseEntity.ok(versions);
+    @PutMapping(path = "{username}/password")
+    public ResponseEntity<Void> updateUserPassword(@PathVariable(name = "username") final String username,
+                                                   @RequestBody final UpdateUserPassword updateUserPassword) {
+        userService.updatePassword(username, updateUserPassword);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping(path = "{id}/versions")
-    public ResponseEntity<Version> post(@PathVariable(name = "id") final Long boxId,
-                                        @Valid @RequestBody final ModifyVersion modifyVersion,
-                                        final UriComponentsBuilder uriBuilder) {
-        Version createdVersion = versionService.create(boxId, modifyVersion);
-        URI uri = uriBuilder.path("versions/{id}").buildAndExpand(createdVersion.getId()).toUri();
-        return ResponseEntity.created(uri).body(createdVersion);
+    @PutMapping(path = "{username}/role")
+    public ResponseEntity<Void> updateUserRole(@PathVariable(name = "username") final String username,
+                                               @RequestBody final UpdateUserPassword updateUserPassword) {
+        userService.updatePassword(username, updateUserPassword);
+        return ResponseEntity.ok().build();
     }
 }

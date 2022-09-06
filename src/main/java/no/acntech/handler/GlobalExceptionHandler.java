@@ -16,14 +16,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.web.util.UrlPathHelper;
 
 import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 
-import no.acntech.exception.UnknownProviderException;
+import no.acntech.exception.ItemNotFoundException;
 import no.acntech.model.Error;
 
 @ControllerAdvice
@@ -33,7 +32,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
             IllegalArgumentException.class,
-            UnknownProviderException.class,
             ConstraintViolationException.class
     })
     @NonNull
@@ -52,6 +50,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({
+            ItemNotFoundException.class
+    })
+    @NonNull
+    public ResponseEntity<Object> handleNotFoundException(@NonNull Exception exception,
+                                                          @NonNull WebRequest request) {
+        return handleException(exception, HttpStatus.NO_CONTENT, request);
+    }
+
+    @ExceptionHandler({
             AuthenticationException.class
     })
     @NonNull
@@ -59,6 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                               @NonNull WebRequest request) {
         return handleException(exception, HttpStatus.UNAUTHORIZED, request);
     }
+
 
     @ExceptionHandler({
             Exception.class
@@ -137,21 +145,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> handleException(Exception exception, HttpHeaders headers, HttpStatus httpStatus, WebRequest request) {
-        Error error = Error.builder()
-                .status(httpStatus.value())
-                .error(httpStatus.getReasonPhrase())
-                .message(exception.getLocalizedMessage())
-                .path(findRequestPath(request))
-                .build();
+        final var messages = Collections.singletonList(exception.getLocalizedMessage());
+        final var error = new Error(messages, false);
         LOGGER.error(exception.getLocalizedMessage(), exception);
         return handleExceptionInternal(exception, error, headers, httpStatus, request);
-    }
-
-    private String findRequestPath(WebRequest request) {
-        if (request instanceof ServletWebRequest servletWebRequest) {
-            return new UrlPathHelper().getPathWithinApplication(servletWebRequest.getRequest());
-        } else {
-            return request.getContextPath();
-        }
     }
 }

@@ -8,12 +8,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
-public record User(
+public record Organization(
         @NotNull @JsonIgnore Integer id,
-        @NotBlank @Min(2) @Max(50) String username,
-        @NotBlank UserRole role,
-        @NotBlank @JsonIgnore String passwordHash,
-        @NotBlank @JsonIgnore String passwordSalt,
+        @NotBlank @Min(2) @Max(50) String name,
+        @NotBlank @Max(4000) String description,
         @NotNull ZonedDateTime created,
         ZonedDateTime modified) {
 }

@@ -10,7 +10,7 @@ public class Box {
     private String name;
     private String description;
     private ZonedDateTime created;
-    private Group group;
+    private Organization group;
 
     public Long getId() {
         return id;
@@ -36,7 +36,7 @@ public class Box {
         return created;
     }
 
-    public Group getGroup() {
+    public Organization getGroup() {
         return group;
     }
 
@@ -48,7 +48,7 @@ public class Box {
 
         private String name;
         private String description;
-        private Group group;
+        private Organization group;
 
         private Builder() {
         }
@@ -63,7 +63,7 @@ public class Box {
             return this;
         }
 
-        public Builder group(Group group) {
+        public Builder group(Organization group) {
             this.group = group;
             return this;
         }
