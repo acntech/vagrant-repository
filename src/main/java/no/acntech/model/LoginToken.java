@@ -1,4 +1,7 @@
 package no.acntech.model;
 
-public record LoginToken(String description) {
+import javax.validation.constraints.Size;
+
+public record LoginToken(
+        @Size(max = 4000) String description) {
 }

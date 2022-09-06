@@ -6,7 +6,7 @@ public class ProviderFile {
     private ProviderType providerType;
     private String fileName;
     private Long fileSize;
-    private ChecksumType checksumType;
+    private Algorithm checksumType;
     private String checksum;
 
     public Long getProviderId() {
@@ -29,7 +29,7 @@ public class ProviderFile {
         return fileSize;
     }
 
-    public ChecksumType getChecksumType() {
+    public Algorithm getChecksumType() {
         return checksumType;
     }
 
@@ -46,7 +46,7 @@ public class ProviderFile {
         private ProviderType providerType;
         private String fileName;
         private Long fileSize;
-        private ChecksumType checksumType;
+        private Algorithm algorithm;
         private String checksum;
 
         private Builder() {
@@ -67,8 +67,8 @@ public class ProviderFile {
             return this;
         }
 
-        public Builder checksumType(ChecksumType checksumType) {
-            this.checksumType = checksumType;
+        public Builder checksumType(Algorithm algorithm) {
+            this.algorithm = algorithm;
             return this;
         }
 
@@ -81,7 +81,7 @@ public class ProviderFile {
             ProviderFile providerFile = new ProviderFile();
             providerFile.providerType = this.providerType;
             providerFile.fileName = this.fileName;
-            providerFile.checksumType = this.checksumType;
+            providerFile.checksumType = this.algorithm;
             providerFile.fileSize = this.fileSize;
             providerFile.checksum = this.checksum;
             return providerFile;

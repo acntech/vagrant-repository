@@ -4,16 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
-import no.acntech.model.ModifyProvider;
 import no.acntech.model.Provider;
 import no.acntech.model.ProviderFile;
 import no.acntech.model.ProviderType;
 
+@Validated
 @Service
 public class ProviderService {
 
@@ -41,7 +42,7 @@ public class ProviderService {
     }
 
     @Transactional
-    public Provider create(final Long versionId, final ModifyProvider modifyProvider) {
+    public Provider create(final Long versionId) {
         return null;
     }
 

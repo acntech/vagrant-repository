@@ -9,7 +9,6 @@ import javax.annotation.PostConstruct;
 import java.util.UUID;
 
 import no.acntech.model.CreateUser;
-import no.acntech.model.UpdateUserRole;
 import no.acntech.model.UserRole;
 import no.acntech.service.UserService;
 
@@ -30,10 +29,8 @@ public class InitializeConfig {
         if (userService.findUsers().isEmpty()) {
             LOGGER.warn("No users found in the database");
             final var password = UUID.randomUUID().toString();
-            final var createUser = new CreateUser(DEFAULT_USERNAME, password);
+            final var createUser = new CreateUser(DEFAULT_USERNAME, password, UserRole.ADMIN);
             userService.createUser(createUser);
-            final var updateUserRole = new UpdateUserRole(UserRole.ADMIN);
-            userService.updateRole(createUser.username(), updateUserRole);
             LOGGER.info("Created default user: {} with password: {}", createUser.username(), createUser.password());
         }
     }

@@ -3,6 +3,7 @@ package no.acntech.service;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -19,6 +20,7 @@ import no.acntech.model.User;
 
 import static no.acntech.converter.BearerTokenAuthenticationConverter.BEARER_TOKEN_PREFIX;
 
+@Validated
 @Service
 public class AuthenticateService {
 

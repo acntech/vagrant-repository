@@ -1,16 +1,18 @@
 package no.acntech.service;
 
-import no.acntech.model.Password;
-
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.security.SecureRandom;
 
+import no.acntech.model.Password;
+
+@Validated
 @Service
 public class PasswordService {
 

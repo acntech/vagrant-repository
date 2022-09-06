@@ -1,87 +1,25 @@
 package no.acntech.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
+import java.util.List;
 
-public class Version {
-
-    private Long id;
-    @NotBlank
-    private String name;
-    private String description;
-    private ZonedDateTime created;
-    private ZonedDateTime modified;
-    private Box box;
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public ZonedDateTime getCreated() {
-        return created;
-    }
-
-    public ZonedDateTime getModified() {
-        return modified;
-    }
-
-    public Box getBox() {
-        return box;
-    }
-
-    @JsonIgnore
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static final class Builder {
-
-        private String name;
-        private String description;
-        private Box box;
-
-        private Builder() {
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Builder box(Box box) {
-            this.box = box;
-            return this;
-        }
-
-        public Version build() {
-            Version version = new Version();
-            version.description = this.description;
-            version.name = this.name;
-            version.box = this.box;
-            return version;
-        }
-    }
+public record Version(
+        @NotNull @JsonIgnore Integer id,
+        @NotBlank @Size(min = 1, max = 10) String version,
+        @NotBlank @Size(min = 1, max = 10) String number,
+        @Size(max = 4000) @JsonProperty("description_html") String descriptionHtml,
+        @Size(max = 4000) @JsonProperty("description_markdown") String descriptionMarkdown,
+        @NotNull VersionStatus status,
+        @Size(max = 4000) @JsonProperty("release_url") String releaseUrl,
+        @Size(max = 4000) @JsonProperty("revoke_url") String revokeUrl,
+        @NotNull @JsonProperty("created_at") ZonedDateTime created,
+        @JsonProperty("updated_at") ZonedDateTime modified,
+        @Valid List<Provider> providers) {
 }

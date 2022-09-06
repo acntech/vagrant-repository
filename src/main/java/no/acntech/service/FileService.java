@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -13,12 +14,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import no.acntech.handler.FileHandler;
-import no.acntech.model.ChecksumType;
+import no.acntech.model.Algorithm;
 import no.acntech.model.ProviderFile;
 import no.acntech.model.ProviderType;
 import no.acntech.properties.ApplicationProperties;
 
-@SuppressWarnings("WeakerAccess")
+@Validated
 @Service
 public class FileService {
 
@@ -56,7 +57,7 @@ public class FileService {
         return ProviderFile.builder()
                 .fileName(fileName)
                 .fileSize(fileSize)
-                .checksumType(ChecksumType.SHA1)
+                .checksumType(Algorithm.SHA256)
                 .checksum(checksum)
                 .build();
     }

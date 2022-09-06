@@ -5,5 +5,5 @@ import java.util.List;
 
 public record Error(
         @NotNull List<String> errors,
-        @NotNull Boolean message) {
+        @NotNull Boolean success) {
 }

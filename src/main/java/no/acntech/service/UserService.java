@@ -1,5 +1,6 @@
 package no.acntech.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.exception.NoDataFoundException;
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -20,10 +22,8 @@ import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
 import no.acntech.model.CreateUser;
 import no.acntech.model.Password;
-import no.acntech.model.UpdateUserPassword;
-import no.acntech.model.UpdateUserRole;
+import no.acntech.model.UpdateUser;
 import no.acntech.model.User;
-import no.acntech.model.UserRole;
 
 import static no.acntech.model.tables.Users.USERS;
 
@@ -32,15 +32,15 @@ import static no.acntech.model.tables.Users.USERS;
 public class UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-    private final ConversionService conversionService;
     private final DSLContext context;
+    private final ConversionService conversionService;
     private final PasswordService passwordService;
 
-    public UserService(final ConversionService conversionService,
-                       final DSLContext context,
+    public UserService(final DSLContext context,
+                       final ConversionService conversionService,
                        final PasswordService passwordService) {
-        this.conversionService = conversionService;
         this.context = context;
+        this.conversionService = conversionService;
         this.passwordService = passwordService;
     }
 
@@ -67,11 +67,22 @@ public class UserService {
 
     public void createUser(@Valid @NotNull final CreateUser createUser) {
         LOGGER.debug("Create user with username {}", createUser.username());
+        // TODO: Access control for who can create admin users
         final var password = passwordService.createPassword(createUser.password());
-        try (final var insert = context.insertInto(USERS,
-                USERS.USERNAME, USERS.ROLE, USERS.PASSWORD_HASH, USERS.PASSWORD_SALT, USERS.CREATED)) {
-            final var rowsAffected = insert.values(createUser.username().toLowerCase(), UserRole.USER.name(),
-                            password.passwordHash(), password.passwordSalt(), LocalDateTime.now())
+        try (final var insert = context.insertInto(
+                USERS,
+                USERS.USERNAME,
+                USERS.ROLE,
+                USERS.PASSWORD_HASH,
+                USERS.PASSWORD_SALT,
+                USERS.CREATED)) {
+            final var rowsAffected = insert.
+                    values(
+                            createUser.username().toLowerCase(),
+                            createUser.role().name(),
+                            password.passwordHash(),
+                            password.passwordSalt(),
+                            LocalDateTime.now())
                     .execute();
             LOGGER.debug("Insert into USERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
@@ -80,50 +91,51 @@ public class UserService {
         }
     }
 
+    public void updateUser(@NotBlank String username,
+                           @Valid @NotNull final UpdateUser updateUser) {
+        LOGGER.debug("Update password for user with username {}", username);
+        final var user = getUser(username);
+        final var newUsername = StringUtils.isBlank(updateUser.username()) ? user.username() : updateUser.username();
+        final var newRole = updateUser.role() == null ? user.role() : updateUser.role();
+        final var oldPassword = new Password(user.passwordHash(), user.passwordSalt());
+        final var newPassword = StringUtils.isNoneBlank(updateUser.oldPassword()) && StringUtils.isNoneBlank(updateUser.newPassword()) ?
+                oldPassword : passwordService.createPassword(updateUser.newPassword());
+
+        if (StringUtils.isNoneBlank(updateUser.oldPassword())) {
+            Assert.hasText(updateUser.newPassword(), "Missing passwords");
+            if (!passwordService.verifyPassword(updateUser.oldPassword(), oldPassword)) {
+                throw new BadCredentialsException("Incorrect username and password combination");
+            }
+        }
+
+        try (final var update = context
+                .update(USERS)
+                .set(USERS.USERNAME, newUsername)
+                .set(USERS.ROLE, newRole.name())
+                .set(USERS.PASSWORD_HASH, newPassword.passwordHash())
+                .set(USERS.PASSWORD_SALT, newPassword.passwordSalt())
+                .set(USERS.MODIFIED, LocalDateTime.now())) {
+            final var rowsAffected = update
+                    .where(USERS.ID.eq(user.id()))
+                    .execute();
+            LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
+            if (rowsAffected == 0) {
+                throw new SaveItemFailedException("Failed to update password for user with username " + username);
+            }
+        }
+    }
+
     public void deleteUser(@NotBlank String username) {
         LOGGER.debug("Delete user with username {}", username);
-        // TODO: Verify if user is last member or last owner of organization
+        // TODO: Verify that user isn't last member or last owner of organization
+        final var user = getUser(username);
         try (final var delete = context.deleteFrom(USERS)) {
-            final var rowsAffected = delete.where(USERS.USERNAME.eq(username))
+            final var rowsAffected = delete
+                    .where(USERS.ID.eq(user.id()))
                     .execute();
             LOGGER.debug("Delete record in USERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
                 throw new SaveItemFailedException("Failed to delete user with username " + username);
-            }
-        }
-    }
-
-    public void updatePassword(@NotBlank String username,
-                               @Valid @NotNull final UpdateUserPassword updateUserPassword) {
-        LOGGER.debug("Update password for user with username {}", username);
-        final var user = getUser(username);
-        final var oldPassword = new Password(user.passwordHash(), user.passwordSalt());
-        if (passwordService.verifyPassword(updateUserPassword.oldPassword(), oldPassword)) {
-            final var newPassword = passwordService.createPassword(updateUserPassword.newPassword());
-            try (final var update = context.update(USERS)
-                    .set(USERS.PASSWORD_HASH, newPassword.passwordHash())
-                    .set(USERS.PASSWORD_SALT, newPassword.passwordSalt())) {
-                final var rowsAffected = update.where(USERS.USERNAME.eq(username))
-                        .execute();
-                LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
-                if (rowsAffected == 0) {
-                    throw new SaveItemFailedException("Failed to update password for user with username " + username);
-                }
-            }
-        } else {
-            throw new BadCredentialsException("Incorrect username and password combination");
-        }
-    }
-
-    public void updateRole(@NotBlank String username,
-                           @Valid @NotNull final UpdateUserRole updateUserRole) {
-        LOGGER.debug("Update role for user with username {}", username);
-        try (final var update = context.update(USERS).set(USERS.ROLE, updateUserRole.role().name())) {
-            final var rowsAffected = update.where(USERS.USERNAME.eq(username))
-                    .execute();
-            LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to update role for user with username " + username);
             }
         }
     }

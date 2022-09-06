@@ -9,5 +9,5 @@ import java.time.ZonedDateTime;
 public record Token(String description,
                     @NotBlank String token,
                     @NotBlank @JsonProperty("token_hash") String tokenHash,
-                    @NotNull @JsonProperty("created_at") ZonedDateTime createdAt) {
+                    @NotNull @JsonProperty("created_at") ZonedDateTime created) {
 }

@@ -11,7 +11,7 @@ public class Provider {
     @NotNull
     private ProviderType providerType;
     private Long size;
-    private ChecksumType checksumType;
+    private Algorithm checksumType;
     private String checksum;
     private ZonedDateTime created;
     private ZonedDateTime modified;
@@ -33,11 +33,11 @@ public class Provider {
         this.size = size;
     }
 
-    public ChecksumType getChecksumType() {
+    public Algorithm getChecksumType() {
         return checksumType;
     }
 
-    public void setChecksumType(ChecksumType checksumType) {
+    public void setChecksumType(Algorithm checksumType) {
         this.checksumType = checksumType;
     }
 
@@ -70,7 +70,7 @@ public class Provider {
 
         private ProviderType providerType;
         private Long size;
-        private ChecksumType checksumType;
+        private Algorithm checksumType;
         private String checksum;
         private Version version;
 
@@ -87,7 +87,7 @@ public class Provider {
             return this;
         }
 
-        public Builder checksumType(ChecksumType checksumType) {
+        public Builder checksumType(Algorithm checksumType) {
             this.checksumType = checksumType;
             return this;
         }

@@ -1,79 +1,27 @@
 package no.acntech.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
+import java.util.List;
 
-public class Box {
-
-    private Long id;
-    @NotBlank
-    private String name;
-    private String description;
-    private ZonedDateTime created;
-    private Organization group;
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public ZonedDateTime getCreated() {
-        return created;
-    }
-
-    public Organization getGroup() {
-        return group;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static final class Builder {
-
-        private String name;
-        private String description;
-        private Organization group;
-
-        private Builder() {
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Builder group(Organization group) {
-            this.group = group;
-            return this;
-        }
-
-        public Box build() {
-            var box = new Box();
-            box.name = this.name;
-            box.description = this.description;
-            box.group = this.group;
-            return box;
-        }
-    }
+public record Box(
+        @NotNull @JsonIgnore Integer id,
+        @NotBlank @Size(min = 2, max = 101) String tag,
+        @NotBlank @Size(min = 2, max = 50) String name,
+        @NotBlank @Size(min = 2, max = 50) String username,
+        @Size(max = 4000) @JsonProperty("short_description") String descriptionShort,
+        @Size(max = 4000) @JsonProperty("description_html") String descriptionHtml,
+        @Size(max = 4000) @JsonProperty("description_markdown") String descriptionMarkdown,
+        @NotNull @JsonProperty("private") Boolean isPrivate,
+        @NotNull Integer downloads,
+        @NotNull @JsonProperty("created_at") ZonedDateTime created,
+        @JsonProperty("updated_at") ZonedDateTime modified,
+        @Valid Version currentVersion,
+        @Valid List<Version> versions) {
 }
