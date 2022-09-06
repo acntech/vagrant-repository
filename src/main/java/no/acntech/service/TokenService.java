@@ -30,8 +30,8 @@ public class TokenService {
         this.keyService = keyService;
     }
 
-    public SignedJWT createToken(@NotBlank String username,
-                                 @NotNull List<String> roles) {
+    public SignedJWT createToken(@NotBlank final String username,
+                                 @NotNull final List<String> roles) {
         try {
             final var privateKey = keyService.privateRsaKey();
             final var signer = new RSASSASigner(privateKey);
@@ -54,7 +54,7 @@ public class TokenService {
         }
     }
 
-    public JWTClaimsSet parseToken(@NotBlank String token) {
+    public JWTClaimsSet parseToken(@NotBlank final String token) {
         try {
             final var signedJWT = SignedJWT.parse(token);
             return signedJWT.getJWTClaimsSet();
@@ -63,7 +63,7 @@ public class TokenService {
         }
     }
 
-    public boolean verifyToken(String token) {
+    public boolean verifyToken(final String token) {
         try {
             final var signedJWT = SignedJWT.parse(token);
             final var publicKey = keyService.publicRsaKey();
@@ -74,7 +74,7 @@ public class TokenService {
         }
     }
 
-    public ZonedDateTime getIssuedDateTime(final SignedJWT signedJWT) {
+    public ZonedDateTime getIssuedDateTime(final @NotNull SignedJWT signedJWT) {
         try {
             final var issuedDate = signedJWT.getJWTClaimsSet().getIssueTime();
             return ZonedDateTime.ofInstant(issuedDate.toInstant(), ZoneId.systemDefault());

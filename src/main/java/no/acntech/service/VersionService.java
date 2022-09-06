@@ -21,7 +21,6 @@ import no.acntech.model.UpdateVersion;
 import no.acntech.model.Version;
 import no.acntech.model.VersionStatus;
 
-import static no.acntech.model.tables.Boxes.BOXES;
 import static no.acntech.model.tables.Versions.VERSIONS;
 
 @Validated
@@ -45,7 +44,7 @@ public class VersionService {
                               @NotBlank final String name,
                               @NotBlank final String version) {
         final var tag = username + "/" + name;
-        LOGGER.info("Get version {} for box with tag {}", version, tag);
+        LOGGER.info("Get version {} for box {}", version, tag);
         final var box = boxService.getBox(username, name);
         try (final var select = context.selectFrom(VERSIONS)) {
             final var record = select
@@ -54,7 +53,7 @@ public class VersionService {
                     .fetchSingle();
             return conversionService.convert(record, Version.class);
         } catch (NoDataFoundException e) {
-            throw new ItemNotFoundException("No version " + version + " found for box with tag " + tag, e);
+            throw new ItemNotFoundException("No version " + version + " found for box " + tag, e);
         }
     }
 
@@ -63,7 +62,7 @@ public class VersionService {
                               @NotBlank final String name,
                               @Valid @NotNull final CreateVersion createVersion) {
         final var tag = username + "/" + name;
-        LOGGER.info("Create version {} for box with tag {}", createVersion.version(), tag);
+        LOGGER.info("Create version {} for box {}", createVersion.version(), tag);
         final var box = boxService.getBox(username, name);
         try (final var insert = context
                 .insertInto(VERSIONS,
@@ -71,7 +70,7 @@ public class VersionService {
                         VERSIONS.DESCRIPTION,
                         VERSIONS.STATUS,
                         VERSIONS.BOX_ID,
-                        BOXES.CREATED)) {
+                        VERSIONS.CREATED)) {
             final var rowsAffected = insert
                     .values(
                             createVersion.version(),
@@ -83,7 +82,7 @@ public class VersionService {
             LOGGER.debug("Insert into VERSIONS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
                 throw new SaveItemFailedException("Failed to create version " + createVersion.version() +
-                        " for box with tag " + tag);
+                        " for box " + tag);
             }
         }
     }
@@ -94,7 +93,7 @@ public class VersionService {
                               @NotBlank final String versionParam,
                               @Valid @NotNull final UpdateVersion updateVersion) {
         final var tag = username + "/" + name;
-        LOGGER.info("Update version {} for box with tag {}", versionParam, tag);
+        LOGGER.info("Update version {} for box {}", versionParam, tag);
         final var version = getVersion(username, name, versionParam);
         try (final var update = context
                 .update(VERSIONS)
@@ -106,7 +105,7 @@ public class VersionService {
             LOGGER.debug("Updated record in VERSIONS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
                 throw new SaveItemFailedException("Failed to update version " + versionParam +
-                        " for box with tag " + tag);
+                        " for box " + tag);
             }
         }
     }
@@ -116,7 +115,7 @@ public class VersionService {
                               @NotBlank final String name,
                               @NotBlank final String versionParam) {
         final var tag = username + "/" + name;
-        LOGGER.info("Delete version {} for box with tag {}", versionParam, tag);
+        LOGGER.info("Delete version {} for box {}", versionParam, tag);
         // TODO: Verify that box has no versions
         final var version = getVersion(username, name, versionParam);
         try (final var delete = context.deleteFrom(VERSIONS)) {
@@ -126,7 +125,7 @@ public class VersionService {
             LOGGER.debug("Delete record in VERSIONS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
                 throw new SaveItemFailedException("Failed to delete version " + versionParam +
-                        " for box with tag " + tag);
+                        " for box " + tag);
             }
         }
     }
@@ -137,7 +136,7 @@ public class VersionService {
                                     @NotBlank final String versionParam,
                                     @NotNull final VersionStatus versionStatus) {
         final var tag = username + "/" + name;
-        LOGGER.info("Update status of version {} for box with tag {}", versionParam, tag);
+        LOGGER.info("Update status of version {} for box {}", versionParam, tag);
         // TODO: Check if version has providers before activating
         final var version = getVersion(username, name, versionParam);
         try (final var update = context
@@ -149,7 +148,7 @@ public class VersionService {
             LOGGER.debug("Updated record in VERSIONS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
                 throw new SaveItemFailedException("Failed to update status of version " + versionParam +
-                        " for box with tag " + tag);
+                        " for box " + tag);
             }
         }
     }

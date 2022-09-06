@@ -51,7 +51,7 @@ public class OrganizationService {
     }
 
     public Organization getOrganization(@NotBlank final String name) {
-        LOGGER.debug("Get organization for name {}", name);
+        LOGGER.debug("Get organization {}", name);
         try (final var select = context.selectFrom(ORGANIZATIONS)) {
             final var record = select.where(ORGANIZATIONS.NAME.eq(name))
                     .fetchSingle();
@@ -63,7 +63,7 @@ public class OrganizationService {
 
     @Transactional
     public void createOrganization(@Valid @NotNull final CreateOrganization createOrganization) {
-        LOGGER.debug("Create organization with name {}", createOrganization.name());
+        LOGGER.debug("Create organization {}", createOrganization.name());
         final var username = securityService.getUsername();
 
         try (final var insert = context.insertInto(
@@ -78,7 +78,7 @@ public class OrganizationService {
                     .execute();
             LOGGER.debug("Insert into ORGANIZATIONS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create organization with name " + createOrganization.name());
+                throw new SaveItemFailedException("Failed to create organization " + createOrganization.name());
             }
         }
 
@@ -97,8 +97,8 @@ public class OrganizationService {
                     .execute();
             LOGGER.debug("Insert into MEMBERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create membership to organization with name " +
-                        createOrganization.name() + " for user with username " + user.username());
+                throw new SaveItemFailedException("Failed to create membership to organization " +
+                        createOrganization.name() + " for user " + user.username());
             }
         }
     }
@@ -106,7 +106,7 @@ public class OrganizationService {
     @Transactional
     public void updateOrganization(@NotBlank final String name,
                                    @Valid @NotNull final UpdateOrganization updateOrganization) {
-        LOGGER.info("Update organization with name {}", name);
+        LOGGER.info("Update organization {}", name);
         final var organization = getOrganization(name);
         final var newName = StringUtils.isBlank(updateOrganization.name()) ? organization.name() : updateOrganization.name();
         final var newDescription = StringUtils.isBlank(updateOrganization.description()) ? organization.description() : updateOrganization.description();
@@ -121,14 +121,14 @@ public class OrganizationService {
                     .execute();
             LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to update organization with name " + name);
+                throw new SaveItemFailedException("Failed to update organization " + name);
             }
         }
     }
 
     @Transactional
     public void deleteOrganization(@NotBlank final String name) {
-        LOGGER.debug("Delete organizations with name {}", name);
+        LOGGER.debug("Delete organizations {}", name);
         // TODO: Verify that organization has no boxes
         final var organization = getOrganization(name);
         try (final var delete = context.deleteFrom(ORGANIZATIONS)) {
@@ -137,7 +137,7 @@ public class OrganizationService {
                     .execute();
             LOGGER.debug("Delete record in ORGANIZATIONS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to delete organization with name " + name);
+                throw new SaveItemFailedException("Failed to delete organization " + name);
             }
         }
     }
@@ -145,22 +145,22 @@ public class OrganizationService {
     @Transactional
     public void addOrganizationMember(@NotBlank final String name,
                                       @NotBlank final AddOrganizationMember addOrganizationMember) {
-        LOGGER.info("Add member with username {} to organization with name {}", addOrganizationMember.username(), name);
+        LOGGER.info("Add member {} to organization {}", addOrganizationMember.username(), name);
 
         final var organization = getOrganization(name);
         final var user = userService.getUser(addOrganizationMember.username());
 
         final var rowsAffected = organizationMemberService.addMember(organization.id(), user.id(), addOrganizationMember.role());
         if (rowsAffected == 0) {
-            throw new SaveItemFailedException("Failed to create membership to organization with name " +
-                    name + " for user with username " + user.username());
+            throw new SaveItemFailedException("Failed to create membership to organization " +
+                    name + " for user " + user.username());
         }
     }
 
     @Transactional
     public void removeOrganizationMember(@NotBlank final String name,
                                          @NotBlank final String username) {
-        LOGGER.info("Remove member with username {} from organization with name {}", username, name);
+        LOGGER.info("Remove member {} from organization {}", username, name);
         final var organizationMember = organizationMemberService.getMember(name, username);
 
         if (organizationMember.role() == OrganizationRole.OWNER) {
@@ -172,7 +172,7 @@ public class OrganizationService {
 
         final var rowsAffected = organizationMemberService.removeMember(organizationMember.organizationId(), organizationMember.userId());
         if (rowsAffected == 0) {
-            throw new SaveItemFailedException("Failed to delete organization with name " + name);
+            throw new SaveItemFailedException("Failed to delete organization " + name);
         }
     }
 }

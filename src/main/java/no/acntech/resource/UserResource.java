@@ -27,7 +27,7 @@ public class UserResource {
     }
 
     @GetMapping(path = "{username}")
-    public ResponseEntity<User> getUser(@PathVariable(name = "username") String username) {
+    public ResponseEntity<User> getUser(@PathVariable(name = "username") final String username) {
         final var user = userService.getUser(username);
         return ResponseEntity.ok(user);
     }
@@ -44,7 +44,7 @@ public class UserResource {
     }
 
     @PutMapping(path = "{username}")
-    public ResponseEntity<Void> updateUser(@PathVariable(name = "username") String username,
+    public ResponseEntity<Void> updateUser(@PathVariable(name = "username") final String username,
                                            @RequestBody final UpdateUser.Request updateUserRequest) {
         final var updateUser = updateUserRequest.user();
         userService.updateUser(username, updateUser);
@@ -52,7 +52,7 @@ public class UserResource {
     }
 
     @DeleteMapping(path = "{username}")
-    public ResponseEntity<Void> deleteUser(@PathVariable(name = "username") String username) {
+    public ResponseEntity<Void> deleteUser(@PathVariable(name = "username") final String username) {
         userService.deleteUser(username);
         return ResponseEntity.ok().build();
     }

@@ -37,7 +37,7 @@ public class AuthenticateService {
         this.userService = userService;
     }
 
-    public Token createToken(@Valid @NotNull Login login) {
+    public Token createToken(@Valid @NotNull final Login login) {
         final var user = getUser(login.user().login());
         final var password = new Password(user.passwordHash(), user.passwordSalt());
         if (passwordService.verifyPassword(login.user().password(), password)) {
@@ -56,7 +56,7 @@ public class AuthenticateService {
         }
     }
 
-    public boolean verifyTokenHeader(String header) {
+    public boolean verifyTokenHeader(final String header) {
         if (StringUtils.isBlank(header)) {
             return false;
         }
@@ -67,7 +67,7 @@ public class AuthenticateService {
         return tokenService.verifyToken(token);
     }
 
-    public void deleteToken(String header) {
+    public void deleteToken(final String header) {
         if (StringUtils.isBlank(header)) {
             throw new BadCredentialsException("Bearer token not set");
         }
@@ -79,7 +79,7 @@ public class AuthenticateService {
         TOKEN_STORE.remove(jwtClaimsSet.getSubject());
     }
 
-    public User getUser(@NotBlank String username) {
+    public User getUser(@NotBlank final String username) {
         try {
             return userService.getUser(username);
         } catch (ItemNotFoundException e) {

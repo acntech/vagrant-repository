@@ -43,7 +43,7 @@ public class BoxService {
     public Box getBox(@NotBlank final String username,
                       @NotBlank final String name) {
         final var tag = username + "/" + name;
-        LOGGER.info("Get box with tag {}", tag);
+        LOGGER.info("Get box {}", tag);
         final var organization = organizationService.getOrganization(username);
         try (final var select = context.selectFrom(BOXES)) {
             final var record = select
@@ -60,7 +60,7 @@ public class BoxService {
     @Transactional
     public void createBox(@Valid @NotNull final CreateBox createBox) {
         final var tag = createBox.username() + "/" + createBox.name();
-        LOGGER.info("Create box with tag {}", tag);
+        LOGGER.info("Create box {}", tag);
         final var organization = organizationService.getOrganization(createBox.username());
         try (final var insert = context.insertInto(
                 BOXES,
@@ -81,7 +81,7 @@ public class BoxService {
                     .execute();
             LOGGER.debug("Insert into BOXES table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create box with tag " + tag);
+                throw new SaveItemFailedException("Failed to create box " + tag);
             }
         }
     }
@@ -91,7 +91,7 @@ public class BoxService {
                           @NotBlank final String name,
                           @Valid @NotNull final UpdateBox updateBox) {
         final var tag = username + "/" + name;
-        LOGGER.info("Update box with tag {}", tag);
+        LOGGER.info("Update box {}", tag);
         final var box = getBox(username, name);
         try (final var update = context
                 .update(BOXES)
@@ -103,7 +103,7 @@ public class BoxService {
                     .execute();
             LOGGER.debug("Updated record in BOXES table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to update box with tag " + tag);
+                throw new SaveItemFailedException("Failed to update box " + tag);
             }
         }
     }
@@ -112,7 +112,7 @@ public class BoxService {
     public void deleteBox(@NotBlank final String username,
                           @NotBlank final String name) {
         final var tag = username + "/" + name;
-        LOGGER.info("Delete box with tag {}", tag);
+        LOGGER.info("Delete box {}", tag);
         // TODO: Verify that box has no versions
         final var box = getBox(username, name);
         try (final var delete = context.deleteFrom(BOXES)) {
@@ -121,7 +121,7 @@ public class BoxService {
                     .execute();
             LOGGER.debug("Delete record in BOXES table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to delete box with tag " + tag);
+                throw new SaveItemFailedException("Failed to delete box " + tag);
             }
         }
     }

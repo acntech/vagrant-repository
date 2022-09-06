@@ -1,31 +1,32 @@
 package no.acntech.model;
 
-import java.util.stream.Stream;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import javax.validation.constraints.NotBlank;
 
 public enum ProviderType {
 
-    VIRTUALBOX("virtualbox", "VirtualBox");
+    VIRTUALBOX("virtualbox");
 
-    private final String name;
-    private final String readable;
+    private final String provider;
 
-    ProviderType(String name, String readable) {
-        this.name = name;
-        this.readable = readable;
+    ProviderType(String provider) {
+        this.provider = provider;
     }
 
-    public String getName() {
-        return name;
+    @JsonValue
+    public String getProvider() {
+        return provider;
     }
 
-    public String getReadable() {
-        return readable;
-    }
-
-    public static ProviderType fromName(String name) {
-        return Stream.of(values())
-                .filter(providerType -> providerType.name.equals(name))
-                .findFirst()
-                .orElse(null);
+    @JsonCreator
+    public static ProviderType fromProvider(@NotBlank final String provider) {
+        for (ProviderType providerType : ProviderType.values()) {
+            if (providerType.provider.equals(provider)) {
+                return providerType;
+            }
+        }
+        throw new IllegalArgumentException("Value is not a valid provider");
     }
 }

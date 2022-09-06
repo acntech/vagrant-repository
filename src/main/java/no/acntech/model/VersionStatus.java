@@ -1,15 +1,20 @@
 package no.acntech.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum VersionStatus {
-    ACTIVE("active"), INACTIVE("inactive");
 
-    private final String readable;
+    ACTIVE("active"),
+    INACTIVE("inactive");
 
-    VersionStatus(String readable) {
-        this.readable = readable;
+    private final String status;
+
+    VersionStatus(String status) {
+        this.status = status;
     }
 
-    public String getReadable() {
-        return readable;
+    @JsonValue
+    public String getStatus() {
+        return status;
     }
 }

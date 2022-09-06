@@ -35,7 +35,7 @@ public class AuthenticateResource {
     }
 
     @GetMapping
-    public ResponseEntity<Void> validateToken(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String header) {
+    public ResponseEntity<Void> validateToken(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) final String header) {
         if (authenticateService.verifyTokenHeader(header)) {
             return ResponseEntity.ok().build();
         } else {
@@ -44,7 +44,7 @@ public class AuthenticateResource {
     }
 
     @DeleteMapping
-    public ResponseEntity<Token> deleteToken(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String header) {
+    public ResponseEntity<Token> deleteToken(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) final String header) {
         authenticateService.deleteToken(header);
         return ResponseEntity.ok().build();
     }

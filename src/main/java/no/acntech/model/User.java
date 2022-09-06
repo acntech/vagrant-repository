@@ -11,9 +11,9 @@ import java.time.ZonedDateTime;
 public record User(
         @NotNull @JsonIgnore Integer id,
         @NotBlank @Size(min = 2, max = 50) String username,
-        @NotBlank UserRole role,
-        @NotBlank @JsonIgnore String passwordHash,
-        @NotBlank @JsonIgnore String passwordSalt,
+        @NotNull UserRole role,
+        @NotBlank @Size(max = 100) @JsonIgnore String passwordHash,
+        @NotBlank @Size(max = 100) @JsonIgnore String passwordSalt,
         @NotNull @JsonProperty("created_at") ZonedDateTime created,
         @JsonProperty("updated_at") ZonedDateTime modified) {
 }

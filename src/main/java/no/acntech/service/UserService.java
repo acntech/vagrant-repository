@@ -44,8 +44,8 @@ public class UserService {
         this.passwordService = passwordService;
     }
 
-    public User getUser(@NotBlank String username) {
-        LOGGER.debug("Get user for username {}", username);
+    public User getUser(@NotBlank final String username) {
+        LOGGER.debug("Get user {}", username);
         try (final var select = context.selectFrom(USERS)) {
             final var record = select.where(USERS.USERNAME.eq(username))
                     .fetchSingle();
@@ -66,7 +66,7 @@ public class UserService {
     }
 
     public void createUser(@Valid @NotNull final CreateUser createUser) {
-        LOGGER.debug("Create user with username {}", createUser.username());
+        LOGGER.debug("Create user {}", createUser.username());
         // TODO: Access control for who can create admin users
         final var password = passwordService.createPassword(createUser.password());
         try (final var insert = context.insertInto(
@@ -86,14 +86,14 @@ public class UserService {
                     .execute();
             LOGGER.debug("Insert into USERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create user with username " + createUser.username());
+                throw new SaveItemFailedException("Failed to create user " + createUser.username());
             }
         }
     }
 
-    public void updateUser(@NotBlank String username,
+    public void updateUser(@NotBlank final String username,
                            @Valid @NotNull final UpdateUser updateUser) {
-        LOGGER.debug("Update password for user with username {}", username);
+        LOGGER.debug("Update password for user {}", username);
         final var user = getUser(username);
         final var newUsername = StringUtils.isBlank(updateUser.username()) ? user.username() : updateUser.username();
         final var newRole = updateUser.role() == null ? user.role() : updateUser.role();
@@ -120,13 +120,13 @@ public class UserService {
                     .execute();
             LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to update password for user with username " + username);
+                throw new SaveItemFailedException("Failed to update password for user " + username);
             }
         }
     }
 
-    public void deleteUser(@NotBlank String username) {
-        LOGGER.debug("Delete user with username {}", username);
+    public void deleteUser(@NotBlank final String username) {
+        LOGGER.debug("Delete user {}", username);
         // TODO: Verify that user isn't last member or last owner of organization
         final var user = getUser(username);
         try (final var delete = context.deleteFrom(USERS)) {
@@ -135,7 +135,7 @@ public class UserService {
                     .execute();
             LOGGER.debug("Delete record in USERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to delete user with username " + username);
+                throw new SaveItemFailedException("Failed to delete user " + username);
             }
         }
     }

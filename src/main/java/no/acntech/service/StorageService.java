@@ -21,15 +21,15 @@ import no.acntech.properties.ApplicationProperties;
 
 @Validated
 @Service
-public class FileService {
+public class StorageService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
 
     private final ApplicationProperties applicationProperties;
     private final FileHandler fileHandler;
 
-    public FileService(final ApplicationProperties applicationProperties,
-                       final FileHandler fileHandler) {
+    public StorageService(final ApplicationProperties applicationProperties,
+                          final FileHandler fileHandler) {
         this.applicationProperties = applicationProperties;
         this.fileHandler = fileHandler;
     }
@@ -43,7 +43,7 @@ public class FileService {
                 .resolve(groupName)
                 .resolve(boxName)
                 .resolve(versionName)
-                .resolve(providerType.getName())
+                .resolve(providerType.toString())
                 .toAbsolutePath()
                 .normalize();
 
@@ -71,7 +71,7 @@ public class FileService {
                 .resolve(groupName)
                 .resolve(boxName)
                 .resolve(versionName)
-                .resolve(providerType.getName())
+                .resolve(providerType.toString())
                 .toAbsolutePath()
                 .normalize();
 
@@ -131,7 +131,7 @@ public class FileService {
                 .resolve(groupName)
                 .resolve(boxName)
                 .resolve(versionName)
-                .resolve(providerType.getName())
+                .resolve(providerType.toString())
                 .toAbsolutePath()
                 .normalize();
 
@@ -149,7 +149,7 @@ public class FileService {
                 .resolve(groupName)
                 .resolve(boxName)
                 .resolve(versionName)
-                .resolve(providerType.getName())
+                .resolve(providerType.toString())
                 .toAbsolutePath()
                 .normalize();
 
