@@ -2,168 +2,66 @@ package no.acntech.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.file.Path;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import no.acntech.handler.FileHandler;
-import no.acntech.model.Algorithm;
-import no.acntech.model.ProviderFile;
-import no.acntech.model.ProviderType;
-import no.acntech.properties.ApplicationProperties;
+import no.acntech.model.Storage;
+import no.acntech.properties.StorageProperties;
 
 @Validated
 @Service
 public class StorageService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
+    private final StorageProperties applicationProperties;
+    private final FileService fileService;
+    private final ChecksumService checksumService;
+    private final UploadService uploadService;
 
-    private final ApplicationProperties applicationProperties;
-    private final FileHandler fileHandler;
-
-    public StorageService(final ApplicationProperties applicationProperties,
-                          final FileHandler fileHandler) {
-        this.applicationProperties = applicationProperties;
-        this.fileHandler = fileHandler;
+    public StorageService(final StorageProperties storageProperties,
+                          final FileService fileService,
+                          final ChecksumService checksumService,
+                          final UploadService uploadService) {
+        this.applicationProperties = storageProperties;
+        this.fileService = fileService;
+        this.checksumService = checksumService;
+        this.uploadService = uploadService;
     }
 
-    public ProviderFile saveFile(String groupName,
-                                 String boxName,
-                                 String versionName,
-                                 ProviderType providerType,
-                                 final MultipartFile file) {
-        Path uploadPath = Paths.get(applicationProperties.getFile().getUploadDir())
-                .resolve(groupName)
-                .resolve(boxName)
-                .resolve(versionName)
-                .resolve(providerType.toString())
+    public Resource readFile(@NotBlank final String uid) {
+        final var fileName = applicationProperties.getFileName();
+        final var uploadPath = Paths.get(applicationProperties.getUploadPath())
+                .resolve(uid)
+                .resolve(fileName)
                 .toAbsolutePath()
                 .normalize();
+        LOGGER.info("Loading file {} from path {}", fileName, uploadPath);
+        return fileService.readFile(fileName, uploadPath);
+    }
 
-        String fileName = applicationProperties.getFile().getDefaultFileName();
-
+    @Transactional
+    public Storage saveFile(@NotBlank final String uid,
+                            @NotNull final InputStreamSource file) {
+        final var fileName = applicationProperties.getFileName();
+        final var uploadPath = Paths.get(applicationProperties.getUploadPath())
+                .resolve(uid)
+                .toAbsolutePath()
+                .normalize();
         LOGGER.info("Saving file {} to path {}", fileName, uploadPath);
-
-        long fileSize = fileHandler.saveFile(file, uploadPath, fileName);
-        String checksum = fileHandler.calculateSha1Checksum(uploadPath, fileName);
-
-        return ProviderFile.builder()
-                .fileName(fileName)
-                .fileSize(fileSize)
-                .checksumType(Algorithm.SHA256)
-                .checksum(checksum)
-                .build();
-    }
-
-    public Resource loadFile(String groupName,
-                             String boxName,
-                             String versionName,
-                             ProviderType providerType,
-                             String fileName) {
-        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
-                .resolve(groupName)
-                .resolve(boxName)
-                .resolve(versionName)
-                .resolve(providerType.toString())
-                .toAbsolutePath()
-                .normalize();
-
-        LOGGER.info("Loading file {} from path {}", fileName, filePath);
-
-        return fileHandler.readFile(filePath, fileName);
-    }
-
-    public void deleteDirectory(String groupName) {
-
-        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
-                .resolve(groupName)
-                .toAbsolutePath()
-                .normalize();
-
-        LOGGER.info("Deleting directory from path {}", filePath);
-
-        fileHandler.deleteDirectory(filePath);
-    }
-
-    public void deleteDirectory(String groupName,
-                                String boxName) {
-
-        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
-                .resolve(groupName)
-                .resolve(boxName)
-                .toAbsolutePath()
-                .normalize();
-
-        LOGGER.info("Deleting directory from path {}", filePath);
-
-        fileHandler.deleteDirectory(filePath);
-    }
-
-    public void deleteDirectory(String groupName,
-                                String boxName,
-                                String versionName) {
-
-        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
-                .resolve(groupName)
-                .resolve(boxName)
-                .resolve(versionName)
-                .toAbsolutePath()
-                .normalize();
-
-        LOGGER.info("Deleting directory from path {}", filePath);
-
-        fileHandler.deleteDirectory(filePath);
-    }
-
-    public void deleteDirectory(String groupName,
-                                String boxName,
-                                String versionName,
-                                ProviderType providerType) {
-
-        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
-                .resolve(groupName)
-                .resolve(boxName)
-                .resolve(versionName)
-                .resolve(providerType.toString())
-                .toAbsolutePath()
-                .normalize();
-
-        LOGGER.info("Deleting directory from path {}", filePath);
-
-        fileHandler.deleteDirectory(filePath);
-    }
-
-    public List<ProviderFile> findDirectoryFiles(String groupName,
-                                                 String boxName,
-                                                 String versionName,
-                                                 ProviderType providerType) {
-
-        Path filePath = Paths.get(applicationProperties.getFile().getUploadDir())
-                .resolve(groupName)
-                .resolve(boxName)
-                .resolve(versionName)
-                .resolve(providerType.toString())
-                .toAbsolutePath()
-                .normalize();
-
-        LOGGER.info("Find directory files from path {}", filePath);
-
-        List<File> files = fileHandler.listFiles(filePath);
-
-        return files.stream()
-                .filter(File::isFile)
-                .map(file -> ProviderFile.builder()
-                        .providerType(providerType)
-                        .fileName(file.getName())
-                        .fileSize(file.length())
-                        .build())
-                .collect(Collectors.toList());
+        final var upload = uploadService.getUpload(uid);
+        if (!Files.exists(uploadPath)) {
+            fileService.createDirectory(uploadPath);
+        }
+        final var fileSize = fileService.saveFile(fileName, uploadPath, file);
+        final var checksum = checksumService.generateChecksum(uploadPath.resolve(fileName), upload.checksumType());
+        return new Storage(uid, fileSize, checksum, upload.checksumType());
     }
 }

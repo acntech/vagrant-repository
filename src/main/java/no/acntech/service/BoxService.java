@@ -97,7 +97,8 @@ public class BoxService {
                 .update(BOXES)
                 .set(BOXES.NAME, updateBox.name())
                 .set(BOXES.DESCRIPTION, updateBox.description())
-                .set(BOXES.PRIVATE, updateBox.isPrivate())) {
+                .set(BOXES.PRIVATE, updateBox.isPrivate())
+                .set(BOXES.MODIFIED, LocalDateTime.now())) {
             final var rowsAffected = update
                     .where(BOXES.ID.eq(box.id()))
                     .execute();

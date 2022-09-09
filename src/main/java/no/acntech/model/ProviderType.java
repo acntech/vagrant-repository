@@ -16,7 +16,8 @@ public enum ProviderType {
     }
 
     @JsonValue
-    public String getProvider() {
+    @Override
+    public String toString() {
         return provider;
     }
 

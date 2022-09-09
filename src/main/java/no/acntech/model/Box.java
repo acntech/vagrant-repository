@@ -20,6 +20,7 @@ public record Box(
         @Size(max = 4000) @JsonProperty("description_markdown") String descriptionMarkdown,
         @NotNull @JsonProperty("private") Boolean isPrivate,
         @NotNull Integer downloads,
+        @NotNull @JsonIgnore Integer organizationId,
         @NotNull @JsonProperty("created_at") ZonedDateTime created,
         @JsonProperty("updated_at") ZonedDateTime modified,
         @Valid Version currentVersion,

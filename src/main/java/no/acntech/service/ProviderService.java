@@ -40,13 +40,24 @@ public class ProviderService {
         this.versionService = versionService;
     }
 
+    public Provider getProvider(@NotBlank final Integer id) {
+        LOGGER.info("Get provider for ID {}", id);
+        try (final var select = context.selectFrom(PROVIDERS)) {
+            final var record = select
+                    .where(PROVIDERS.ID.eq(id))
+                    .fetchSingle();
+            return conversionService.convert(record, Provider.class);
+        } catch (NoDataFoundException e) {
+            throw new ItemNotFoundException("No provider found for ID " + id, e);
+        }
+    }
 
     public Provider getProvider(@NotBlank final String username,
                                 @NotBlank final String name,
                                 @NotBlank final String versionParam,
-                                @NotNull ProviderType provider) {
+                                @NotNull final ProviderType provider) {
         final var tag = username + "/" + name;
-        LOGGER.info("Get provider {} for version {} of box {}", provider.getProvider(), versionParam, tag);
+        LOGGER.info("Get provider {} for version {} of box {}", provider, versionParam, tag);
         final var version = versionService.getVersion(username, name, versionParam);
         try (final var select = context.selectFrom(PROVIDERS)) {
             final var record = select
@@ -66,7 +77,7 @@ public class ProviderService {
                                @NotBlank final String versionParam,
                                @Valid @NotNull final CreateProvider createProvider) {
         final var tag = username + "/" + name;
-        LOGGER.info("Create provider {} for version {} of box {}", createProvider.name().getProvider(), versionParam, tag);
+        LOGGER.info("Create provider {} for version {} of box {}", createProvider.name(), versionParam, tag);
         final var version = versionService.getVersion(username, name, versionParam);
         try (final var insert = context
                 .insertInto(PROVIDERS,
@@ -80,14 +91,14 @@ public class ProviderService {
                     .values(
                             createProvider.name().name(),
                             false,
-                            createProvider.checksum(),
+                            createProvider.checksum().toLowerCase(),
                             createProvider.checksumType().name(),
                             version.id(),
                             LocalDateTime.now())
                     .execute();
             LOGGER.debug("Insert into PROVIDERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create provider " + createProvider.name().getProvider() +
+                throw new SaveItemFailedException("Failed to create provider " + createProvider.name() +
                         " for version " + versionParam + " of box " + tag);
             }
         }
@@ -97,22 +108,23 @@ public class ProviderService {
     public void updateProvider(@NotBlank final String username,
                                @NotBlank final String name,
                                @NotBlank final String version,
-                               @NotNull ProviderType providerParam,
+                               @NotNull final ProviderType providerParam,
                                @Valid @NotNull final UpdateProvider updateProvider) {
         final var tag = username + "/" + name;
-        LOGGER.info("Update provider {} for version {} of box {}", providerParam.getProvider(), version, tag);
+        LOGGER.info("Update provider {} for version {} of box {}", providerParam, version, tag);
         final var provider = getProvider(username, name, version, providerParam);
         try (final var update = context
                 .update(PROVIDERS)
                 .set(PROVIDERS.NAME, updateProvider.name().name())
                 .set(PROVIDERS.CHECKSUM, updateProvider.checksum())
-                .set(PROVIDERS.CHECKSUM_TYPE, updateProvider.checksumType().name())) {
+                .set(PROVIDERS.CHECKSUM_TYPE, updateProvider.checksumType().name())
+                .set(PROVIDERS.MODIFIED, LocalDateTime.now())) {
             final var rowsAffected = update
                     .where(PROVIDERS.ID.eq(provider.id()))
                     .execute();
             LOGGER.debug("Updated record in PROVIDERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to update provider " + providerParam.getProvider() +
+                throw new SaveItemFailedException("Failed to update provider " + providerParam +
                         " for version " + version + " of box " + tag);
             }
         }
@@ -122,9 +134,9 @@ public class ProviderService {
     public void deleteProvider(@NotBlank final String username,
                                @NotBlank final String name,
                                @NotBlank final String version,
-                               @NotNull ProviderType providerParam) {
+                               @NotNull final ProviderType providerParam) {
         final var tag = username + "/" + name;
-        LOGGER.info("Delete provider {} for version {} of box {}", providerParam.getProvider(), version, tag);
+        LOGGER.info("Delete provider {} for version {} of box {}", providerParam, version, tag);
         final var provider = getProvider(username, name, version, providerParam);
         try (final var delete = context.deleteFrom(PROVIDERS)) {
             final var rowsAffected = delete
@@ -132,7 +144,7 @@ public class ProviderService {
                     .execute();
             LOGGER.debug("Delete record in PROVIDERS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to delete provider " + providerParam.getProvider() +
+                throw new SaveItemFailedException("Failed to delete provider " + providerParam +
                         " for version " + version + " of box " + tag);
             }
         }

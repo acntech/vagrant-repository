@@ -14,7 +14,8 @@ public enum Algorithm {
     }
 
     @JsonValue
-    public String getAlgorithm() {
+    @Override
+    public String toString() {
         return algorithm;
     }
 }

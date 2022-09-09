@@ -23,6 +23,7 @@ public class VersionConverter implements Converter<VersionsRecord, Version> {
                 source.getDescription(),
                 source.getDescription(), // TODO: What is this?
                 VersionStatus.valueOf(source.getStatus()),
+                source.getBoxId(),
                 null,
                 null,
                 source.getCreated().atZone(ZoneId.systemDefault()),

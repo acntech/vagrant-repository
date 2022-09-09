@@ -5,10 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import no.acntech.properties.ApplicationProperties;
+import no.acntech.properties.StorageProperties;
 
 @EnableConfigurationProperties({
-        ApplicationProperties.class
+        StorageProperties.class
 })
 @EnableTransactionManagement
 @SpringBootApplication

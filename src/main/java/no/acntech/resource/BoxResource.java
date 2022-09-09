@@ -20,10 +20,12 @@ import no.acntech.model.ProviderType;
 import no.acntech.model.UpdateBox;
 import no.acntech.model.UpdateProvider;
 import no.acntech.model.UpdateVersion;
+import no.acntech.model.Upload;
 import no.acntech.model.Version;
 import no.acntech.model.VersionStatus;
 import no.acntech.service.BoxService;
 import no.acntech.service.ProviderService;
+import no.acntech.service.UploadService;
 import no.acntech.service.VersionService;
 
 @RequestMapping(path = "/api/box")
@@ -33,13 +35,16 @@ public class BoxResource {
     private final BoxService boxService;
     private final VersionService versionService;
     private final ProviderService providerService;
+    private final UploadService uploadService;
 
     public BoxResource(final BoxService boxService,
                        final VersionService versionService,
-                       final ProviderService providerService) {
+                       final ProviderService providerService,
+                       final UploadService uploadService) {
         this.boxService = boxService;
         this.versionService = versionService;
         this.providerService = providerService;
+        this.uploadService = uploadService;
     }
 
     @GetMapping(path = "{username}/{name}")
@@ -149,7 +154,7 @@ public class BoxResource {
         final var createProvider = createProviderRequest.provider();
         providerService.createProvider(username, name, version, createProvider);
         final var uri = uriBuilder.path("/api/box/{username}/{name}/version/{version}/provider/{provider}")
-                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.toLowerCase(), createProvider.name().getProvider())
+                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.toLowerCase(), createProvider.name().toString())
                 .toUri();
         return ResponseEntity.created(uri).build();
     }
@@ -158,7 +163,7 @@ public class BoxResource {
     public ResponseEntity<Version> updateProvider(@PathVariable(name = "username") final String username,
                                                   @PathVariable(name = "name") final String name,
                                                   @PathVariable(name = "version") final String version,
-                                                  @PathVariable(name = "provider") String provider,
+                                                  @PathVariable(name = "provider") final String provider,
                                                   @RequestBody final UpdateProvider.Request updateProviderRequest) {
         final var updateProvider = updateProviderRequest.provider();
         providerService.updateProvider(username, name, version, ProviderType.fromProvider(provider), updateProvider);
@@ -169,8 +174,20 @@ public class BoxResource {
     public ResponseEntity<Version> deleteProvider(@PathVariable(name = "username") final String username,
                                                   @PathVariable(name = "name") final String name,
                                                   @PathVariable(name = "version") final String version,
-                                                  @PathVariable(name = "provider") String provider) {
+                                                  @PathVariable(name = "provider") final String provider) {
         providerService.deleteProvider(username, name, version, ProviderType.fromProvider(provider));
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "{username}/{name}/version/{version}/provider/{provider}/upload")
+    public ResponseEntity<Upload> getUpload(@PathVariable(name = "username") final String username,
+                                            @PathVariable(name = "name") final String name,
+                                            @PathVariable(name = "version") final String version,
+                                            @PathVariable(name = "provider") final String providerParam,
+                                            final UriComponentsBuilder uriBuilder) {
+        final var provider = ProviderType.fromProvider(providerParam);
+        final var uid = uploadService.createUpload(username, name, version, provider, uriBuilder);
+        final var upload = uploadService.getUpload(uid);
+        return ResponseEntity.ok(upload);
     }
 }

@@ -7,26 +7,24 @@ import org.springframework.stereotype.Component;
 import java.time.ZoneId;
 
 import no.acntech.model.Algorithm;
-import no.acntech.model.Provider;
-import no.acntech.model.ProviderType;
-import no.acntech.model.tables.records.ProvidersRecord;
+import no.acntech.model.Upload;
+import no.acntech.model.tables.records.UploadsRecord;
 
 @Component
-public class ProviderConverter implements Converter<ProvidersRecord, Provider> {
+public class UploadConverter implements Converter<UploadsRecord, Upload> {
 
     @NonNull
     @Override
-    public Provider convert(@NonNull final ProvidersRecord source) {
-        return new Provider(
+    public Upload convert(@NonNull final UploadsRecord source) {
+        return new Upload(
                 source.getId(),
-                ProviderType.valueOf(source.getName()),
-                source.getHosted(),
-                source.getHostedToken(),
+                source.getUid(),
+                source.getUploadPath(),
+                null,
+                source.getFileSize(),
                 source.getChecksum(),
                 Algorithm.valueOf(source.getChecksumType()),
-                source.getVersionId(),
-                null,
-                null,
+                source.getProviderId(),
                 source.getCreated().atZone(ZoneId.systemDefault()),
                 source.getModified() == null ? null : source.getModified().atZone(ZoneId.systemDefault()));
     }

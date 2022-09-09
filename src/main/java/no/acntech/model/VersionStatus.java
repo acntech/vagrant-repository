@@ -14,7 +14,8 @@ public enum VersionStatus {
     }
 
     @JsonValue
-    public String getStatus() {
+    @Override
+    public String toString() {
         return status;
     }
 }

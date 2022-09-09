@@ -15,6 +15,7 @@ public record Provider(
         @Size(max = 200) @JsonProperty("hosted_token") String hostedToken,
         @NotBlank @Size(max = 200) String checksum,
         @NotNull @JsonProperty("checksum_type") Algorithm checksumType,
+        @NotNull @JsonIgnore Integer versionId,
         @Size(max = 200) @JsonProperty("original_url") String originalUrl,
         @Size(max = 200) @JsonProperty("download_url") String downloadUrl,
         @NotNull @JsonProperty("created_at") ZonedDateTime created,

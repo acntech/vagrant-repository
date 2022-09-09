@@ -17,6 +17,7 @@ public record Version(
         @Size(max = 4000) @JsonProperty("description_html") String descriptionHtml,
         @Size(max = 4000) @JsonProperty("description_markdown") String descriptionMarkdown,
         @NotNull VersionStatus status,
+        @NotNull @JsonIgnore Integer boxId,
         @Size(max = 200) @JsonProperty("release_url") String releaseUrl,
         @Size(max = 200) @JsonProperty("revoke_url") String revokeUrl,
         @NotNull @JsonProperty("created_at") ZonedDateTime created,

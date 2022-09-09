@@ -98,7 +98,8 @@ public class VersionService {
         try (final var update = context
                 .update(VERSIONS)
                 .set(VERSIONS.VERSION, updateVersion.version())
-                .set(VERSIONS.DESCRIPTION, updateVersion.description())) {
+                .set(VERSIONS.DESCRIPTION, updateVersion.description())
+                .set(VERSIONS.MODIFIED, LocalDateTime.now())) {
             final var rowsAffected = update
                     .where(VERSIONS.ID.eq(version.id()))
                     .execute();
@@ -141,7 +142,8 @@ public class VersionService {
         final var version = getVersion(username, name, versionParam);
         try (final var update = context
                 .update(VERSIONS)
-                .set(VERSIONS.STATUS, versionStatus.name())) {
+                .set(VERSIONS.STATUS, versionStatus.name())
+                .set(VERSIONS.MODIFIED, LocalDateTime.now())) {
             final var rowsAffected = update
                     .where(VERSIONS.ID.eq(version.id()))
                     .execute();
