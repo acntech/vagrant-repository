@@ -42,6 +42,18 @@ public class VersionService {
         this.boxService = boxService;
     }
 
+    public Version getVersion(@NotNull final Integer id) {
+        LOGGER.info("Get version for ID {}", id);
+        try (final var select = context.selectFrom(VERSIONS)) {
+            final var record = select
+                    .where(VERSIONS.ID.eq(id))
+                    .fetchSingle();
+            return conversionService.convert(record, Version.class);
+        } catch (NoDataFoundException e) {
+            throw new ItemNotFoundException("No version found for ID " + id, e);
+        }
+    }
+
     public Version getVersion(@NotBlank final String username,
                               @NotBlank final String name,
                               @NotBlank final String version) {
@@ -170,5 +182,11 @@ public class VersionService {
                         " for box " + tag);
             }
         }
+    }
+
+    @Transactional
+    public void postDownload(@NotNull final Integer id) {
+        final var version = getVersion(id);
+        boxService.postDownload(version.boxId());
     }
 }

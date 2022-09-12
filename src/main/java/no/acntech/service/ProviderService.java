@@ -189,4 +189,10 @@ public class ProviderService {
             }
         }
     }
+
+    @Transactional
+    public void postDownload(@NotNull final Integer id) {
+        final var provider = getProvider(id);
+        versionService.postDownload(provider.versionId());
+    }
 }

@@ -40,6 +40,20 @@ public class BoxService {
         this.organizationService = organizationService;
     }
 
+    public Box getBox(@NotNull final Integer id) {
+        LOGGER.info("Get box for ID {}", id);
+        try (final var select = context.selectFrom(BOXES)) {
+            final var record = select
+                    .where(BOXES.ID.eq(id))
+                    .fetchSingle();
+            final var organization = organizationService.getOrganization(record.getOrganizationId());
+            final var pair = Pair.of(record, organization);
+            return conversionService.convert(pair, Box.class);
+        } catch (NoDataFoundException e) {
+            throw new ItemNotFoundException("No box found for ID " + id, e);
+        }
+    }
+
     public Box getBox(@NotBlank final String username,
                       @NotBlank final String name) {
         final var tag = username + "/" + name;
@@ -123,6 +137,23 @@ public class BoxService {
             LOGGER.debug("Delete record in BOXES table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
                 throw new SaveItemFailedException("Failed to delete box " + tag);
+            }
+        }
+    }
+
+    @Transactional
+    public void postDownload(@NotNull final Integer id) {
+        final var box = getBox(id);
+        try (final var update = context
+                .update(BOXES)
+                .set(BOXES.DOWNLOADS, box.downloads() + 1)
+                .set(BOXES.MODIFIED, LocalDateTime.now())) {
+            final var rowsAffected = update
+                    .where(BOXES.ID.eq(box.id()))
+                    .execute();
+            LOGGER.debug("Updated record in BOXES table affected {} rows", rowsAffected);
+            if (rowsAffected == 0) {
+                throw new SaveItemFailedException("Failed to update box with ID " + id);
             }
         }
     }

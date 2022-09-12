@@ -52,10 +52,14 @@ public class BearerTokenAuthenticationConverter implements AuthenticationConvert
             throw new BadCredentialsException("Malformed bearer token");
         }
         final var roles = getRolesClaim(claims);
-        final var authorities = roles.stream()
-                .map(AUTHORITY_ROLE_PREFIX::concat)
-                .map(SimpleGrantedAuthority::new).toList();
-        return UsernamePasswordAuthenticationToken.authenticated(subject, null, authorities);
+        if (roles != null) {
+            final var authorities = roles.stream()
+                    .map(AUTHORITY_ROLE_PREFIX::concat)
+                    .map(SimpleGrantedAuthority::new).toList();
+            return UsernamePasswordAuthenticationToken.authenticated(subject, null, authorities);
+        } else {
+            return UsernamePasswordAuthenticationToken.authenticated(subject, null, Collections.emptyList());
+        }
     }
 
     public List<String> getRolesClaim(final JWTClaimsSet claims) {

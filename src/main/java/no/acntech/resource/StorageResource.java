@@ -1,6 +1,7 @@
 package no.acntech.resource;
 
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,10 +28,18 @@ public class StorageResource {
         this.storageService = storageService;
     }
 
-    @GetMapping(path = "{uid}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(path = "{uid}")
     public ResponseEntity<Resource> getObject(@PathVariable(name = "uid") final String uid) {
         final var resource = storageService.readFile(uid);
-        return ResponseEntity.ok(resource);
+        try {
+            final var contentDisposition = "attachment; filename=\"" + resource.getFilename() + "\"";
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+        } finally {
+            uploadService.postDownload(uid);
+        }
     }
 
     @PostMapping(path = "{uid}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

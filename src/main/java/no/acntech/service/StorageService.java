@@ -36,6 +36,7 @@ public class StorageService {
         this.uploadService = uploadService;
     }
 
+    @Transactional
     public Resource readFile(@NotBlank final String uid) {
         final var fileName = applicationProperties.getFileName();
         final var uploadPath = Paths.get(applicationProperties.getUploadPath())

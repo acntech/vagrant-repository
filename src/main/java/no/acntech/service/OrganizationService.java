@@ -50,10 +50,23 @@ public class OrganizationService {
         this.organizationMemberService = organizationMemberService;
     }
 
+    public Organization getOrganization(@NotNull final Integer id) {
+        LOGGER.debug("Get organization for ID {}", id);
+        try (final var select = context.selectFrom(ORGANIZATIONS)) {
+            final var record = select
+                    .where(ORGANIZATIONS.ID.eq(id))
+                    .fetchSingle();
+            return conversionService.convert(record, Organization.class);
+        } catch (NoDataFoundException e) {
+            throw new ItemNotFoundException("No organization found for ID " + id, e);
+        }
+    }
+
     public Organization getOrganization(@NotBlank final String name) {
         LOGGER.debug("Get organization {}", name);
         try (final var select = context.selectFrom(ORGANIZATIONS)) {
-            final var record = select.where(ORGANIZATIONS.NAME.eq(name))
+            final var record = select
+                    .where(ORGANIZATIONS.NAME.eq(name))
                     .fetchSingle();
             return conversionService.convert(record, Organization.class);
         } catch (NoDataFoundException e) {

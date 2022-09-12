@@ -152,4 +152,10 @@ public class UploadService {
         }
         providerService.updateProviderStatus(provider.id(), ProviderStatus.VERIFIED);
     }
+
+    @Transactional
+    public void postDownload(@NotBlank final String uid) {
+        final var upload = getUpload(uid);
+        providerService.postDownload(upload.providerId());
+    }
 }
