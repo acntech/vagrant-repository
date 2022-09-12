@@ -25,4 +25,22 @@ public record Box(
         @JsonProperty("updated_at") ZonedDateTime modified,
         @Valid Version currentVersion,
         @Valid List<Version> versions) {
+
+    public Box with(@Valid @NotNull List<Version> versions) {
+        return new Box(
+                this.id,
+                this.tag,
+                this.name,
+                this.username,
+                this.descriptionShort,
+                this.descriptionHtml,
+                this.descriptionMarkdown,
+                this.isPrivate,
+                this.downloads,
+                this.organizationId,
+                this.created,
+                this.modified,
+                null, // TODO: Handle
+                versions);
+    }
 }

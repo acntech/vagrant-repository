@@ -9,7 +9,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -19,7 +18,9 @@ import java.util.UUID;
 import no.acntech.exception.ChecksumException;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
+import no.acntech.model.ProviderStatus;
 import no.acntech.model.ProviderType;
+import no.acntech.model.UpdateStatus;
 import no.acntech.model.Upload;
 
 import static no.acntech.model.tables.Uploads.UPLOADS;
@@ -46,6 +47,7 @@ public class UploadService {
         try (final var select = context.selectFrom(UPLOADS)) {
             final var record = select
                     .where(UPLOADS.UID.eq(uid))
+                    .and(UPLOADS.STATUS.eq(UpdateStatus.ACTIVE.name()))
                     .fetchSingle();
             return conversionService.convert(record, Upload.class);
         } catch (NoDataFoundException e) {
@@ -53,30 +55,55 @@ public class UploadService {
         }
     }
 
+    public Upload getUpload(@NotBlank final String username,
+                            @NotBlank final String name,
+                            @NotBlank final String version,
+                            @NotNull final ProviderType providerParam) {
+        final var tag = username + "/" + name;
+        LOGGER.info("Get upload for provider {} and version {} of box {}", providerParam, version, tag);
+        final var provider = providerService.getProvider(username, name, version, providerParam);
+        try (final var select = context.selectFrom(UPLOADS)) {
+            final var record = select
+                    .where(UPLOADS.PROVIDER_ID.eq(provider.id()))
+                    .and(UPLOADS.STATUS.eq(UpdateStatus.ACTIVE.name()))
+                    .fetchSingle();
+            return conversionService.convert(record, Upload.class);
+        } catch (NoDataFoundException e) {
+            throw new ItemNotFoundException("Failed to get upload for provider " + providerParam +
+                    " for version " + version + " of box " + tag, e);
+        }
+    }
+
     @Transactional
     public String createUpload(@NotBlank final String username,
                                @NotBlank final String name,
                                @NotBlank final String version,
-                               @NotNull final ProviderType providerParam,
-                               final UriComponentsBuilder uriBuilder) {
+                               @NotNull final ProviderType providerParam) {
         final var tag = username + "/" + name;
         LOGGER.info("Create upload for provider {} and version {} of box {}", providerParam, version, tag);
         final var uid = UUID.randomUUID().toString();
-        final var uploadPathUri = uriBuilder.path("/api/storage/{uid}")
-                .buildAndExpand(uid)
-                .toUri();
         final var provider = providerService.getProvider(username, name, version, providerParam);
+        try (final var update = context
+                .update(UPLOADS)
+                .set(UPLOADS.STATUS, UpdateStatus.INACTIVE.name())
+                .set(UPLOADS.MODIFIED, LocalDateTime.now())) {
+            final var rowsAffected = update
+                    .where(UPLOADS.PROVIDER_ID.eq(provider.id()))
+                    .and(UPLOADS.STATUS.eq(UpdateStatus.ACTIVE.name()))
+                    .execute();
+            LOGGER.debug("Updated record in UPLOADS table affected {} rows", rowsAffected);
+        }
         try (final var insert = context
                 .insertInto(UPLOADS,
                         UPLOADS.UID,
-                        UPLOADS.UPLOAD_PATH,
                         UPLOADS.CHECKSUM_TYPE,
+                        UPLOADS.STATUS,
                         UPLOADS.PROVIDER_ID,
                         UPLOADS.CREATED)) {
             final var rowsAffected = insert
                     .values(uid,
-                            uploadPathUri.toString(),
                             provider.checksumType().name(),
+                            UpdateStatus.ACTIVE.name(),
                             provider.id(),
                             LocalDateTime.now())
                     .execute();
@@ -95,6 +122,7 @@ public class UploadService {
                              @NotBlank final String checksum) {
         LOGGER.info("Update upload {}", uid);
         final var upload = getUpload(uid);
+        final var provider = providerService.getProvider(upload.providerId());
         try (final var update = context
                 .update(UPLOADS)
                 .set(UPLOADS.FILE_SIZE, fileSize)
@@ -107,6 +135,7 @@ public class UploadService {
             if (rowsAffected == 0) {
                 throw new SaveItemFailedException("Failed to update upload " + uid);
             }
+            providerService.updateProviderStatus(provider.id(), ProviderStatus.UPLOADED);
         }
     }
 
@@ -119,7 +148,8 @@ public class UploadService {
             throw new ChecksumException("Upload " + uid + " is missing checksum");
         }
         if (!upload.checksum().equals(provider.checksum())) {
-            throw new ChecksumException("Checksum of provider " + provider.name() + " does not match checksum of upload " + upload);
+            throw new ChecksumException("Checksum of provider " + provider.name() + " does not match checksum of upload " + upload.uid());
         }
+        providerService.updateProviderStatus(provider.id(), ProviderStatus.VERIFIED);
     }
 }

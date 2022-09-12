@@ -26,14 +26,14 @@ public class BoxConverter implements Converter<Pair<BoxesRecord, Organization>, 
                 boxesRecord.getName(),
                 organization.name(),
                 boxesRecord.getDescription(),
-                null,
-                null,
+                null, // TODO: Handle
+                null, // TODO: Handle
                 boxesRecord.getPrivate(),
                 boxesRecord.getDownloads(),
                 boxesRecord.getOrganizationId(),
                 boxesRecord.getCreated().atZone(ZoneId.systemDefault()),
                 boxesRecord.getModified() == null ? null : boxesRecord.getModified().atZone(ZoneId.systemDefault()),
-                null,
-                null);
+                null, // TODO: Handle
+                null); // Is set in resource
     }
 }

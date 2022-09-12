@@ -21,13 +21,13 @@ public class VersionConverter implements Converter<VersionsRecord, Version> {
                 source.getVersion(),
                 source.getVersion(), // TODO: What is this?
                 source.getDescription(),
-                source.getDescription(), // TODO: What is this?
+                null, // TODO: What is this?
                 VersionStatus.valueOf(source.getStatus()),
                 source.getBoxId(),
-                null,
-                null,
+                null, // Is set in resource
+                null, // Is set in resource
                 source.getCreated().atZone(ZoneId.systemDefault()),
                 source.getModified() == null ? null : source.getModified().atZone(ZoneId.systemDefault()),
-                null);
+                null); // Is set in resource
     }
 }

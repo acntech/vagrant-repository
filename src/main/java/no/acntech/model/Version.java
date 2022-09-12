@@ -23,4 +23,22 @@ public record Version(
         @NotNull @JsonProperty("created_at") ZonedDateTime created,
         @JsonProperty("updated_at") ZonedDateTime modified,
         @Valid List<Provider> providers) {
+
+    public Version with(@NotBlank @Size(max = 200) String releaseUrl,
+                        @NotBlank @Size(max = 200) String revokeUrl,
+                        @Valid @NotNull List<Provider> providers) {
+        return new Version(
+                this.id,
+                this.version,
+                this.number,
+                this.descriptionHtml,
+                this.descriptionMarkdown,
+                this.status,
+                this.boxId,
+                releaseUrl,
+                revokeUrl,
+                this.created,
+                this.modified,
+                providers);
+    }
 }

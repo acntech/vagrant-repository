@@ -8,6 +8,7 @@ import java.time.ZoneId;
 
 import no.acntech.model.Algorithm;
 import no.acntech.model.Provider;
+import no.acntech.model.ProviderStatus;
 import no.acntech.model.ProviderType;
 import no.acntech.model.tables.records.ProvidersRecord;
 
@@ -24,9 +25,10 @@ public class ProviderConverter implements Converter<ProvidersRecord, Provider> {
                 source.getHostedToken(),
                 source.getChecksum(),
                 Algorithm.valueOf(source.getChecksumType()),
+                ProviderStatus.valueOf(source.getStatus()),
                 source.getVersionId(),
-                null,
-                null,
+                null, // TODO: Handle
+                null, // Is set in resource
                 source.getCreated().atZone(ZoneId.systemDefault()),
                 source.getModified() == null ? null : source.getModified().atZone(ZoneId.systemDefault()));
     }

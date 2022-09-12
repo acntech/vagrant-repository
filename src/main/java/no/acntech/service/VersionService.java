@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
@@ -54,6 +56,21 @@ public class VersionService {
             return conversionService.convert(record, Version.class);
         } catch (NoDataFoundException e) {
             throw new ItemNotFoundException("No version " + version + " found for box " + tag, e);
+        }
+    }
+
+    public List<Version> findVersions(@NotBlank final String username,
+                                      @NotBlank final String name) {
+        final var tag = username + "/" + name;
+        LOGGER.info("Get versions for box {}", tag);
+        final var box = boxService.getBox(username, name);
+        try (final var select = context.selectFrom(VERSIONS)) {
+            final var result = select
+                    .where(VERSIONS.BOX_ID.eq(box.id()))
+                    .fetch();
+            return result.stream()
+                    .map(record -> conversionService.convert(record, Version.class))
+                    .collect(Collectors.toList());
         }
     }
 

@@ -25,8 +25,17 @@ public class ChecksumService {
 
         try (FileInputStream fileInputStream = new FileInputStream(filePath.toFile())) {
             switch (algorithm) {
+                case MD5 -> {
+                    return DigestUtils.md5Hex(fileInputStream);
+                }
+                case SHA1 -> {
+                    return DigestUtils.sha1Hex(fileInputStream);
+                }
                 case SHA256 -> {
                     return DigestUtils.sha256Hex(fileInputStream);
+                }
+                case SHA384 -> {
+                    return DigestUtils.sha384Hex(fileInputStream);
                 }
                 case SHA512 -> {
                     return DigestUtils.sha512Hex(fileInputStream);

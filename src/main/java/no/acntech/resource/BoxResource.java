@@ -49,9 +49,32 @@ public class BoxResource {
 
     @GetMapping(path = "{username}/{name}")
     public ResponseEntity<Box> getBox(@PathVariable(name = "username") final String username,
-                                      @PathVariable(name = "name") final String name) {
+                                      @PathVariable(name = "name") final String name,
+                                      final UriComponentsBuilder uriBuilder) {
         final var box = boxService.getBox(username, name);
-        return ResponseEntity.ok(box);
+        final var versions = versionService.findVersions(username, name);
+        final var augmentedVersions = versions.stream()
+                .map(version -> {
+                    final var releaseUrl = uriBuilder.cloneBuilder()
+                            .path("/api/box/{username}/{name}/version/{version}/release")
+                            .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.version())
+                            .toUri().toString();
+                    final var revokeUrl = uriBuilder.cloneBuilder()
+                            .path("/api/box/{username}/{name}/version/{version}/revoke")
+                            .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.version())
+                            .toUri().toString();
+                    final var providers = providerService.findProviders(username, name, version.version());
+                    final var augmentedProviders = providers.stream()
+                            .map(provider -> {
+                                final var upload = uploadService.getUpload(username, name, version.version(), provider.name());
+                                final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
+                                        .buildAndExpand(upload.uid())
+                                        .toUri().toString();
+                                return provider.with(uploadPathUrl);
+                            }).toList();
+                    return version.with(releaseUrl, revokeUrl, augmentedProviders);
+                }).toList();
+        return ResponseEntity.ok(box.with(augmentedVersions));
     }
 
     @PostMapping
@@ -59,10 +82,10 @@ public class BoxResource {
                                           final UriComponentsBuilder uriBuilder) {
         final var createBox = createBoxRequest.box();
         boxService.createBox(createBox);
-        final var uri = uriBuilder.path("/api/box/{username}/{name}")
+        final var boxUri = uriBuilder.path("/api/box/{username}/{name}")
                 .buildAndExpand(createBox.username().toLowerCase(), createBox.name().toLowerCase())
                 .toUri();
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(boxUri).build();
     }
 
     @PutMapping(path = "{username}/{name}")
@@ -84,9 +107,19 @@ public class BoxResource {
     @GetMapping(path = "{username}/{name}/version/{version}")
     public ResponseEntity<Version> getVersion(@PathVariable(name = "username") final String username,
                                               @PathVariable(name = "name") final String name,
-                                              @PathVariable(name = "version") final String versionParam) {
+                                              @PathVariable(name = "version") final String versionParam,
+                                              final UriComponentsBuilder uriBuilder) {
         final var version = versionService.getVersion(username, name, versionParam);
-        return ResponseEntity.ok(version);
+        final var providers = providerService.findProviders(username, name, versionParam);
+        final var releaseUrl = uriBuilder.cloneBuilder()
+                .path("/api/box/{username}/{name}/version/{version}/release")
+                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.version())
+                .toUri().toString();
+        final var revokeUrl = uriBuilder.cloneBuilder()
+                .path("/api/box/{username}/{name}/version/{version}/revoke")
+                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.version())
+                .toUri().toString();
+        return ResponseEntity.ok(version.with(releaseUrl, revokeUrl, providers));
     }
 
     @PostMapping(path = "{username}/{name}/version")
@@ -96,10 +129,10 @@ public class BoxResource {
                                                  final UriComponentsBuilder uriBuilder) {
         final var createVersion = createVersionRequest.version();
         versionService.createVersion(username, name, createVersion);
-        final var uri = uriBuilder.path("/api/box/{username}/{name}/version/{version}")
+        final var versionUri = uriBuilder.path("/api/box/{username}/{name}/version/{version}")
                 .buildAndExpand(username.toLowerCase(), name.toLowerCase(), createVersion.version())
                 .toUri();
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(versionUri).build();
     }
 
     @PutMapping(path = "{username}/{name}/version/{version}")
@@ -140,9 +173,15 @@ public class BoxResource {
     public ResponseEntity<Provider> getProvider(@PathVariable(name = "username") final String username,
                                                 @PathVariable(name = "name") final String name,
                                                 @PathVariable(name = "version") final String version,
-                                                @PathVariable(name = "provider") final String providerParam) {
-        final var provider = providerService.getProvider(username, name, version, ProviderType.fromProvider(providerParam));
-        return ResponseEntity.ok(provider);
+                                                @PathVariable(name = "provider") final String providerParam,
+                                                final UriComponentsBuilder uriBuilder) {
+        final var providerType = ProviderType.fromProvider(providerParam);
+        final var provider = providerService.getProvider(username, name, version, providerType);
+        final var upload = uploadService.getUpload(username, name, version, providerType);
+        final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
+                .buildAndExpand(upload.uid())
+                .toUri().toString();
+        return ResponseEntity.ok(provider.with(uploadPathUrl));
     }
 
     @PostMapping(path = "{username}/{name}/version/{version}/provider")
@@ -153,10 +192,10 @@ public class BoxResource {
                                                   final UriComponentsBuilder uriBuilder) {
         final var createProvider = createProviderRequest.provider();
         providerService.createProvider(username, name, version, createProvider);
-        final var uri = uriBuilder.path("/api/box/{username}/{name}/version/{version}/provider/{provider}")
+        final var providerUri = uriBuilder.path("/api/box/{username}/{name}/version/{version}/provider/{provider}")
                 .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.toLowerCase(), createProvider.name().toString())
                 .toUri();
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(providerUri).build();
     }
 
     @PutMapping(path = "{username}/{name}/version/{version}/provider/{provider}")
@@ -186,8 +225,11 @@ public class BoxResource {
                                             @PathVariable(name = "provider") final String providerParam,
                                             final UriComponentsBuilder uriBuilder) {
         final var provider = ProviderType.fromProvider(providerParam);
-        final var uid = uploadService.createUpload(username, name, version, provider, uriBuilder);
+        final var uid = uploadService.createUpload(username, name, version, provider);
         final var upload = uploadService.getUpload(uid);
-        return ResponseEntity.ok(upload);
+        final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
+                .buildAndExpand(uid)
+                .toUri().toString();
+        return ResponseEntity.ok(upload.with(uploadPathUrl));
     }
 }

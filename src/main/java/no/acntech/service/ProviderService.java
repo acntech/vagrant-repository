@@ -13,11 +13,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
 import no.acntech.model.CreateProvider;
 import no.acntech.model.Provider;
+import no.acntech.model.ProviderStatus;
 import no.acntech.model.ProviderType;
 import no.acntech.model.UpdateProvider;
 
@@ -40,7 +43,7 @@ public class ProviderService {
         this.versionService = versionService;
     }
 
-    public Provider getProvider(@NotBlank final Integer id) {
+    public Provider getProvider(@NotNull final Integer id) {
         LOGGER.info("Get provider for ID {}", id);
         try (final var select = context.selectFrom(PROVIDERS)) {
             final var record = select
@@ -71,6 +74,23 @@ public class ProviderService {
         }
     }
 
+    public List<Provider> findProviders(@NotBlank final String username,
+                                        @NotBlank final String name,
+                                        @NotBlank final String versionParam) {
+        final var tag = username + "/" + name;
+        LOGGER.info("Find providers for version {} of box {}", versionParam, tag);
+        final var version = versionService.getVersion(username, name, versionParam);
+        try (final var select = context.selectFrom(PROVIDERS)) {
+            final var result = select
+                    .where(PROVIDERS.VERSION_ID.eq(version.id()))
+                    // TODO .and(PROVIDERS.STATUS.eq(ProviderStatus.VERIFIED.name()))
+                    .fetch();
+            return result.stream()
+                    .map(record -> conversionService.convert(record, Provider.class))
+                    .collect(Collectors.toList());
+        }
+    }
+
     @Transactional
     public void createProvider(@NotBlank final String username,
                                @NotBlank final String name,
@@ -85,6 +105,7 @@ public class ProviderService {
                         PROVIDERS.HOSTED,
                         PROVIDERS.CHECKSUM,
                         PROVIDERS.CHECKSUM_TYPE,
+                        PROVIDERS.STATUS,
                         PROVIDERS.VERSION_ID,
                         PROVIDERS.CREATED)) {
             final var rowsAffected = insert
@@ -93,6 +114,7 @@ public class ProviderService {
                             false,
                             createProvider.checksum().toLowerCase(),
                             createProvider.checksumType().name(),
+                            ProviderStatus.PENDING.name(),
                             version.id(),
                             LocalDateTime.now())
                     .execute();
@@ -146,6 +168,24 @@ public class ProviderService {
             if (rowsAffected == 0) {
                 throw new SaveItemFailedException("Failed to delete provider " + providerParam +
                         " for version " + version + " of box " + tag);
+            }
+        }
+    }
+
+    @Transactional
+    public void updateProviderStatus(@NotNull final Integer id,
+                                     @NotNull final ProviderStatus status) {
+        LOGGER.info("Update provider for ID {}", id);
+        try (final var update = context
+                .update(PROVIDERS)
+                .set(PROVIDERS.STATUS, status.name())
+                .set(PROVIDERS.MODIFIED, LocalDateTime.now())) {
+            final var rowsAffected = update
+                    .where(PROVIDERS.ID.eq(id))
+                    .execute();
+            LOGGER.debug("Updated record in PROVIDERS table affected {} rows", rowsAffected);
+            if (rowsAffected == 0) {
+                throw new SaveItemFailedException("Failed to update provider with ID " + id);
             }
         }
     }

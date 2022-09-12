@@ -40,7 +40,6 @@ public class StorageService {
         final var fileName = applicationProperties.getFileName();
         final var uploadPath = Paths.get(applicationProperties.getUploadPath())
                 .resolve(uid)
-                .resolve(fileName)
                 .toAbsolutePath()
                 .normalize();
         LOGGER.info("Loading file {} from path {}", fileName, uploadPath);
