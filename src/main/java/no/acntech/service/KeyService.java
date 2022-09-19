@@ -20,14 +20,14 @@ import java.util.UUID;
 public class KeyService {
 
     private static final String KEY_ID = UUID.randomUUID().toString();
-    private final Resource privateKeyFile;
     private final Resource publicKeyFile;
+    private final Resource privateKeyFile;
     private final KeyFactory rsaKeyFactory;
 
-    public KeyService(@Value("classpath:private.pem") final Resource privateKeyFile,
-                      @Value("classpath:public.pem") final Resource publicKeyFile) throws Exception {
-        this.privateKeyFile = privateKeyFile;
+    public KeyService(@Value("${acntech.keys.public-key}") final Resource publicKeyFile,
+                      @Value("${acntech.keys.private-key}") final Resource privateKeyFile) throws Exception {
         this.publicKeyFile = publicKeyFile;
+        this.privateKeyFile = privateKeyFile;
         this.rsaKeyFactory = KeyFactory.getInstance("RSA");
     }
 

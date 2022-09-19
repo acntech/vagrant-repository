@@ -1,54 +1,51 @@
 package no.acntech.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.DSLContext;
 import org.jooq.exception.NoDataFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
 import no.acntech.model.CreateUser;
-import no.acntech.model.Password;
 import no.acntech.model.UpdateUser;
 import no.acntech.model.User;
-
-import static no.acntech.model.tables.Users.USERS;
+import no.acntech.repository.UserRepository;
 
 @Validated
 @Service
 public class UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-    private final DSLContext context;
     private final ConversionService conversionService;
-    private final PasswordService passwordService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
-    public UserService(final DSLContext context,
-                       final ConversionService conversionService,
-                       final PasswordService passwordService) {
-        this.context = context;
+    public UserService(final ConversionService conversionService,
+                       final PasswordEncoder passwordEncoder,
+                       final UserRepository userRepository) {
         this.conversionService = conversionService;
-        this.passwordService = passwordService;
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
     }
 
     public User getUser(@NotBlank final String username) {
         LOGGER.debug("Get user {}", username);
-        try (final var select = context.selectFrom(USERS)) {
-            final var record = select.where(USERS.USERNAME.eq(username))
-                    .fetchSingle();
+        try {
+            final var record = userRepository.getUser(username);
             return conversionService.convert(record, User.class);
         } catch (NoDataFoundException e) {
             throw new ItemNotFoundException("No user found for username " + username, e);
@@ -57,37 +54,24 @@ public class UserService {
 
     public List<User> findUsers() {
         LOGGER.debug("Find users");
-        try (final var select = context.selectFrom(USERS)) {
-            final var result = select.fetch();
-            return result.stream()
-                    .map(record -> conversionService.convert(record, User.class))
-                    .collect(Collectors.toList());
-        }
+        final var result = userRepository.findUsers();
+        return result.stream()
+                .map(record -> conversionService.convert(record, User.class))
+                .collect(Collectors.toList());
     }
 
+    @Transactional
     public void createUser(@Valid @NotNull final CreateUser createUser) {
         LOGGER.debug("Create user {}", createUser.username());
         // TODO: Access control for who can create admin users
-        final var password = passwordService.createPassword(createUser.password());
-        try (final var insert = context.insertInto(
-                USERS,
-                USERS.USERNAME,
-                USERS.ROLE,
-                USERS.PASSWORD_HASH,
-                USERS.PASSWORD_SALT,
-                USERS.CREATED)) {
-            final var rowsAffected = insert.
-                    values(
-                            createUser.username().toLowerCase(),
-                            createUser.role().name(),
-                            password.passwordHash(),
-                            password.passwordSalt(),
-                            LocalDateTime.now())
-                    .execute();
-            LOGGER.debug("Insert into USERS table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create user " + createUser.username());
-            }
+        final var passwordHash = passwordEncoder.encode(createUser.password());
+        final var rowsAffected = userRepository.createUser(
+                createUser.username().toLowerCase(),
+                createUser.role().name(),
+                passwordHash);
+        LOGGER.debug("Insert into USERS table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to create user " + createUser.username());
         }
     }
 
@@ -95,48 +79,37 @@ public class UserService {
                            @Valid @NotNull final UpdateUser updateUser) {
         LOGGER.debug("Update password for user {}", username);
         final var user = getUser(username);
-        final var newUsername = StringUtils.isBlank(updateUser.username()) ? user.username() : updateUser.username();
-        final var newRole = updateUser.role() == null ? user.role() : updateUser.role();
-        final var oldPassword = new Password(user.passwordHash(), user.passwordSalt());
-        final var newPassword = StringUtils.isNoneBlank(updateUser.oldPassword()) && StringUtils.isNoneBlank(updateUser.newPassword()) ?
-                oldPassword : passwordService.createPassword(updateUser.newPassword());
 
-        if (StringUtils.isNoneBlank(updateUser.oldPassword())) {
-            Assert.hasText(updateUser.newPassword(), "Missing passwords");
-            if (!passwordService.verifyPassword(updateUser.oldPassword(), oldPassword)) {
+        if (StringUtils.isNoneBlank(updateUser.newPassword())) {
+            Assert.hasText(updateUser.oldPassword(), "Missing passwords");
+            if (!passwordEncoder.matches(updateUser.oldPassword(), user.passwordHash())) {
                 throw new BadCredentialsException("Incorrect username and password combination");
             }
         }
 
-        try (final var update = context
-                .update(USERS)
-                .set(USERS.USERNAME, newUsername)
-                .set(USERS.ROLE, newRole.name())
-                .set(USERS.PASSWORD_HASH, newPassword.passwordHash())
-                .set(USERS.PASSWORD_SALT, newPassword.passwordSalt())
-                .set(USERS.MODIFIED, LocalDateTime.now())) {
-            final var rowsAffected = update
-                    .where(USERS.ID.eq(user.id()))
-                    .execute();
-            LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to update password for user " + username);
-            }
+        final var newUsername = StringUtils.isBlank(updateUser.username()) ? user.username() : updateUser.username();
+        final var newRole = updateUser.role() == null ? user.role() : updateUser.role();
+        final var newPasswordHash = StringUtils.isNoneBlank(updateUser.oldPassword()) && StringUtils.isNoneBlank(updateUser.newPassword()) ?
+                user.passwordHash() : passwordEncoder.encode(updateUser.newPassword());
+
+        final var rowsAffected = userRepository.updateUser(
+                username,
+                newUsername.toLowerCase(),
+                newRole.name(),
+                newPasswordHash);
+        LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to update password for user " + username);
         }
     }
 
     public void deleteUser(@NotBlank final String username) {
         LOGGER.debug("Delete user {}", username);
         // TODO: Verify that user isn't last member or last owner of organization
-        final var user = getUser(username);
-        try (final var delete = context.deleteFrom(USERS)) {
-            final var rowsAffected = delete
-                    .where(USERS.ID.eq(user.id()))
-                    .execute();
-            LOGGER.debug("Delete record in USERS table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to delete user " + username);
-            }
+        final var rowsAffected = userRepository.deleteUser(username);
+        LOGGER.debug("Delete record in USERS table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to delete user " + username);
         }
     }
 }

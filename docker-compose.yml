@@ -1,11 +1,9 @@
-version: '3.5'
+version: '3.7'
 
 services:
-  database:
+  postgres:
     image: postgres
-    container_name: vagrant-repository-database
-    hostname: database
-    domainname: acntech.local
+    container_name: acntech.postgres
     environment:
       - POSTGRES_DB=vagrant_repository
       - POSTGRES_USER=vagrant_repository
@@ -13,14 +11,14 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - database:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     networks:
-      - vagrant_repository
+      - postgres
 
 volumes:
-  database:
-    name: vagrant-repository-database
+  postgres:
+    name: acntech.postgres
 
 networks:
-  vagrant_repository:
-    name: vagrant-repository
+  postgres:
+    name: acntech.postgres

@@ -2,6 +2,7 @@ package no.acntech.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -9,46 +10,46 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.model.Login;
-import no.acntech.model.Password;
 import no.acntech.model.Token;
 import no.acntech.model.User;
-
-import static no.acntech.converter.BearerTokenAuthenticationConverter.BEARER_TOKEN_PREFIX;
+import no.acntech.repository.TokenRepository;
 
 @Validated
 @Service
 public class AuthenticateService {
 
-    private final PasswordService passwordService;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenRepository tokenRepository;
+    private final HttpRequestService httpRequestService;
     private final TokenService tokenService;
     private final UserService userService;
-    private final Map<String, Token> TOKEN_STORE = new HashMap<>();
 
-    public AuthenticateService(final PasswordService passwordService,
+    public AuthenticateService(final PasswordEncoder passwordEncoder,
+                               final TokenRepository tokenRepository,
+                               final HttpRequestService httpRequestService,
                                final TokenService tokenService,
                                final UserService userService) {
-        this.passwordService = passwordService;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenRepository = tokenRepository;
+        this.httpRequestService = httpRequestService;
         this.tokenService = tokenService;
         this.userService = userService;
     }
 
     public Token createToken(@Valid @NotNull final Login login) {
         final var user = getUser(login.user().login());
-        final var password = new Password(user.passwordHash(), user.passwordSalt());
-        if (passwordService.verifyPassword(login.user().password(), password)) {
-            if (TOKEN_STORE.containsKey(login.user().login())) {
-                return TOKEN_STORE.get(login.user().login());
+        if (passwordEncoder.matches(login.user().password(), user.passwordHash())) {
+            if (tokenRepository.containsToken(login.user().login())) {
+                return tokenRepository.loadToken(login.user().login());
             } else {
                 final var signedJWT = tokenService.createToken(user.username(), Collections.singletonList(user.role().name()));
                 final var jwt = signedJWT.serialize();
                 final var createdAt = tokenService.getIssuedDateTime(signedJWT);
                 final var token = new Token(login.token().description(), jwt, "", createdAt);
-                TOKEN_STORE.put(login.user().login(), token);
+                tokenRepository.saveToken(login.user().login(), token);
                 return token;
             }
         } else {
@@ -57,26 +58,20 @@ public class AuthenticateService {
     }
 
     public boolean verifyTokenHeader(final String header) {
-        if (StringUtils.isBlank(header)) {
+        final var token = httpRequestService.getBearerToken(header);
+        if (StringUtils.isNoneBlank(token)) {
+            return tokenService.verifyToken(token);
+        } else {
             return false;
         }
-        if (!StringUtils.startsWithIgnoreCase(header, BEARER_TOKEN_PREFIX)) {
-            return false;
-        }
-        final var token = header.replace(BEARER_TOKEN_PREFIX, "").trim();
-        return tokenService.verifyToken(token);
     }
 
     public void deleteToken(final String header) {
-        if (StringUtils.isBlank(header)) {
-            throw new BadCredentialsException("Bearer token not set");
+        final var token = httpRequestService.getBearerToken(header);
+        if (StringUtils.isNoneBlank(token)) {
+            final var jwtClaimsSet = tokenService.parseToken(token);
+            tokenRepository.removeToken(jwtClaimsSet.getSubject());
         }
-        if (!StringUtils.startsWithIgnoreCase(header, BEARER_TOKEN_PREFIX)) {
-            throw new BadCredentialsException("Bearer token has bad format");
-        }
-        final var token = header.replace(BEARER_TOKEN_PREFIX, "").trim();
-        final var jwtClaimsSet = tokenService.parseToken(token);
-        TOKEN_STORE.remove(jwtClaimsSet.getSubject());
     }
 
     public User getUser(@NotBlank final String username) {

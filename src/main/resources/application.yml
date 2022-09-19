@@ -2,14 +2,20 @@
 # SPRING Configuration #
 ########################
 spring:
+  # Application
   application:
     name: vagrant-repository
+  # Messages
+  messages:
+    basename: locale/messages
+  # Servlet
   servlet:
     multipart:
       enabled: true
       max-file-size: 10GB
       max-request-size: 10GB
       file-size-threshold: 2KB
+  # Jackson
   jackson:
     date-format: com.fasterxml.jackson.databind.util.StdDateFormat
     default-property-inclusion: NON_NULL
@@ -17,8 +23,10 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
     deserialization:
       ADJUST_DATES_TO_CONTEXT_TIME_ZONE: false
+  # JMX
   jmx:
     enabled: false
+  # AOP
   aop:
     proxy-target-class: true
 
@@ -32,3 +40,10 @@ springdoc:
     path: /api/docs
   swagger-ui:
     path: /api/docs.html
+
+### Server ###
+server:
+  error:
+    include-stacktrace: ALWAYS
+    whitelabel:
+      enabled: false

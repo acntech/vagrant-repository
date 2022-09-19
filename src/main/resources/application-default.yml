@@ -2,6 +2,9 @@
 # ACNTECH Configuration #
 #########################
 acntech:
+  keys:
+    public-key: classpath:public.pem
+    private-key: classpath:private.pem
   storage:
     file-name: image.box
     upload-path: /tmp/vagrant-repository/uploads

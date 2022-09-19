@@ -21,7 +21,6 @@ public class UserConverter implements Converter<UsersRecord, User> {
                 source.getUsername(),
                 UserRole.valueOf(source.getRole()),
                 source.getPasswordHash(),
-                source.getPasswordSalt(),
                 source.getCreated().atZone(ZoneId.systemDefault()),
                 source.getModified() == null ? null : source.getModified().atZone(ZoneId.systemDefault()));
     }

@@ -1,7 +1,6 @@
 package no.acntech.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.DSLContext;
 import org.jooq.exception.NoDataFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 import no.acntech.exception.CannotDeleteItemException;
 import no.acntech.exception.ItemNotFoundException;
@@ -23,39 +21,36 @@ import no.acntech.model.CreateOrganization;
 import no.acntech.model.Organization;
 import no.acntech.model.OrganizationRole;
 import no.acntech.model.UpdateOrganization;
-
-import static no.acntech.model.tables.Members.MEMBERS;
-import static no.acntech.model.tables.Organizations.ORGANIZATIONS;
+import no.acntech.repository.MemberRepository;
+import no.acntech.repository.OrganizationRepository;
 
 @Validated
 @Service
 public class OrganizationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationService.class);
-    private final DSLContext context;
     private final ConversionService conversionService;
     private final SecurityService securityService;
     private final UserService userService;
-    private final OrganizationMemberService organizationMemberService;
+    private final OrganizationRepository organizationRepository;
+    private final MemberRepository memberRepository;
 
-    public OrganizationService(final DSLContext context,
-                               final ConversionService conversionService,
+    public OrganizationService(final ConversionService conversionService,
                                final SecurityService securityService,
                                final UserService userService,
-                               final OrganizationMemberService organizationMemberService) {
-        this.context = context;
+                               final OrganizationRepository organizationRepository,
+                               final MemberRepository memberRepository) {
         this.conversionService = conversionService;
         this.securityService = securityService;
         this.userService = userService;
-        this.organizationMemberService = organizationMemberService;
+        this.organizationRepository = organizationRepository;
+        this.memberRepository = memberRepository;
     }
 
     public Organization getOrganization(@NotNull final Integer id) {
         LOGGER.debug("Get organization for ID {}", id);
-        try (final var select = context.selectFrom(ORGANIZATIONS)) {
-            final var record = select
-                    .where(ORGANIZATIONS.ID.eq(id))
-                    .fetchSingle();
+        try {
+            final var record = organizationRepository.getOrganization(id);
             return conversionService.convert(record, Organization.class);
         } catch (NoDataFoundException e) {
             throw new ItemNotFoundException("No organization found for ID " + id, e);
@@ -64,10 +59,8 @@ public class OrganizationService {
 
     public Organization getOrganization(@NotBlank final String name) {
         LOGGER.debug("Get organization {}", name);
-        try (final var select = context.selectFrom(ORGANIZATIONS)) {
-            final var record = select
-                    .where(ORGANIZATIONS.NAME.eq(name))
-                    .fetchSingle();
+        try {
+            final var record = organizationRepository.getOrganization(name);
             return conversionService.convert(record, Organization.class);
         } catch (NoDataFoundException e) {
             throw new ItemNotFoundException("No organization found for name " + name, e);
@@ -79,40 +72,26 @@ public class OrganizationService {
         LOGGER.debug("Create organization {}", createOrganization.name());
         final var username = securityService.getUsername();
 
-        try (final var insert = context.insertInto(
-                ORGANIZATIONS,
-                ORGANIZATIONS.NAME,
-                ORGANIZATIONS.DESCRIPTION,
-                ORGANIZATIONS.CREATED)) {
-            final var rowsAffected = insert
-                    .values(
-                            createOrganization.name().toLowerCase(),
-                            createOrganization.description(), LocalDateTime.now())
-                    .execute();
-            LOGGER.debug("Insert into ORGANIZATIONS table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create organization " + createOrganization.name());
-            }
+        var rowsAffected = organizationRepository.createOrganization(
+                createOrganization.name().toLowerCase(),
+                createOrganization.description());
+        LOGGER.debug("Insert into ORGANIZATIONS table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to create organization " + createOrganization.name());
         }
 
         final var organization = getOrganization(createOrganization.name());
         final var user = userService.getUser(username);
 
-        try (final var insert = context.insertInto(
-                MEMBERS,
-                MEMBERS.ORGANIZATION_ID,
-                MEMBERS.USER_ID,
-                MEMBERS.ROLE)) {
-            final var rowsAffected = insert
-                    .values(
-                            organization.id(),
-                            user.id(), OrganizationRole.OWNER.name())
-                    .execute();
-            LOGGER.debug("Insert into MEMBERS table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create membership to organization " +
-                        createOrganization.name() + " for user " + user.username());
-            }
+        rowsAffected = memberRepository.addMember(
+                organization.id(),
+                user.id(),
+                OrganizationRole.OWNER
+        );
+        LOGGER.debug("Insert into MEMBERS table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to create membership to organization " +
+                    createOrganization.name() + " for user " + user.username());
         }
     }
 
@@ -124,18 +103,14 @@ public class OrganizationService {
         final var newName = StringUtils.isBlank(updateOrganization.name()) ? organization.name() : updateOrganization.name();
         final var newDescription = StringUtils.isBlank(updateOrganization.description()) ? organization.description() : updateOrganization.description();
 
-        try (final var update = context
-                .update(ORGANIZATIONS)
-                .set(ORGANIZATIONS.NAME, newName)
-                .set(ORGANIZATIONS.DESCRIPTION, newDescription)
-                .set(ORGANIZATIONS.MODIFIED, LocalDateTime.now())) {
-            final var rowsAffected = update
-                    .where(ORGANIZATIONS.ID.eq(organization.id()))
-                    .execute();
-            LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to update organization " + name);
-            }
+        final var rowsAffected = organizationRepository.updateOrganization(
+                name,
+                newName,
+                newDescription
+        );
+        LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to update organization " + name);
         }
     }
 
@@ -143,15 +118,10 @@ public class OrganizationService {
     public void deleteOrganization(@NotBlank final String name) {
         LOGGER.debug("Delete organizations {}", name);
         // TODO: Verify that organization has no boxes
-        final var organization = getOrganization(name);
-        try (final var delete = context.deleteFrom(ORGANIZATIONS)) {
-            final var rowsAffected = delete
-                    .where(ORGANIZATIONS.ID.eq(organization.id()))
-                    .execute();
-            LOGGER.debug("Delete record in ORGANIZATIONS table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to delete organization " + name);
-            }
+        final var rowsAffected = organizationRepository.deleteOrganization(name);
+        LOGGER.debug("Delete record in ORGANIZATIONS table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to delete organization " + name);
         }
     }
 
@@ -163,7 +133,7 @@ public class OrganizationService {
         final var organization = getOrganization(name);
         final var user = userService.getUser(addOrganizationMember.username());
 
-        final var rowsAffected = organizationMemberService.addMember(organization.id(), user.id(), addOrganizationMember.role());
+        final var rowsAffected = memberRepository.addMember(organization.id(), user.id(), addOrganizationMember.role());
         if (rowsAffected == 0) {
             throw new SaveItemFailedException("Failed to create membership to organization " +
                     name + " for user " + user.username());
@@ -174,16 +144,16 @@ public class OrganizationService {
     public void removeOrganizationMember(@NotBlank final String name,
                                          @NotBlank final String username) {
         LOGGER.info("Remove member {} from organization {}", username, name);
-        final var organizationMember = organizationMemberService.getMember(name, username);
+        final var organizationMember = memberRepository.getMember(name, username);
 
-        if (organizationMember.role() == OrganizationRole.OWNER) {
-            final int numberOfOwners = organizationMemberService.getMemberCount(organizationMember.organizationId(), OrganizationRole.OWNER);
+        if (OrganizationRole.OWNER.name().equals(organizationMember.getRole())) {
+            final int numberOfOwners = memberRepository.getMemberCount(organizationMember.getOrganizationId(), OrganizationRole.OWNER);
             if (numberOfOwners == 1) {
                 throw new CannotDeleteItemException("Cannot delete membership of single organization owner");
             }
         }
 
-        final var rowsAffected = organizationMemberService.removeMember(organizationMember.organizationId(), organizationMember.userId());
+        final var rowsAffected = memberRepository.removeMember(organizationMember.getOrganizationId(), organizationMember.getUserId());
         if (rowsAffected == 0) {
             throw new SaveItemFailedException("Failed to delete organization " + name);
         }

@@ -2,6 +2,9 @@
 # ACNTECH Configuration #
 #########################
 acntech:
+  keys:
+    public-key: ${ACNTECH_PUBLIC_KEY:classpath:public.pem}
+    private-key: ${ACNTECH_PRIVATE_KEY:classpath:private.pem}
   storage:
     file-name: image.box
     upload-path: ${ACNTECH_STORAGE_UPLOAD_PATH}
