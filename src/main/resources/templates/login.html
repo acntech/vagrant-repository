@@ -15,10 +15,12 @@
             </div>
             <form th:action="@{/login}" method="post" class="mb-3">
                 <div class="form-group mb-3">
-                    <input type="text" name="username" class="form-control" th:placeholder="#{login.form.username}">
+                    <input type="text" name="username" class="form-control"
+                           th:placeholder="#{login.form.username.placeholder}">
                 </div>
                 <div class="form-group mb-3">
-                    <input type="password" name="password" class="form-control" th:placeholder="#{login.form.password}">
+                    <input type="password" name="password" class="form-control"
+                           th:placeholder="#{login.form.password.placeholder}">
                 </div>
                 <div class="form-group mb-3">
                     <button type="submit" class="btn btn-primary w-100" th:text="#{login.form.button}"></button>

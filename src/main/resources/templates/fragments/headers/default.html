@@ -21,7 +21,7 @@
             </ul>
         </div>
         <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto me-5">
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a id="navbarDropdown" href="#" class="nav-link dropdown-toggle" role="button"
                        data-bs-toggle="dropdown">
@@ -30,6 +30,9 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" th:href="@{/logout}">
                             <span th:text="#{navbar.link.logout}"></span>
+                        </a>
+                        <a class="dropdown-item" th:href="@{/password}">
+                            <span th:text="#{navbar.link.password}"></span>
                         </a>
                     </div>
                 </li>

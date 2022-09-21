@@ -18,10 +18,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(
-        controllers = ViewController.class,
+        controllers = BoxController.class,
         excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class)},
         excludeAutoConfiguration = {SecurityAutoConfiguration.class})
-class ViewControllerTest {
+class BoxControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

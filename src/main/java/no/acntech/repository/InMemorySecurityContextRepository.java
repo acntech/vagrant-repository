@@ -33,7 +33,7 @@ public class InMemorySecurityContextRepository implements SecurityContextReposit
 
     @Override
     public SecurityContext loadContext(final HttpRequestResponseHolder requestResponseHolder) {
-        LOGGER.debug("Loading security context");
+        LOGGER.trace("Loading security context");
         return getTokenSubject(requestResponseHolder.getRequest())
                 .map(securityContextStore::get)
                 .orElseGet(SecurityContextHolder::createEmptyContext);
@@ -43,7 +43,7 @@ public class InMemorySecurityContextRepository implements SecurityContextReposit
     public void saveContext(final SecurityContext securityContext,
                             final HttpServletRequest request,
                             final HttpServletResponse response) {
-        LOGGER.debug("Save security context");
+        LOGGER.trace("Save security context");
         Optional.ofNullable(securityContext)
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getName)
@@ -52,7 +52,7 @@ public class InMemorySecurityContextRepository implements SecurityContextReposit
 
     @Override
     public boolean containsContext(final HttpServletRequest request) {
-        LOGGER.debug("Contains security context");
+        LOGGER.trace("Contains security context");
         return getTokenSubject(request)
                 .map(securityContextStore::containsKey)
                 .orElse(false);
