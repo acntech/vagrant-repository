@@ -44,6 +44,5 @@ springdoc:
 ### Server ###
 server:
   error:
-    include-stacktrace: ALWAYS
     whitelabel:
       enabled: false

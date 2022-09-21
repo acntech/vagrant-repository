@@ -4,16 +4,13 @@ import org.jooq.DSLContext;
 import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 import no.acntech.model.tables.records.UsersRecord;
 
 import static no.acntech.model.tables.Users.USERS;
 
-@Validated
 @Repository
 public class UserRepository {
 
@@ -23,7 +20,7 @@ public class UserRepository {
         this.context = context;
     }
 
-    public UsersRecord getUser(@NotBlank final String username) {
+    public UsersRecord getUser(final String username) {
         try (final var select = context.selectFrom(USERS)) {
             return select.where(USERS.USERNAME.eq(username))
                     .fetchSingle();
@@ -37,9 +34,9 @@ public class UserRepository {
     }
 
     @Transactional
-    public int createUser(@NotBlank final String username,
-                          @NotBlank final String role,
-                          @NotBlank final String passwordHash) {
+    public int createUser(final String username,
+                          final String role,
+                          final String passwordHash) {
         try (final var insert = context.insertInto(
                 USERS,
                 USERS.USERNAME,
@@ -57,10 +54,10 @@ public class UserRepository {
     }
 
     @Transactional
-    public int updateUser(@NotBlank final String oldUsername,
-                          @NotBlank final String newUsername,
-                          @NotBlank final String role,
-                          @NotBlank final String passwordHash) {
+    public int updateUser(final String oldUsername,
+                          final String newUsername,
+                          final String role,
+                          final String passwordHash) {
         try (final var update = context
                 .update(USERS)
                 .set(USERS.USERNAME, newUsername)
@@ -74,7 +71,7 @@ public class UserRepository {
     }
 
     @Transactional
-    public int deleteUser(@NotBlank final String username) {
+    public int deleteUser(final String username) {
         try (final var delete = context.deleteFrom(USERS)) {
             return delete
                     .where(USERS.USERNAME.eq(username))

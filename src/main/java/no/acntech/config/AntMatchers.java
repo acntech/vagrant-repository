@@ -3,8 +3,11 @@ package no.acntech.config;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.ArrayList;
 
 public final class AntMatchers {
 
@@ -25,5 +28,22 @@ public final class AntMatchers {
 
     public static RequestMatcher andMatcher(final RequestMatcher... requestMatchers) {
         return new AndRequestMatcher(requestMatchers);
+    }
+
+    public static RequestMatcher anyMatcher() {
+        return AnyRequestMatcher.INSTANCE;
+    }
+
+    public static RequestMatcher anyExceptMatcher(final String... paths) {
+        if (paths == null || paths.length == 0) {
+            return anyMatcher();
+        } else {
+            final var requestMatchers = new ArrayList<RequestMatcher>();
+            requestMatchers.add(anyMatcher());
+            for (final String path : paths) {
+                requestMatchers.add(negatedAntMatcher(path));
+            }
+            return andMatcher(requestMatchers.toArray(new RequestMatcher[0]));
+        }
     }
 }

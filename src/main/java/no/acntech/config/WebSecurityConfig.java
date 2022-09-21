@@ -30,7 +30,7 @@ public class WebSecurityConfig {
     private final UserService userService;
     private final TokenService tokenService;
 
-    public WebSecurityConfig(@Value("${acntech.security.cookie.name:ACNTECH_SESSION}") final String cookieName,
+    public WebSecurityConfig(@Value("${acntech.security.cookie.name}") final String cookieName,
                              final HttpRequestService httpRequestService,
                              final SecurityService securityService,
                              final UserService userService,
@@ -52,24 +52,29 @@ public class WebSecurityConfig {
                 .securityContext().securityContextRepository(securityContextRepository())
                 .and()
                 .authorizeRequests()
-                .antMatchers("/webjars/**", "/resources/**").permitAll()
-                .antMatchers("/error", "/api/authenticate").permitAll()
+                .antMatchers(
+                        "/error",
+                        "/register",
+                        "/api/authenticate",
+                        "/webjars/**",
+                        "/resources/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
+                .formLogin().loginPage("/login").failureUrl("/login?error=failed").permitAll()
                 .successHandler(authenticationSuccessHandler())
                 .and()
-                .logout().logoutSuccessUrl("/login?logout").deleteCookies(cookieName).permitAll()
+                .logout().logoutSuccessUrl("/login?logout=success").deleteCookies(cookieName).permitAll()
                 .and()
                 .apply(tokenSecurity())
                 .tokenAuthenticationConverter(tokenAuthenticationConverter())
-                .requiresAuthentication(AntMatchers.andMatcher(
-                        AntMatchers.antMatcher("/**"),
-                        AntMatchers.negatedAntMatcher("/error"),
-                        AntMatchers.negatedAntMatcher("/login"),
-                        AntMatchers.negatedAntMatcher("/api/authenticate"),
-                        AntMatchers.negatedAntMatcher("/webjars/**"),
-                        AntMatchers.negatedAntMatcher("/resources/**")))
+                .requiresAuthentication(
+                        AntMatchers.anyExceptMatcher(
+                                "/error",
+                                "/login",
+                                "/register",
+                                "/api/authenticate",
+                                "/webjars/**",
+                                "/resources/**"))
                 .and()
                 .userDetailsService(userDetailsService())
                 .build();
@@ -78,7 +83,7 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return new TokenAuthenticationSuccessHandler(AntMatchers.andMatcher(
-                AntMatchers.antMatcher("/**"),
+                AntMatchers.anyMatcher(),
                 AntMatchers.negatedAntMatcher("/api/**")
         ), "/", httpRequestService, securityService, tokenService);
     }

@@ -5,6 +5,7 @@ import org.jooq.exception.NoDataFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import no.acntech.exception.ItemAlreadyExistsException;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
 import no.acntech.model.CreateUser;
@@ -63,15 +65,19 @@ public class UserService {
     @Transactional
     public void createUser(@Valid @NotNull final CreateUser createUser) {
         LOGGER.debug("Create user {}", createUser.username());
-        // TODO: Access control for who can create admin users
-        final var passwordHash = passwordEncoder.encode(createUser.password());
-        final var rowsAffected = userRepository.createUser(
-                createUser.username().toLowerCase(),
-                createUser.role().name(),
-                passwordHash);
-        LOGGER.debug("Insert into USERS table affected {} rows", rowsAffected);
-        if (rowsAffected == 0) {
-            throw new SaveItemFailedException("Failed to create user " + createUser.username());
+        try {
+            // TODO: Access control for who can create admin users
+            final var passwordHash = passwordEncoder.encode(createUser.password());
+            final var rowsAffected = userRepository.createUser(
+                    createUser.username().toLowerCase(),
+                    createUser.role().name(),
+                    passwordHash);
+            LOGGER.debug("Insert into USERS table affected {} rows", rowsAffected);
+            if (rowsAffected == 0) {
+                throw new SaveItemFailedException("Failed to create user " + createUser.username());
+            }
+        } catch (DuplicateKeyException e) {
+            throw new ItemAlreadyExistsException("User " + createUser.username() + " already exists", e);
         }
     }
 

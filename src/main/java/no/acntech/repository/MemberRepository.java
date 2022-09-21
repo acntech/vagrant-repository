@@ -3,10 +3,7 @@ package no.acntech.repository;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 
 import no.acntech.model.OrganizationRole;
@@ -16,7 +13,6 @@ import static no.acntech.model.tables.Members.MEMBERS;
 import static no.acntech.model.tables.Organizations.ORGANIZATIONS;
 import static no.acntech.model.tables.Users.USERS;
 
-@Validated
 @Repository
 public class MemberRepository {
 
@@ -26,8 +22,8 @@ public class MemberRepository {
         this.context = context;
     }
 
-    public MembersRecord getMember(@NotBlank final String name,
-                                   @NotBlank final String username) {
+    public MembersRecord getMember(final String name,
+                                   final String username) {
         try (final var select = context.select(MEMBERS.fields())) {
             try (final var organizationJoin = select.from(MEMBERS)
                     .join(ORGANIZATIONS).on(MEMBERS.ORGANIZATION_ID.eq(ORGANIZATIONS.ID))) {
@@ -42,7 +38,7 @@ public class MemberRepository {
         }
     }
 
-    public int getMemberCount(@NotNull final Integer organizationId,
+    public int getMemberCount(final Integer organizationId,
                               final OrganizationRole... organizationRoles) {
         if (organizationRoles == null) {
             try (final var count = context.selectCount()) {
@@ -63,9 +59,9 @@ public class MemberRepository {
     }
 
     @Transactional
-    public int addMember(@NotNull final Integer organizationId,
-                         @NotNull final Integer userId,
-                         @NotNull final OrganizationRole role) {
+    public int addMember(final Integer organizationId,
+                         final Integer userId,
+                         final OrganizationRole role) {
         try (final var insert = context.insertInto(
                 MEMBERS,
                 MEMBERS.ORGANIZATION_ID,
@@ -81,8 +77,8 @@ public class MemberRepository {
     }
 
     @Transactional
-    public int removeMember(@NotNull final Integer organizationId,
-                            @NotNull final Integer userId) {
+    public int removeMember(final Integer organizationId,
+                            final Integer userId) {
         try (final var delete = context.deleteFrom(MEMBERS)) {
             return delete
                     .where(MEMBERS.ORGANIZATION_ID.eq(organizationId))

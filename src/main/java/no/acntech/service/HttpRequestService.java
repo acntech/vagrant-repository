@@ -16,9 +16,9 @@ public class HttpRequestService extends CookieGenerator {
 
     public static final String BEARER_TOKEN_PREFIX = "Bearer";
 
-    public HttpRequestService(@Value("${acntech.security.cookie.name:ACNTECH_SESSION}") final String cookieName,
-                              @Value("${acntech.security.cookie.max-age:-1}") final Integer cookieMaxAge,
-                              @Value("${acntech.security.cookie.http-only:true}") final Boolean httpOnly) {
+    public HttpRequestService(@Value("${acntech.security.cookie.name}") final String cookieName,
+                              @Value("${acntech.security.cookie.max-age}") final Integer cookieMaxAge,
+                              @Value("${acntech.security.cookie.http-only}") final Boolean httpOnly) {
         this.setCookieName(cookieName);
         this.setCookieMaxAge(cookieMaxAge);
         this.setCookieHttpOnly(httpOnly);

@@ -5,10 +5,15 @@ acntech:
   keys:
     public-key: ${ACNTECH_PUBLIC_KEY:classpath:public.pem}
     private-key: ${ACNTECH_PRIVATE_KEY:classpath:private.pem}
+  security:
+    cookie:
+      name: ${ACNTECH_SECURITY_COOKIE_NAME:ACNTECH_SESSION}
+      max-age: ${ACNTECH_SECURITY_COOKIE_MAX_AGE:-1} # -1 = no expiry
+      http-only: ${ACNTECH_SECURITY_COOKIE_HTTP_ONLY:true} # Having this as false is a big security vulnerability
   storage:
-    file-name: image.box
+    file-name: ${ACNTECH_STORAGE_FILE_NAME:image.box}
     upload-path: ${ACNTECH_STORAGE_UPLOAD_PATH}
-    overwrite-existing-files: true
+    overwrite-existing-files: ${ACNTECH_STORAGE_OVERWRITE_EXITING_FILES:true}
 
 
 ########################
@@ -36,6 +41,11 @@ management:
       enabled: true
     info:
       enabled: true
+
+### Server ###
+server:
+  error:
+    include-stacktrace: NEVER
 
 # Logging
 logging:

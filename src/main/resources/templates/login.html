@@ -2,37 +2,47 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/login}">
+      layout:decorate="~{layouts/anonymous}">
 <head>
     <title th:text="#{navbar.brand}"></title>
 </head>
 <body>
-    <div layout:fragment="content" class="container">
-        <main class="container" role="main">
-            <div class="starter-template">
-                <div class="jumbotron">
-                    <h1 th:text="#{login.page.title}"></h1>
-                </div>
-                <form th:action="@{/login}" action="#" method="post">
-                    <div class="form-group">
-                        <label for="username"><span th:text="#{login.form.username}"></span></label>
-                        <input type="text" class="form-control" id="username" name="username">
-                    </div>
-                    <div class="form-group">
-                        <label for="password"><span th:text="#{login.form.password}"></span></label>
-                        <input type="password" class="form-control" id="password" name="password">
-                    </div>
-                    <button type="submit" class="btn btn-success"><span th:text="#{login.form.button}"></span></button>
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                </form>
-                <div th:if="${param.error != null}" class="alert alert-danger" role="alert">
-                    <span th:text="#{login.invalid.credentials}"></span>
-                </div>
-                <div th:if="${param.logout != null}" class="alert alert-success" role="alert">
-                    <span th:text="#{logout.successful}"></span>
-                </div>
+<div layout:fragment="content" class="container-fluid">
+    <main class="content content-login" role="main">
+        <div class="starter-template">
+            <div class="jumbotron mb-4">
+                <h1 th:text="#{login.page.title}"></h1>
             </div>
-        </main>
-    </div>
+            <form th:action="@{/login}" method="post" class="mb-3">
+                <div class="form-group mb-3">
+                    <input type="text" name="username" class="form-control" th:placeholder="#{login.form.username}">
+                </div>
+                <div class="form-group mb-3">
+                    <input type="password" name="password" class="form-control" th:placeholder="#{login.form.password}">
+                </div>
+                <div class="form-group mb-3">
+                    <button type="submit" class="btn btn-primary w-100" th:text="#{login.form.button}"></button>
+                </div>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            </form>
+            <div class="mb-3 text-center">
+                <span th:text="#{login.no-user}"></span>
+                <a th:href="@{/register}">
+                    <span th:text="#{login.register-here}"></span>
+                </a>
+            </div>
+            <div th:if="${param.error != null && param.error == 'failed'}" class="alert alert-danger" role="alert">
+                <span th:text="#{login.invalid-credentials}"></span>
+            </div>
+            <div th:if="${param.logout != null && param.logout == 'success'}" class="alert alert-success" role="alert">
+                <span th:text="#{login.logout-success}"></span>
+            </div>
+            <div th:if="${param.register != null && param.register == 'success'}" class="alert alert-success"
+                 role="alert">
+                <span th:text="#{login.register-success}"></span>
+            </div>
+        </div>
+    </main>
+</div>
 </body>
 </html>

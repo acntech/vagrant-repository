@@ -3,17 +3,13 @@ package no.acntech.repository;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 import no.acntech.model.tables.records.OrganizationsRecord;
 
 import static no.acntech.model.tables.Organizations.ORGANIZATIONS;
 
-@Validated
 @Repository
 public class OrganizationRepository {
 
@@ -23,7 +19,7 @@ public class OrganizationRepository {
         this.context = context;
     }
 
-    public OrganizationsRecord getOrganization(@NotNull final Integer id) {
+    public OrganizationsRecord getOrganization(final Integer id) {
         try (final var select = context.selectFrom(ORGANIZATIONS)) {
             return select
                     .where(ORGANIZATIONS.ID.eq(id))
@@ -31,7 +27,7 @@ public class OrganizationRepository {
         }
     }
 
-    public OrganizationsRecord getOrganization(@NotBlank final String name) {
+    public OrganizationsRecord getOrganization(final String name) {
         try (final var select = context.selectFrom(ORGANIZATIONS)) {
             return select
                     .where(ORGANIZATIONS.NAME.eq(name))
@@ -40,8 +36,8 @@ public class OrganizationRepository {
     }
 
     @Transactional
-    public int createOrganization(@NotBlank final String name,
-                                  @NotBlank final String description) {
+    public int createOrganization(final String name,
+                                  final String description) {
         try (final var insert = context.insertInto(
                 ORGANIZATIONS,
                 ORGANIZATIONS.NAME,
@@ -57,9 +53,9 @@ public class OrganizationRepository {
     }
 
     @Transactional
-    public int updateOrganization(@NotBlank final String oldName,
-                                  @NotBlank final String newName,
-                                  @NotBlank final String description) {
+    public int updateOrganization(final String oldName,
+                                  final String newName,
+                                  final String description) {
         try (final var update = context
                 .update(ORGANIZATIONS)
                 .set(ORGANIZATIONS.NAME, newName)
@@ -72,7 +68,7 @@ public class OrganizationRepository {
     }
 
     @Transactional
-    public int deleteOrganization(@NotBlank final String name) {
+    public int deleteOrganization(final String name) {
         try (final var delete = context.deleteFrom(ORGANIZATIONS)) {
             return delete
                     .where(ORGANIZATIONS.NAME.eq(name))
