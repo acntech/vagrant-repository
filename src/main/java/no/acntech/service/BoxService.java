@@ -14,6 +14,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
@@ -68,6 +70,20 @@ public class BoxService {
             return conversionService.convert(pair, Box.class);
         } catch (NoDataFoundException e) {
             throw new ItemNotFoundException("No box found for tag " + tag, e);
+        }
+    }
+
+    public List<Box> findBoxes(@NotBlank final String username) {
+        LOGGER.info("Find boxes for {}", username);
+        final var organization = organizationService.getOrganization(username);
+        try (final var select = context.selectFrom(BOXES)) {
+            final var result = select
+                    .where(BOXES.ORGANIZATION_ID.eq(organization.id()))
+                    .fetch();
+            return result.stream()
+                    .map(record -> Pair.of(record, organization))
+                    .map(pair -> conversionService.convert(pair, Box.class))
+                    .collect(Collectors.toList());
         }
     }
 

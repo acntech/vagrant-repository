@@ -7,14 +7,30 @@
     <title th:text="#{navbar.brand}"></title>
 </head>
 <body>
-    <div layout:fragment="content" class="container">
-        <main class="container" role="main">
-            <div class="starter-template">
-                <div class="jumbotron">
-                    <h1 th:text="#{index.page.title}"></h1>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container mt-4" role="main">
+    <section class="content content-home">
+        <div class="row gx-5">
+            <div class="col">
+                <div class="p-3 border bg-light">
+                    <a th:href="@{/organizations}">
+                        <span th:text="#{index.page.link.goto-organizations}"></span>
+                    </a>
                 </div>
             </div>
-        </main>
-    </div>
+            <div class="col">
+                <div class="p-3 border bg-light">Search for boxes</div>
+            </div>
+        </div>
+    </section>
+</main>
 </body>
 </html>

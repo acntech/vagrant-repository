@@ -7,45 +7,41 @@
     <title th:text="#{navbar.brand}"></title>
 </head>
 <body>
-<div layout:fragment="content" class="container-fluid">
-    <main class="content content-register" role="main">
-        <div class="starter-template">
-            <div class="jumbotron mb-4">
-                <h1 th:text="#{register.page.title}"></h1>
+<main layout:fragment="content" class="container-fluid mt-4" role="main">
+    <section class="content content-register">
+        <h3 class="mb-4" th:text="#{register.page.title}"></h3>
+        <form th:action="@{/register}" th:object="${formData}" method="post"
+              class="mb-3">
+            <div class="form-group mb-3">
+                <input type="text" id="username" th:field="*{username}" class="form-control"
+                       th:placeholder="#{register.page.form.username.placeholder}"
+                       th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''">
+                <div id="usernameFeedback" class="invalid-feedback">
+                    <span th:errors="*{username}"></span>
+                </div>
             </div>
-            <form th:action="@{/register}" th:object="${formData}" method="post"
-                  class="mb-3">
-                <div class="form-group mb-3">
-                    <input type="text" id="username" th:field="*{username}" class="form-control"
-                           th:placeholder="#{register.form.username.placeholder}"
-                           th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''">
-                    <div id="usernameFeedback" class="invalid-feedback">
-                        <span th:errors="*{username}"></span>
-                    </div>
+            <div class="form-group mb-3">
+                <input type="password" id="newPassword" th:field="*{newPassword}" class="form-control"
+                       th:placeholder="#{register.page.form.new-password.placeholder}"
+                       th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid' : ''">
+                <div id="newPasswordFeedback" class="invalid-feedback">
+                    <span th:errors="*{newPassword}"></span>
                 </div>
-                <div class="form-group mb-3">
-                    <input type="password" id="newPassword" th:field="*{newPassword}" class="form-control"
-                           th:placeholder="#{register.form.new-password.placeholder}"
-                           th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid' : ''">
-                    <div id="newPasswordFeedback" class="invalid-feedback">
-                        <span th:errors="*{newPassword}"></span>
-                    </div>
+            </div>
+            <div class="form-group mb-3">
+                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control"
+                       th:placeholder="#{register.page.form.confirm-password.placeholder}"
+                       th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''">
+                <div id="confirmPasswordFeedback" class="invalid-feedback">
+                    <span th:errors="*{confirmPassword}"></span>
                 </div>
-                <div class="form-group mb-3">
-                    <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control"
-                           th:placeholder="#{register.form.confirm-password.placeholder}"
-                           th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''">
-                    <div id="confirmPasswordFeedback" class="invalid-feedback">
-                        <span th:errors="*{confirmPassword}"></span>
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <button type="submit" class="btn btn-primary w-100" th:text="#{register.form.button}"></button>
-                </div>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            </form>
-        </div>
-    </main>
-</div>
+            </div>
+            <div class="form-group mb-3">
+                <button type="submit" class="btn btn-primary w-100" th:text="#{register.page.form.button}"></button>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </section>
+</main>
 </body>
 </html>

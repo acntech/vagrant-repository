@@ -1,10 +1,12 @@
 package no.acntech.repository;
 
 import org.jooq.DSLContext;
+import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import no.acntech.model.tables.records.OrganizationsRecord;
 
@@ -32,6 +34,14 @@ public class OrganizationRepository {
             return select
                     .where(ORGANIZATIONS.NAME.eq(name))
                     .fetchSingle();
+        }
+    }
+
+    public Result<OrganizationsRecord> findOrganizations(final List<Integer> ids) {
+        try (final var select = context.selectFrom(ORGANIZATIONS)) {
+            return select
+                    .where(ORGANIZATIONS.ID.in(ids))
+                    .fetch();
         }
     }
 

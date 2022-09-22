@@ -12,6 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import no.acntech.exception.CannotDeleteItemException;
 import no.acntech.exception.ItemNotFoundException;
@@ -21,6 +23,7 @@ import no.acntech.model.CreateOrganization;
 import no.acntech.model.Organization;
 import no.acntech.model.OrganizationRole;
 import no.acntech.model.UpdateOrganization;
+import no.acntech.model.tables.records.MembersRecord;
 import no.acntech.repository.MemberRepository;
 import no.acntech.repository.OrganizationRepository;
 
@@ -65,6 +68,19 @@ public class OrganizationService {
         } catch (NoDataFoundException e) {
             throw new ItemNotFoundException("No organization found for name " + name, e);
         }
+    }
+
+    public List<Organization> findOrganizations(@NotBlank final String username) {
+        LOGGER.debug("Find organizations for user {}", username);
+        final var membersResult = memberRepository.findMemberships(username);
+        final var ids = membersResult.stream()
+                .map(MembersRecord::getOrganizationId)
+                .toList();
+
+        final var result = organizationRepository.findOrganizations(ids);
+        return result.stream()
+                .map(record -> conversionService.convert(record, Organization.class))
+                .collect(Collectors.toList());
     }
 
     @Transactional

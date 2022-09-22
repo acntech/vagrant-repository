@@ -7,14 +7,10 @@
     <title th:text="#{navbar.brand}"></title>
 </head>
 <body>
-    <div layout:fragment="content" class="container">
-        <main class="container" role="main">
-            <div class="starter-template">
-                <div class="jumbotron">
-                    <h1 th:text="#{about.page.title}"></h1>
-                </div>
-            </div>
-        </main>
-    </div>
+<main layout:fragment="content" class="container mt-4" role="main">
+    <section class="content content-about">
+        <h3 class="mb-4" th:text="#{about.page.title}"></h3>
+    </section>
+</main>
 </body>
 </html>

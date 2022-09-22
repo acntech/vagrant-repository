@@ -1,6 +1,8 @@
 package no.acntech.repository;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +60,21 @@ public class MemberRepository {
         }
     }
 
+    public Result<MembersRecord> findMemberships(final String username) {
+        try (final var select = context.select(MEMBERS.fields())) {
+            try (final var organizationJoin = select.from(MEMBERS)
+                    .join(ORGANIZATIONS).on(MEMBERS.ORGANIZATION_ID.eq(ORGANIZATIONS.ID))) {
+                try (final var userJoin = organizationJoin
+                        .join(USERS).on(MEMBERS.USER_ID.eq(USERS.ID))) {
+                    final var result = userJoin
+                            .and(USERS.USERNAME.eq(username))
+                            .fetch();
+                    return cast(result, MembersRecord.class);
+                }
+            }
+        }
+    }
+
     @Transactional
     public int addMember(final Integer organizationId,
                          final Integer userId,
@@ -85,5 +102,10 @@ public class MemberRepository {
                     .and(MEMBERS.USER_ID.eq(userId))
                     .execute();
         }
+    }
+
+    @SuppressWarnings({"unchecked", "unused", "SameParameterValue"})
+    private <T extends Record, S extends Result<T>> S cast(Result<?> result, Class<T> clazz) {
+        return (S) result;
     }
 }

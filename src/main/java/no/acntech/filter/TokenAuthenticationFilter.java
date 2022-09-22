@@ -53,7 +53,7 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
     }
 
     private boolean requiresAuthentication(final HttpServletRequest request) {
-        return isAuthenticated() || requiresAuthenticationRequestMatcher.matches(request);
+        return requiresAuthenticationRequestMatcher.matches(request) && !isAuthenticated();
     }
 
     private boolean isAuthenticated() {

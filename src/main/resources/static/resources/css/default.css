@@ -1,12 +1,3 @@
-.header {
-}
-
-.navbar {
-}
-
-.navbar-brand {
-}
-
 .content-login {
     max-width: 300px;
     margin: 0 auto;
@@ -19,5 +10,15 @@
 
 .content-password {
     max-width: 300px;
+    margin: 0 auto;
+}
+
+.content-organizations {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.content-boxes {
+    width: 50%;
     margin: 0 auto;
 }

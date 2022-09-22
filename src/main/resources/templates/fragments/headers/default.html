@@ -1,33 +1,33 @@
-<header class="header"
-        th:fragment="header"
+<header class="header" th:fragment="header"
         xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark px-4 py-3">
         <a class="navbar-brand me-4" th:href="@{/}">
             <span th:text="#{navbar.brand}"></span>
         </a>
-        <div class="collapse navbar-collapse">
+        <div layout:fragment="main-menu" class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
+                <li class="nav-item me-4">
                     <a class="nav-link" th:href="@{/}">
-                        <span th:text="#{navbar.link.home}"></span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/about}">
-                        <span th:text="#{navbar.link.about}"></span>
+                        <i class="fa-solid fa-house"></i>
                     </a>
                 </li>
             </ul>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto me-5">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/about}">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </a>
+                </li>
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                    <a id="navbarDropdown" href="#" class="nav-link dropdown-toggle" role="button"
+                    <a id="navbarUserDropdown" href="#" class="nav-link dropdown-toggle" role="button"
                        data-bs-toggle="dropdown">
                         <span sec:authentication="principal"></span>
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
                         <a class="dropdown-item" th:href="@{/logout}">
                             <span th:text="#{navbar.link.logout}"></span>
                         </a>

@@ -31,7 +31,15 @@ public class InitializeConfig {
             final var password = UUID.randomUUID().toString();
             final var createUser = new CreateUser(DEFAULT_USERNAME, password, UserRole.ADMIN);
             userService.createUser(createUser);
-            LOGGER.info("Created default user: {} with password: {}", createUser.username(), createUser.password());
+            LOGGER.info("\n\n" + """
+                    #########################################################
+                    
+                        Created default user:
+                            - username: {}
+                            - password: {}
+                    
+                    #########################################################
+                    """, createUser.username(), createUser.password());
         }
     }
 }
