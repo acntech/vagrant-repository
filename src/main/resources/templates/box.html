@@ -38,9 +38,8 @@
                 </div>
             </div>
             <div class="form-group mb-3">
-                <input id="privateCheckbox" class="form-check-input" type="checkbox" value="">
-                <label for="privateCheckbox" class="form-check-label" th:text="#{box.page.form.private}"></label>
-                <button type="submit" class="btn btn-primary w-100" th:text="#{box.page.form.button}"></button>
+                <input type="checkbox" id="private" th:field="*{private}" class="form-check-input" value="">
+                <label for="private" class="form-check-label" th:text="#{box.page.form.private}"></label>
             </div>
             <div class="form-group mb-3">
                 <button type="submit" class="btn btn-primary w-100" th:text="#{box.page.form.button}"></button>

@@ -1,7 +1,6 @@
 package no.acntech.repository;
 
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +68,9 @@ public class MemberRepository {
                     final var result = userJoin
                             .and(USERS.USERNAME.eq(username))
                             .fetch();
-                    return cast(result, MembersRecord.class);
+                    final var membersRecords = context.newResult(MEMBERS);
+                    membersRecords.addAll(result.into(MembersRecord.class));
+                    return membersRecords;
                 }
             }
         }
@@ -102,10 +103,5 @@ public class MemberRepository {
                     .and(MEMBERS.USER_ID.eq(userId))
                     .execute();
         }
-    }
-
-    @SuppressWarnings({"unchecked", "unused", "SameParameterValue"})
-    private <T extends Record, S extends Result<T>> S cast(Result<?> result, Class<T> clazz) {
-        return (S) result;
     }
 }

@@ -20,6 +20,7 @@ import no.acntech.model.OrganizationForm;
 import no.acntech.service.BoxService;
 import no.acntech.service.OrganizationService;
 import no.acntech.service.SecurityService;
+import no.acntech.service.VersionService;
 
 @Controller
 public class BoxController {
@@ -27,13 +28,16 @@ public class BoxController {
     private final SecurityService securityService;
     private final OrganizationService organizationService;
     private final BoxService boxService;
+    private final VersionService versionService;
 
     public BoxController(final SecurityService securityService,
                          final OrganizationService organizationService,
-                         final BoxService boxService) {
+                         final BoxService boxService,
+                         final VersionService versionService) {
         this.securityService = securityService;
         this.organizationService = organizationService;
         this.boxService = boxService;
+        this.versionService = versionService;
     }
 
     @GetMapping(path = "/")
@@ -120,6 +124,17 @@ public class BoxController {
         final var modelAndView = new ModelAndView("boxes");
         modelAndView.addObject("organization", organization);
         modelAndView.addObject("boxes", boxes);
+        return modelAndView;
+    }
+
+    @GetMapping(path = "/{username}/boxes/{name}")
+    public ModelAndView getVersionsPage(@PathVariable("username") final String username,
+                                        @PathVariable("name") final String name) {
+        final var box = boxService.getBox(username, name);
+        final var versions = versionService.findVersions(username, name);
+        final var modelAndView = new ModelAndView("versions");
+        modelAndView.addObject("box", box);
+        modelAndView.addObject("versions", versions);
         return modelAndView;
     }
 }
