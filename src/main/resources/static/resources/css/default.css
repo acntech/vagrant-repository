@@ -13,12 +13,46 @@
     margin: 0 auto;
 }
 
+.content-organization {
+    width: 30%;
+    margin: 0 auto;
+}
+
 .content-organizations {
     width: 50%;
+    margin: 0 auto;
+}
+
+.content-box {
+    width: 30%;
     margin: 0 auto;
 }
 
 .content-boxes {
     width: 50%;
     margin: 0 auto;
+}
+
+.content-version {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.content-versions {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.content-provider {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.content-providers {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.box-breadcrumb a {
+    text-decoration: none;
 }

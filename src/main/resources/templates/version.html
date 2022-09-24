@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{navbar.brand}"></title>
+</head>
+<body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/organizations}">
+                <span>organizations</span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}">
+                <span th:text="${box.username}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}">
+                <span th:text="${box.name}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container-fluid mt-4" role="main">
+    <section class="content content-version">
+        <h3 class="mb-4" th:text="#{version.page.title}"></h3>
+        <form th:action="@{/{username}/boxes/{name}/version(username=${box.username},name=${box.name})}" th:object="${formData}" method="post"
+              class="mb-3">
+            <div class="form-group mb-3">
+                <input type="text" id="version" th:field="*{version}" class="form-control"
+                       th:placeholder="#{version.page.form.version.placeholder}"
+                       th:classappend="${#fields.hasErrors('version')} ? 'is-invalid' : ''">
+                <div id="versionFeedback" class="invalid-feedback">
+                    <span th:errors="*{version}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <input type="text" id="description" th:field="*{description}" class="form-control"
+                       th:placeholder="#{version.page.form.description.placeholder}"
+                       th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''">
+                <div id="descriptionFeedback" class="invalid-feedback">
+                    <span th:errors="*{description}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <button type="submit" class="btn btn-primary w-100" th:text="#{version.page.form.button}"></button>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </section>
+</main>
+</body>
+</html>

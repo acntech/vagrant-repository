@@ -13,12 +13,19 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import no.acntech.exception.ItemNotFoundException;
+import no.acntech.model.Algorithm;
 import no.acntech.model.BoxForm;
 import no.acntech.model.CreateBox;
 import no.acntech.model.CreateOrganization;
+import no.acntech.model.CreateProvider;
+import no.acntech.model.CreateVersion;
 import no.acntech.model.OrganizationForm;
+import no.acntech.model.ProviderForm;
+import no.acntech.model.ProviderType;
+import no.acntech.model.VersionForm;
 import no.acntech.service.BoxService;
 import no.acntech.service.OrganizationService;
+import no.acntech.service.ProviderService;
 import no.acntech.service.SecurityService;
 import no.acntech.service.VersionService;
 
@@ -29,15 +36,18 @@ public class BoxController {
     private final OrganizationService organizationService;
     private final BoxService boxService;
     private final VersionService versionService;
+    private final ProviderService providerService;
 
     public BoxController(final SecurityService securityService,
                          final OrganizationService organizationService,
                          final BoxService boxService,
-                         final VersionService versionService) {
+                         final VersionService versionService,
+                         final ProviderService providerService) {
         this.securityService = securityService;
         this.organizationService = organizationService;
         this.boxService = boxService;
         this.versionService = versionService;
+        this.providerService = providerService;
     }
 
     @GetMapping(path = "/")
@@ -74,12 +84,13 @@ public class BoxController {
     public ModelAndView postOrganizationPage(@ModelAttribute("formData") @Valid @NotNull final OrganizationForm form,
                                              final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = new ModelAndView("organization");
+            final var modelAndView = getOrganizationPage();
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
         }
-        organizationService.createOrganization(new CreateOrganization(form.getName(), form.getDescription()));
+        final var username = securityService.getUsername();
+        organizationService.createOrganization(username, new CreateOrganization(form.getName(), form.getDescription()));
         final var organization = organizationService.getOrganization(form.getName().toLowerCase());
         return new ModelAndView("redirect:/" + organization.name() + "/boxes");
     }
@@ -107,13 +118,14 @@ public class BoxController {
     public ModelAndView postBoxPage(@ModelAttribute("formData") @Valid @NotNull final BoxForm form,
                                     final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = new ModelAndView("box");
+            final var modelAndView = getBoxPage();
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
         }
-        boxService.createBox(new CreateBox(form.getName(), form.getUsername(), form.getDescription(), form.getDescription(), form.getPrivate()));
-        final var box = boxService.getBox(form.getUsername().toLowerCase(), form.getName().toLowerCase());
+        final var organization = organizationService.getOrganization(form.getUsername());
+        boxService.createBox(new CreateBox(form.getName(), organization.name(), form.getDescription(), form.getDescription(), form.getPrivate()));
+        final var box = boxService.getBox(organization.name(), form.getName().toLowerCase());
         return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name());
     }
 
@@ -136,5 +148,80 @@ public class BoxController {
         modelAndView.addObject("box", box);
         modelAndView.addObject("versions", versions);
         return modelAndView;
+    }
+
+    @GetMapping(path = "/{username}/boxes/{name}/version")
+    public ModelAndView getVersionPage(@PathVariable("username") final String username,
+                                       @PathVariable("name") final String name) {
+        final var box = boxService.getBox(username, name);
+        final var modelAndView = new ModelAndView("version");
+        modelAndView.addObject("box", box);
+        modelAndView.addObject("formData", new VersionForm());
+        return modelAndView;
+    }
+
+    @PostMapping(path = "/{username}/boxes/{name}/version")
+    public ModelAndView postVersionPage(@PathVariable("username") final String username,
+                                        @PathVariable("name") final String name,
+                                        @ModelAttribute("formData") @Valid @NotNull final VersionForm form,
+                                        final BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            final var modelAndView = getVersionPage(username, name);
+            modelAndView.addObject("formData", form);
+            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
+            return modelAndView;
+        }
+        final var box = boxService.getBox(username, name);
+        versionService.createVersion(box.username(), box.name(), new CreateVersion(form.getVersion(), form.getDescription()));
+        final var version = versionService.getVersion(username, name, form.getVersion());
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.version());
+    }
+
+    @GetMapping(path = "/{username}/boxes/{name}/versions/{version}")
+    public ModelAndView getProvidersPage(@PathVariable("username") final String username,
+                                         @PathVariable("name") final String name,
+                                         @PathVariable("version") final String versionParam) {
+        final var box = boxService.getBox(username, name);
+        final var version = versionService.getVersion(username, name, versionParam);
+        final var providers = providerService.findProviders(username, name, versionParam);
+        final var modelAndView = new ModelAndView("providers");
+        modelAndView.addObject("box", box);
+        modelAndView.addObject("version", version);
+        modelAndView.addObject("providers", providers);
+        return modelAndView;
+    }
+
+    @GetMapping(path = "/{username}/boxes/{name}/versions/{version}/provider")
+    public ModelAndView getProviderPage(@PathVariable("username") final String username,
+                                        @PathVariable("name") final String name,
+                                        @PathVariable("version") final String versionParam) {
+        final var box = boxService.getBox(username, name);
+        final var version = versionService.getVersion(username, name, versionParam);
+        final var modelAndView = new ModelAndView("provider");
+        modelAndView.addObject("box", box);
+        modelAndView.addObject("version", version);
+        modelAndView.addObject("providerTypes", ProviderType.values());
+        modelAndView.addObject("checksumTypes", Algorithm.values());
+        modelAndView.addObject("formData", new ProviderForm());
+        return modelAndView;
+    }
+
+    @PostMapping(path = "/{username}/boxes/{name}/versions/{version}/provider")
+    public ModelAndView postProviderPage(@PathVariable("username") final String username,
+                                         @PathVariable("name") final String name,
+                                         @PathVariable("version") final String versionParam,
+                                         @ModelAttribute("formData") @Valid @NotNull final ProviderForm form,
+                                         final BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            final var modelAndView = getProviderPage(username, name, versionParam);
+            modelAndView.addObject("formData", form);
+            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
+            return modelAndView;
+        }
+        final var box = boxService.getBox(username, name);
+        final var version = versionService.getVersion(username, name, versionParam);
+        final var createProvider = new CreateProvider(form.getName(), form.getChecksum(), form.getChecksumType(), form.getHosted(), form.getUrl());
+        providerService.createProvider(box.username(), box.name(), version.version(), createProvider);
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.version());
     }
 }

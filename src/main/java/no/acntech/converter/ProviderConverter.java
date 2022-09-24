@@ -21,10 +21,10 @@ public class ProviderConverter implements Converter<ProvidersRecord, Provider> {
         return new Provider(
                 source.getId(),
                 ProviderType.valueOf(source.getName()),
-                source.getHosted(),
-                source.getHostedToken(),
                 source.getChecksum(),
                 Algorithm.valueOf(source.getChecksumType()),
+                source.getHosted(),
+                source.getHostedToken(),
                 ProviderStatus.valueOf(source.getStatus()),
                 source.getVersionId(),
                 null, // TODO: Handle

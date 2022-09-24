@@ -32,8 +32,10 @@
         <h3 class="mb-4" th:text="#{boxes.page.title}"></h3>
 
         <div class="d-flex w-100 justify-content-between mb-2">
-            <div>
-                <h5 class="mb-1" th:text="${organization.name}"></h5>
+            <div class="box-breadcrumb">
+                <a class="link-dark" th:href="@{/{username}/boxes(username=${organization.name})}">
+                    <h5 class="mb-1" th:text="${organization.name}"></h5>
+                </a>
                 <p class="text-muted mb-1" th:text="${organization.description}"></p>
             </div>
             <div>

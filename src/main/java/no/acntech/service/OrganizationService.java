@@ -33,18 +33,15 @@ public class OrganizationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationService.class);
     private final ConversionService conversionService;
-    private final SecurityService securityService;
     private final UserService userService;
     private final OrganizationRepository organizationRepository;
     private final MemberRepository memberRepository;
 
     public OrganizationService(final ConversionService conversionService,
-                               final SecurityService securityService,
                                final UserService userService,
                                final OrganizationRepository organizationRepository,
                                final MemberRepository memberRepository) {
         this.conversionService = conversionService;
-        this.securityService = securityService;
         this.userService = userService;
         this.organizationRepository = organizationRepository;
         this.memberRepository = memberRepository;
@@ -84,20 +81,20 @@ public class OrganizationService {
     }
 
     @Transactional
-    public void createOrganization(@Valid @NotNull final CreateOrganization createOrganization) {
+    public void createOrganization(@NotBlank final String username,
+                                   @Valid @NotNull final CreateOrganization createOrganization) {
         LOGGER.debug("Create organization {}", createOrganization.name());
-        final var username = securityService.getUsername();
+        final var user = userService.getUser(username);
 
         var rowsAffected = organizationRepository.createOrganization(
                 createOrganization.name().toLowerCase(),
                 createOrganization.description());
         LOGGER.debug("Insert into ORGANIZATIONS table affected {} rows", rowsAffected);
         if (rowsAffected == 0) {
-            throw new SaveItemFailedException("Failed to create organization " + createOrganization.name());
+            throw new SaveItemFailedException("Failed to create organization " + createOrganization.name().toLowerCase());
         }
 
-        final var organization = getOrganization(createOrganization.name());
-        final var user = userService.getUser(username);
+        final var organization = getOrganization(createOrganization.name().toLowerCase());
 
         rowsAffected = memberRepository.addMember(
                 organization.id(),

@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{navbar.brand}"></title>
+</head>
+<body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/organizations}">
+                <span>organizations</span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}">
+                <span th:text="${box.username}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}">
+                <span th:text="${box.name}"></span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}">
+                <span th:text="${version.version}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container-fluid mt-4" role="main">
+    <section class="content content-provider">
+        <h3 class="mb-4" th:text="#{provider.page.title}"></h3>
+        <form th:action="@{/{username}/boxes/{name}/versions/{version}/provider(username=${box.username},name=${box.name},version=${version.version})}"
+              th:object="${formData}" method="post"
+              class="mb-3">
+            <div class="form-group mb-3">
+                <select class="form-select" id="name" th:field="*{name}"
+                        th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                    <option th:each="providerType : ${providerTypes}"
+                            th:value="${providerType.name}" th:text="${providerType}"></option>
+                </select>
+                <label for="name" class="form-check-label" th:text="#{provider.page.form.name.label}"></label>
+                <div id="nameFeedback" class="invalid-feedback">
+                    <span th:errors="*{name}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <select class="form-select" id="checksumType" th:field="*{checksumType}"
+                        th:classappend="${#fields.hasErrors('checksumType')} ? 'is-invalid' : ''">
+                    <option th:each="checksumType : ${checksumTypes}"
+                            th:value="${checksumType.name}" th:text="${checksumType}"></option>
+                </select>
+                <label for="checksumType" class="form-check-label"
+                       th:text="#{provider.page.form.checksum-type.label}"></label>
+                <div id="checksumTypeFeedback" class="invalid-feedback">
+                    <span th:errors="*{checksumType}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <input type="text" id="checksum" th:field="*{checksum}" class="form-control"
+                       th:placeholder="#{provider.page.form.checksum.placeholder}"
+                       th:classappend="${#fields.hasErrors('checksum')} ? 'is-invalid' : ''">
+                <div id="checksumFeedback" class="invalid-feedback">
+                    <span th:errors="*{checksum}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <input type="checkbox" id="hosted" th:field="*{hosted}" class="form-check-input" value="">
+                <label for="hosted" class="form-check-label" th:text="#{provider.page.form.hosted.label}"></label>
+            </div>
+            <div class="form-group mb-3">
+                <input type="text" id="url" th:field="*{url}" class="form-control"
+                       th:placeholder="#{provider.page.form.url.placeholder}"
+                       th:classappend="${#fields.hasErrors('url')} ? 'is-invalid' : ''">
+                <div id="urlFeedback" class="invalid-feedback">
+                    <span th:errors="*{url}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <button type="submit" class="btn btn-primary w-100" th:text="#{provider.page.form.button}"></button>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </section>
+</main>
+</body>
+</html>

@@ -16,14 +16,18 @@ import no.acntech.model.CreateOrganization;
 import no.acntech.model.Organization;
 import no.acntech.model.UpdateOrganization;
 import no.acntech.service.OrganizationService;
+import no.acntech.service.SecurityService;
 
 @RequestMapping(path = "/api/organization")
 @RestController
 public class OrganizationResource {
 
+    private final SecurityService securityService;
     private final OrganizationService organizationService;
 
-    public OrganizationResource(final OrganizationService organizationService) {
+    public OrganizationResource(final SecurityService securityService,
+                                final OrganizationService organizationService) {
+        this.securityService = securityService;
         this.organizationService = organizationService;
     }
 
@@ -37,7 +41,8 @@ public class OrganizationResource {
     public ResponseEntity<Organization> createOrganization(@RequestBody final CreateOrganization.Request createOrganizationRequest,
                                                            final UriComponentsBuilder uriBuilder) {
         final var createOrganization = createOrganizationRequest.organization();
-        organizationService.createOrganization(createOrganization);
+        final var username = securityService.getUsername();
+        organizationService.createOrganization(username, createOrganization);
         final var uri = uriBuilder.path("/api/organization/{name}")
                 .buildAndExpand(createOrganization.name().toLowerCase())
                 .toUri();

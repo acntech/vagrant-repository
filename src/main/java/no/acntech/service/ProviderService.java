@@ -102,18 +102,18 @@ public class ProviderService {
         try (final var insert = context
                 .insertInto(PROVIDERS,
                         PROVIDERS.NAME,
-                        PROVIDERS.HOSTED,
                         PROVIDERS.CHECKSUM,
                         PROVIDERS.CHECKSUM_TYPE,
+                        PROVIDERS.HOSTED,
                         PROVIDERS.STATUS,
                         PROVIDERS.VERSION_ID,
                         PROVIDERS.CREATED)) {
             final var rowsAffected = insert
                     .values(
                             createProvider.name().name(),
-                            false,
                             createProvider.checksum().toLowerCase(),
                             createProvider.checksumType().name(),
+                            createProvider.hosted(),
                             ProviderStatus.PENDING.name(),
                             version.id(),
                             LocalDateTime.now())
