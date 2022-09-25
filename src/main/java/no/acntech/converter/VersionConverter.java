@@ -18,8 +18,8 @@ public class VersionConverter implements Converter<VersionsRecord, Version> {
     public Version convert(@NonNull final VersionsRecord source) {
         return new Version(
                 source.getId(),
-                source.getVersion(),
-                source.getVersion(), // TODO: What is this?
+                source.getName(),
+                source.getName(), // TODO: What is this?
                 source.getDescription(),
                 null, // TODO: What is this?
                 VersionStatus.valueOf(source.getStatus()),

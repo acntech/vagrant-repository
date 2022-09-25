@@ -53,6 +53,11 @@
     margin: 0 auto;
 }
 
+.content-upload {
+    width: 30%;
+    margin: 0 auto;
+}
+
 .box-breadcrumb a {
     text-decoration: none;
 }

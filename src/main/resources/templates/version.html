@@ -39,11 +39,11 @@
         <form th:action="@{/{username}/boxes/{name}/version(username=${box.username},name=${box.name})}" th:object="${formData}" method="post"
               class="mb-3">
             <div class="form-group mb-3">
-                <input type="text" id="version" th:field="*{version}" class="form-control"
+                <input type="text" id="name" th:field="*{name}" class="form-control"
                        th:placeholder="#{version.page.form.version.placeholder}"
-                       th:classappend="${#fields.hasErrors('version')} ? 'is-invalid' : ''">
-                <div id="versionFeedback" class="invalid-feedback">
-                    <span th:errors="*{version}"></span>
+                       th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                <div id="nameFeedback" class="invalid-feedback">
+                    <span th:errors="*{name}"></span>
                 </div>
             </div>
             <div class="form-group mb-3">

@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/register")
-    public ModelAndView postRegisterPage(@ModelAttribute("formData") @Valid @NotNull final RegisterForm form,
+    public ModelAndView postRegisterPage(@ModelAttribute(name = "formData") @Valid @NotNull final RegisterForm form,
                                          final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             final var modelAndView = new ModelAndView("register");
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/password")
-    public ModelAndView postPasswordPage(@ModelAttribute("formData") @Valid @NotNull final PasswordForm form,
+    public ModelAndView postPasswordPage(@ModelAttribute(name = "formData") @Valid @NotNull final PasswordForm form,
                                          final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             final var modelAndView = new ModelAndView("password");

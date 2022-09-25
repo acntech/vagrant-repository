@@ -57,16 +57,16 @@ public class BoxResource {
                 .map(version -> {
                     final var releaseUrl = uriBuilder.cloneBuilder()
                             .path("/api/box/{username}/{name}/version/{version}/release")
-                            .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.version())
+                            .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.name())
                             .toUri().toString();
                     final var revokeUrl = uriBuilder.cloneBuilder()
                             .path("/api/box/{username}/{name}/version/{version}/revoke")
-                            .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.version())
+                            .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.name())
                             .toUri().toString();
-                    final var providers = providerService.findProviders(username, name, version.version());
+                    final var providers = providerService.findProviders(username, name, version.name());
                     final var augmentedProviders = providers.stream()
                             .map(provider -> {
-                                final var upload = uploadService.getUpload(username, name, version.version(), provider.name());
+                                final var upload = uploadService.getUpload(username, name, version.name(), provider.name());
                                 final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
                                         .buildAndExpand(upload.uid())
                                         .toUri().toString();
@@ -113,11 +113,11 @@ public class BoxResource {
         final var providers = providerService.findProviders(username, name, versionParam);
         final var releaseUrl = uriBuilder.cloneBuilder()
                 .path("/api/box/{username}/{name}/version/{version}/release")
-                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.version())
+                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.name())
                 .toUri().toString();
         final var revokeUrl = uriBuilder.cloneBuilder()
                 .path("/api/box/{username}/{name}/version/{version}/revoke")
-                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.version())
+                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), version.name())
                 .toUri().toString();
         return ResponseEntity.ok(version.with(releaseUrl, revokeUrl, providers));
     }
@@ -130,7 +130,7 @@ public class BoxResource {
         final var createVersion = createVersionRequest.version();
         versionService.createVersion(username, name, createVersion);
         final var versionUri = uriBuilder.path("/api/box/{username}/{name}/version/{version}")
-                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), createVersion.version())
+                .buildAndExpand(username.toLowerCase(), name.toLowerCase(), createVersion.name())
                 .toUri();
         return ResponseEntity.created(versionUri).build();
     }
@@ -224,8 +224,7 @@ public class BoxResource {
                                             @PathVariable(name = "version") final String version,
                                             @PathVariable(name = "provider") final String providerParam,
                                             final UriComponentsBuilder uriBuilder) {
-        final var provider = ProviderType.fromProvider(providerParam);
-        final var uid = uploadService.createUpload(username, name, version, provider);
+        final var uid = uploadService.createUpload(username, name, version, ProviderType.fromProvider(providerParam));
         final var upload = uploadService.getUpload(uid);
         final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
                 .buildAndExpand(uid)

@@ -42,7 +42,8 @@
                         <p class="text-muted mb-1" th:text="${organization.description}"></p>
                     </div>
                     <div>
-                        <small class="text-muted d-block mb-2" th:text="${organization.created}"></small>
+                        <small class="text-muted d-block mb-2"
+                               th:text="${#temporals.format(organization.created, 'yyyy-MM-dd')}"></small>
                     </div>
                 </div>
             </a>

@@ -7,16 +7,16 @@ public class VersionForm {
 
     @NotBlank
     @Size(min = 2, max = 50)
-    private String version;
+    private String name;
     @Size(max = 4000)
     private String description;
 
-    public String getVersion() {
-        return version;
+    public String getName() {
+        return name;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

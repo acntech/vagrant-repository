@@ -20,6 +20,13 @@ acntech:
 # SPRING Configuration #
 ########################
 spring:
+  # Servlet
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE:10GB}
+      max-request-size: ${SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE:10GB}
+      file-size-threshold: ${SPRING_SERVLET_MULTIPART_FILE_SIZE_THRESHOLD:2KB}
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${SPRING_DATASOURCE_URL}

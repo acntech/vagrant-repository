@@ -21,20 +21,20 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}">
+            <a class="nav-link" th:href="@{/{organization}/boxes(organization=${box.username})}">
                 <span th:text="${box.username}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}">
+            <a class="nav-link" th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
                 <span th:text="${box.name}"></span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}">
-                <span th:text="${version.version}"></span>
+               th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.name})}">
+                <span th:text="${version.name}"></span>
             </a>
         </li>
     </ul>
@@ -42,7 +42,7 @@
 <main layout:fragment="content" class="container-fluid mt-4" role="main">
     <section class="content content-provider">
         <h3 class="mb-4" th:text="#{provider.page.title}"></h3>
-        <form th:action="@{/{username}/boxes/{name}/versions/{version}/provider(username=${box.username},name=${box.name},version=${version.version})}"
+        <form th:action="@{/{organization}/boxes/{box}/versions/{version}/provider(organization=${box.username},box=${box.name},version=${version.name})}"
               th:object="${formData}" method="post"
               class="mb-3">
             <div class="form-group mb-3">

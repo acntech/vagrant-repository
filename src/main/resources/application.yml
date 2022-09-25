@@ -8,13 +8,6 @@ spring:
   # Messages
   messages:
     basename: locale/messages
-  # Servlet
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10GB
-      max-request-size: 10GB
-      file-size-threshold: 2KB
   # Jackson
   jackson:
     date-format: com.fasterxml.jackson.databind.util.StdDateFormat

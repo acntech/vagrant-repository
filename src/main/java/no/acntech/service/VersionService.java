@@ -62,7 +62,7 @@ public class VersionService {
         final var box = boxService.getBox(username, name);
         try (final var select = context.selectFrom(VERSIONS)) {
             final var record = select
-                    .where(VERSIONS.VERSION.eq(version))
+                    .where(VERSIONS.NAME.eq(version))
                     .and(VERSIONS.BOX_ID.eq(box.id()))
                     .fetchSingle();
             return conversionService.convert(record, Version.class);
@@ -91,18 +91,18 @@ public class VersionService {
                               @NotBlank final String name,
                               @Valid @NotNull final CreateVersion createVersion) {
         final var tag = username + "/" + name;
-        LOGGER.info("Create version {} for box {}", createVersion.version(), tag);
+        LOGGER.info("Create version {} for box {}", createVersion.name(), tag);
         final var box = boxService.getBox(username, name);
         try (final var insert = context
                 .insertInto(VERSIONS,
-                        VERSIONS.VERSION,
+                        VERSIONS.NAME,
                         VERSIONS.DESCRIPTION,
                         VERSIONS.STATUS,
                         VERSIONS.BOX_ID,
                         VERSIONS.CREATED)) {
             final var rowsAffected = insert
                     .values(
-                            createVersion.version(),
+                            createVersion.name(),
                             createVersion.description(),
                             VersionStatus.INACTIVE.name(),
                             box.id(),
@@ -110,7 +110,7 @@ public class VersionService {
                     .execute();
             LOGGER.debug("Insert into VERSIONS table affected {} rows", rowsAffected);
             if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create version " + createVersion.version() +
+                throw new SaveItemFailedException("Failed to create version " + createVersion.name() +
                         " for box " + tag);
             }
         }
@@ -126,7 +126,7 @@ public class VersionService {
         final var version = getVersion(username, name, versionParam);
         try (final var update = context
                 .update(VERSIONS)
-                .set(VERSIONS.VERSION, updateVersion.version())
+                .set(VERSIONS.NAME, updateVersion.version())
                 .set(VERSIONS.DESCRIPTION, updateVersion.description())
                 .set(VERSIONS.MODIFIED, LocalDateTime.now())) {
             final var rowsAffected = update

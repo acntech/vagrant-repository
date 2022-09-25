@@ -44,7 +44,7 @@ public class StorageResource {
 
     @PostMapping(path = "{uid}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> uploadObject(@PathVariable(name = "uid") final String uid,
-                                             @RequestParam("file") MultipartFile file) {
+                                             @RequestParam("file") final MultipartFile file) {
         final var storage = storageService.saveFile(uid, file);
         uploadService.updateUpload(storage.uid(), storage.fileSize(), storage.checksum());
         uploadService.verifyUpload(uid);

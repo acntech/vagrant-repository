@@ -21,21 +21,21 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}">
+            <a class="nav-link" th:href="@{/{organization}/boxes(organization=${box.username})}">
                 <span th:text="${box.username}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}">
+            <a class="nav-link" th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
                 <span th:text="${box.name}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}">
-                <span th:text="${version.version}"></span>
+               th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.name})}">
+                <span th:text="${version.name}"></span>
             </a>
         </li>
     </ul>
@@ -47,29 +47,30 @@
         <div class="d-flex w-100 justify-content-between mb-2">
             <div class="box-breadcrumb">
                 <h5 class="mb-1">
-                    <a class="link-dark" th:href="@{/{username}/boxes(username=${box.username})}">
+                    <a class="link-dark" th:href="@{/{organization}/boxes(organization=${box.username})}">
                         <span th:text="${box.username}"></span>
                     </a>
                     /
                     <a class="link-dark"
-                       th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}">
+                       th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
                         <span th:text="${box.name}"></span>
                     </a>
                     /
                     <a class="link-dark"
-                       th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}">
-                        <span th:text="${version.version}"></span>
+                       th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.name})}">
+                        <span th:text="${version.name}"></span>
                     </a>
                 </h5>
                 <p class="text-muted mb-1" th:text="${version.descriptionHtml}"></p>
             </div>
             <div>
-                <small class="text-muted d-block mb-2" th:text="${version.created}"></small>
+                <small class="text-muted d-block mb-2"
+                       th:text="${#temporals.format(version.created, 'yyyy-MM-dd')}"></small>
             </div>
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end pb-2 mb-4">
-            <a th:href="@{/{username}/boxes/{name}/versions/{version}/provider(username=${box.username},name=${box.name},version=${version.version})}"
+            <a th:href="@{/{organization}/boxes/{box}/versions/{version}/provider(organization=${box.username},box=${box.name},version=${version.name})}"
                class="btn btn-primary me-md-2"
                role="button" th:text="#{providers.page.button.create}"></a>
         </div>
@@ -79,7 +80,7 @@
         </div>
 
         <div class="list-group" th:each="provider : ${providers}">
-            <a th:href="@{/{username}/boxes/{name}/versions/{version}/providers/{provider}(username=${box.username},name=${box.name},version=${version.version},provider=${provider.name})}"
+            <a th:href="@{/{organization}/boxes/{box}/versions/{version}/providers/{provider}(organization=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}"
                class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
                     <div>
@@ -90,7 +91,8 @@
                            th:text="#{providers.page.text.not-hosted}"></p>
                     </div>
                     <div>
-                        <small class="text-muted d-block mb-2" th:text="${provider.created}"></small>
+                        <small class="text-muted d-block mb-2"
+                               th:text="${#temporals.format(provider.created, 'yyyy-MM-dd')}"></small>
                     </div>
                 </div>
             </a>
