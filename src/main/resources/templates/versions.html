@@ -48,6 +48,7 @@
                        th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
                         <span th:text="${box.name}"></span>
                     </a>
+                    <i class="fa-solid fa-lock text-muted fs-6 ms-2" th:if="${box.isPrivate}"></i>
                 </h5>
                 <p class="text-muted mb-1" th:text="${box.descriptionShort}"></p>
             </div>
@@ -60,7 +61,10 @@
         <div class="d-grid gap-2 d-md-flex justify-content-md-end pb-2 mb-4">
             <a th:href="@{/{organization}/boxes/{box}/version(organization=${box.username},box=${box.name})}"
                class="btn btn-primary me-md-2"
-               role="button" th:text="#{versions.page.button.create}"></a>
+               role="button" th:text="#{versions.page.button.create-version}"></a>
+            <a th:href="@{/box/{organization}/{box}(organization=${box.username},box=${box.name})}"
+               class="btn btn-primary me-md-2"
+               role="button" th:text="#{versions.page.button.update-box}"></a>
         </div>
 
         <div th:if="${#lists.isEmpty(versions)}" class="list-group-item">

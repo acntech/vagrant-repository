@@ -9,12 +9,12 @@
 <body>
 <main layout:fragment="content" class="container-fluid mt-4" role="main">
     <section class="content content-organization">
-        <h3 class="mb-4" th:text="#{organization.page.title}"></h3>
-        <form th:action="@{/organization}" th:object="${formData}" method="post"
-              class="mb-3">
+        <h3 class="mb-4" th:text="#{update-organization.page.title}"></h3>
+        <form th:action="@{/organization/{organization}(organization=${organization.name})}"
+              th:object="${formData}" method="post" class="mb-3">
             <div class="form-group mb-3">
                 <input type="text" id="name" th:field="*{name}" class="form-control"
-                       th:placeholder="#{organization.page.form.name.placeholder}"
+                       th:placeholder="#{update-organization.page.form.name.placeholder}"
                        th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
                 <div id="nameFeedback" class="invalid-feedback">
                     <span th:errors="*{name}"></span>
@@ -22,14 +22,15 @@
             </div>
             <div class="form-group mb-3">
                 <input type="text" id="description" th:field="*{description}" class="form-control"
-                       th:placeholder="#{organization.page.form.description.placeholder}"
+                       th:placeholder="#{update-organization.page.form.description.placeholder}"
                        th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''">
                 <div id="descriptionFeedback" class="invalid-feedback">
                     <span th:errors="*{description}"></span>
                 </div>
             </div>
             <div class="form-group mb-3">
-                <button type="submit" class="btn btn-primary w-100" th:text="#{organization.page.form.button}"></button>
+                <button type="submit" class="btn btn-primary w-100"
+                        th:text="#{update-organization.page.form.button}"></button>
             </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>

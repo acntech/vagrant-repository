@@ -4,7 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class BoxForm {
+public class CreateBoxForm {
 
     @NotBlank
     @Size(min = 2, max = 50)
@@ -16,6 +16,16 @@ public class BoxForm {
     private String description;
     @NotNull
     private Boolean isPrivate;
+
+    public CreateBoxForm() {
+    }
+
+    public CreateBoxForm(String name, String username, String description, Boolean isPrivate) {
+        this.name = name;
+        this.username = username;
+        this.description = description;
+        this.isPrivate = isPrivate;
+    }
 
     public String getName() {
         return name;

@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{navbar.brand}"></title>
+</head>
+<body>
+<main layout:fragment="content" class="container-fluid mt-4" role="main">
+    <section class="content content-box">
+        <h3 class="mb-4" th:text="#{update-box.page.title}"></h3>
+        <form th:action="@{/box/{organization}/{box}(organization=${box.username},box=${box.name})}"
+              th:object="${formData}" method="post" class="mb-3">
+            <div class="form-group mb-3">
+                <input type="text" id="username" th:value="${organization.name}" class="form-control"
+                       th:disabled="true">
+                <input type="text" id="name" th:field="*{name}" class="form-control"
+                       th:placeholder="#{update-box.page.form.name.placeholder}"
+                       th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                <div id="nameFeedback" class="invalid-feedback">
+                    <span th:errors="*{name}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <input type="text" id="description" th:field="*{description}" class="form-control"
+                       th:placeholder="#{update-box.page.form.description.placeholder}"
+                       th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''">
+                <div id="descriptionFeedback" class="invalid-feedback">
+                    <span th:errors="*{description}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <input type="checkbox" id="private" th:field="*{private}" class="form-check-input" value="">
+                <label for="private" class="form-check-label" th:text="#{update-box.page.form.private.label}"></label>
+            </div>
+            <div class="form-group mb-3">
+                <button type="submit" class="btn btn-primary w-100" th:text="#{update-box.page.form.button}"></button>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </section>
+</main>
+</body>
+</html>

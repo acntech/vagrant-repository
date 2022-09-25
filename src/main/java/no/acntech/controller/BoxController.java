@@ -19,14 +19,17 @@ import javax.validation.constraints.NotNull;
 import no.acntech.exception.ChecksumException;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.model.Algorithm;
-import no.acntech.model.BoxForm;
 import no.acntech.model.CreateBox;
+import no.acntech.model.CreateBoxForm;
 import no.acntech.model.CreateOrganization;
 import no.acntech.model.CreateProvider;
 import no.acntech.model.CreateVersion;
 import no.acntech.model.OrganizationForm;
 import no.acntech.model.ProviderForm;
 import no.acntech.model.ProviderType;
+import no.acntech.model.UpdateBox;
+import no.acntech.model.UpdateBoxForm;
+import no.acntech.model.UpdateOrganization;
 import no.acntech.model.VersionForm;
 import no.acntech.service.BoxService;
 import no.acntech.service.OrganizationService;
@@ -73,22 +76,9 @@ public class BoxController {
         return new ModelAndView("about");
     }
 
-    @GetMapping(path = "/organization/{name}")
-    public ModelAndView getOrganizationByNamePage(@PathVariable(name = "name") final String name) {
-        final var modelAndView = new ModelAndView("organization");
-        try {
-            final var organization = organizationService.getOrganization(name);
-            modelAndView.addObject("organization", organization);
-        } catch (ItemNotFoundException e) {
-            modelAndView.addObject("organization", null);
-            modelAndView.setStatus(HttpStatus.NOT_FOUND);
-        }
-        return modelAndView;
-    }
-
     @GetMapping(path = "/organization")
     public ModelAndView getOrganizationPage() {
-        final var modelAndView = new ModelAndView("organization");
+        final var modelAndView = new ModelAndView("create-organization");
         modelAndView.addObject("formData", new OrganizationForm());
         return modelAndView;
     }
@@ -108,6 +98,36 @@ public class BoxController {
         return new ModelAndView("redirect:/" + organization.name() + "/boxes");
     }
 
+    @GetMapping(path = "/organization/{name}")
+    public ModelAndView getOrganizationPage(@PathVariable(name = "name") final String name) {
+        final var modelAndView = new ModelAndView("update-organization");
+        try {
+            final var organization = organizationService.getOrganization(name);
+            modelAndView.addObject("organization", organization);
+            modelAndView.addObject("formData", new OrganizationForm(organization.name(), organization.description()));
+        } catch (ItemNotFoundException e) {
+            modelAndView.addObject("organization", null);
+            modelAndView.addObject("formData", new OrganizationForm());
+            modelAndView.setStatus(HttpStatus.NOT_FOUND);
+        }
+        return modelAndView;
+    }
+
+    @PostMapping(path = "/organization/{name}")
+    public ModelAndView postOrganizationPage(@PathVariable(name = "name") final String name,
+                                             @ModelAttribute(name = "formData") @Valid @NotNull final OrganizationForm form,
+                                             final BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            final var modelAndView = getOrganizationPage();
+            modelAndView.addObject("formData", form);
+            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
+            return modelAndView;
+        }
+        organizationService.updateOrganization(name, new UpdateOrganization(form.getName(), form.getDescription()));
+        final var organization = organizationService.getOrganization(form.getName().toLowerCase());
+        return new ModelAndView("redirect:/" + organization.name() + "/boxes");
+    }
+
     @GetMapping(path = "/organizations")
     public ModelAndView getOrganizationsPage() {
         final var username = securityService.getUsername();
@@ -121,14 +141,14 @@ public class BoxController {
     public ModelAndView getBoxPage() {
         final var username = securityService.getUsername();
         final var organizations = organizationService.findOrganizations(username);
-        final var modelAndView = new ModelAndView("box");
+        final var modelAndView = new ModelAndView("create-box");
         modelAndView.addObject("organizations", organizations);
-        modelAndView.addObject("formData", new BoxForm());
+        modelAndView.addObject("formData", new CreateBoxForm());
         return modelAndView;
     }
 
     @PostMapping(path = "/box")
-    public ModelAndView postBoxPage(@ModelAttribute(name = "formData") @Valid @NotNull final BoxForm form,
+    public ModelAndView postBoxPage(@ModelAttribute(name = "formData") @Valid @NotNull final CreateBoxForm form,
                                     final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             final var modelAndView = getBoxPage();
@@ -139,6 +159,41 @@ public class BoxController {
         final var organization = organizationService.getOrganization(form.getUsername());
         boxService.createBox(new CreateBox(form.getName(), organization.name(), form.getDescription(), form.getDescription(), form.getPrivate()));
         final var box = boxService.getBox(organization.name(), form.getName().toLowerCase());
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name());
+    }
+
+    @GetMapping(path = "/box/{username}/{name}")
+    public ModelAndView getBoxPage(@PathVariable(name = "username") final String username,
+                                   @PathVariable(name = "name") final String name) {
+        final var modelAndView = new ModelAndView("update-box");
+        try {
+            final var organization = organizationService.getOrganization(username);
+            final var box = boxService.getBox(username, name);
+            modelAndView.addObject("organization", organization);
+            modelAndView.addObject("box", box);
+            modelAndView.addObject("formData", new UpdateBoxForm(box.name(), box.descriptionShort(), box.isPrivate()));
+        } catch (ItemNotFoundException e) {
+            modelAndView.addObject("organization", null);
+            modelAndView.addObject("box", null);
+            modelAndView.addObject("formData", new UpdateBoxForm());
+            modelAndView.setStatus(HttpStatus.NOT_FOUND);
+        }
+        return modelAndView;
+    }
+
+    @PostMapping(path = "/box/{username}/{name}")
+    public ModelAndView postBoxPage(@PathVariable(name = "username") final String username,
+                                    @PathVariable(name = "name") final String name,
+                                    @ModelAttribute(name = "formData") @Valid @NotNull final UpdateBoxForm form,
+                                    final BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            final var modelAndView = getBoxPage();
+            modelAndView.addObject("formData", form);
+            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
+            return modelAndView;
+        }
+        boxService.updateBox(username, name, new UpdateBox(form.getName(), form.getDescription(), form.getDescription(), form.getPrivate()));
+        final var box = boxService.getBox(username, form.getName().toLowerCase());
         return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name());
     }
 
