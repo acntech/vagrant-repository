@@ -21,26 +21,34 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}">
+            <a class="nav-link" th:href="@{/{organization}/boxes(organization=${box.username})}">
                 <span th:text="${box.username}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}">
+            <a class="nav-link" th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
                 <span th:text="${box.name}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.name})}">
+                <span th:text="${version.name}"></span>
             </a>
         </li>
     </ul>
 </div>
 <main layout:fragment="content" class="container-fluid mt-4" role="main">
     <section class="content content-version">
-        <h3 class="mb-4" th:text="#{version.page.title}"></h3>
-        <form th:action="@{/{username}/boxes/{name}/version(username=${box.username},name=${box.name})}" th:object="${formData}" method="post"
+        <h3 class="mb-4" th:text="#{update-version.page.title}"></h3>
+        <form th:action="@{/{username}/boxes/{name}/version/{version}(username=${box.username},name=${box.name},version=${version.name})}"
+              th:object="${formData}" method="post"
               class="mb-3">
             <div class="form-group mb-3">
                 <input type="text" id="name" th:field="*{name}" class="form-control"
-                       th:placeholder="#{version.page.form.version.placeholder}"
+                       th:placeholder="#{update-version.page.form.version.placeholder}"
                        th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
                 <div id="nameFeedback" class="invalid-feedback">
                     <span th:errors="*{name}"></span>
@@ -48,14 +56,15 @@
             </div>
             <div class="form-group mb-3">
                 <input type="text" id="description" th:field="*{description}" class="form-control"
-                       th:placeholder="#{version.page.form.description.placeholder}"
+                       th:placeholder="#{update-version.page.form.description.placeholder}"
                        th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''">
                 <div id="descriptionFeedback" class="invalid-feedback">
                     <span th:errors="*{description}"></span>
                 </div>
             </div>
             <div class="form-group mb-3">
-                <button type="submit" class="btn btn-primary w-100" th:text="#{version.page.form.button}"></button>
+                <button type="submit" class="btn btn-primary w-100"
+                        th:text="#{update-version.page.form.button}"></button>
             </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>

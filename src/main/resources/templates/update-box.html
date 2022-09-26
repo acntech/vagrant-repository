@@ -7,6 +7,32 @@
     <title th:text="#{navbar.brand}"></title>
 </head>
 <body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/organizations}">
+                <span>organizations</span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{organization}/boxes(organization=${box.username})}">
+                <span th:text="${box.username}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
+                <span th:text="${box.name}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
 <main layout:fragment="content" class="container-fluid mt-4" role="main">
     <section class="content content-box">
         <h3 class="mb-4" th:text="#{update-box.page.title}"></h3>

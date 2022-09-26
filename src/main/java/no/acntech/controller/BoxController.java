@@ -30,6 +30,7 @@ import no.acntech.model.ProviderType;
 import no.acntech.model.UpdateBox;
 import no.acntech.model.UpdateBoxForm;
 import no.acntech.model.UpdateOrganization;
+import no.acntech.model.UpdateVersion;
 import no.acntech.model.VersionForm;
 import no.acntech.service.BoxService;
 import no.acntech.service.OrganizationService;
@@ -118,7 +119,7 @@ public class BoxController {
                                              @ModelAttribute(name = "formData") @Valid @NotNull final OrganizationForm form,
                                              final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = getOrganizationPage();
+            final var modelAndView = getOrganizationPage(name);
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
@@ -187,7 +188,7 @@ public class BoxController {
                                     @ModelAttribute(name = "formData") @Valid @NotNull final UpdateBoxForm form,
                                     final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = getBoxPage();
+            final var modelAndView = getBoxPage(username, name);
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
@@ -222,7 +223,7 @@ public class BoxController {
     public ModelAndView getVersionPage(@PathVariable(name = "username") final String username,
                                        @PathVariable(name = "name") final String name) {
         final var box = boxService.getBox(username, name);
-        final var modelAndView = new ModelAndView("version");
+        final var modelAndView = new ModelAndView("create-version");
         modelAndView.addObject("box", box);
         modelAndView.addObject("formData", new VersionForm());
         return modelAndView;
@@ -241,6 +242,37 @@ public class BoxController {
         }
         final var box = boxService.getBox(username, name);
         versionService.createVersion(box.username(), box.name(), new CreateVersion(form.getName(), form.getDescription()));
+        final var version = versionService.getVersion(username, name, form.getName());
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
+    }
+
+    @GetMapping(path = "/{username}/boxes/{name}/version/{version}")
+    public ModelAndView getVersionPage(@PathVariable(name = "username") final String username,
+                                       @PathVariable(name = "name") final String name,
+                                       @PathVariable(name = "version") final String versionParam) {
+        final var box = boxService.getBox(username, name);
+        final var version = versionService.getVersion(username, name, versionParam);
+        final var modelAndView = new ModelAndView("update-version");
+        modelAndView.addObject("box", box);
+        modelAndView.addObject("version", version);
+        modelAndView.addObject("formData", new VersionForm(version.name(), version.descriptionHtml()));
+        return modelAndView;
+    }
+
+    @PostMapping(path = "/{username}/boxes/{name}/version/{version}")
+    public ModelAndView postVersionPage(@PathVariable(name = "username") final String username,
+                                        @PathVariable(name = "name") final String name,
+                                        @PathVariable(name = "version") final String versionParam,
+                                        @ModelAttribute(name = "formData") @Valid @NotNull final VersionForm form,
+                                        final BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            final var modelAndView = getVersionPage(username, name, versionParam);
+            modelAndView.addObject("formData", form);
+            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
+            return modelAndView;
+        }
+        final var box = boxService.getBox(username, name);
+        versionService.updateVersion(box.username(), box.name(), versionParam, new UpdateVersion(form.getName(), form.getDescription()));
         final var version = versionService.getVersion(username, name, form.getName());
         return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
     }

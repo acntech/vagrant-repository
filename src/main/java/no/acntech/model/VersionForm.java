@@ -11,6 +11,14 @@ public class VersionForm {
     @Size(max = 4000)
     private String description;
 
+    public VersionForm() {
+    }
+
+    public VersionForm(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
     public String getName() {
         return name;
     }
