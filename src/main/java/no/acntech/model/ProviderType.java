@@ -2,12 +2,13 @@ package no.acntech.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
-import javax.validation.constraints.NotBlank;
+import org.springframework.util.Assert;
 
 public enum ProviderType {
 
-    VIRTUALBOX("virtualbox");
+    HYPER_V("hyper-v"),
+    VIRTUALBOX("virtualbox"),
+    VMWARE("vmware");
 
     private final String provider;
 
@@ -22,12 +23,13 @@ public enum ProviderType {
     }
 
     @JsonCreator
-    public static ProviderType fromProvider(@NotBlank final String provider) {
+    public static ProviderType fromProvider(final String provider) {
+        Assert.hasText(provider, "Provider is null");
         for (ProviderType providerType : ProviderType.values()) {
             if (providerType.provider.equals(provider)) {
                 return providerType;
             }
         }
-        throw new IllegalArgumentException("Value is not a valid provider");
+        throw new IllegalArgumentException("\"" + provider + "\" is not a supported provider");
     }
 }

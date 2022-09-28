@@ -24,39 +24,58 @@
 <main layout:fragment="content" class="container-fluid mt-4" role="main">
     <section class="content content-box">
         <h3 class="mb-4" th:text="#{create-box.page.title}"></h3>
-        <form th:action="@{/box}" th:object="${formData}" method="post"
-              class="mb-3">
-            <div class="form-group mb-3">
-                <select class="form-select"
-                        th:field="*{username}"
-                        th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''">
-                    <option th:each="organization : ${organizations}"
-                            th:value="${organization.name}" th:text="${organization.name}"></option>
-                </select>
-                <input type="text" id="name" th:field="*{name}" class="form-control"
-                       th:placeholder="#{create-box.page.form.name.placeholder}"
-                       th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
-                <div id="usernameFeedback" class="invalid-feedback">
-                    <span th:errors="*{username}"></span>
+        <form class="mb-3" th:action="@{/box}" th:object="${formData}" th:method="post">
+            <div class="form-group row mb-3">
+                <div class="col-4">
+                    <label for="username" class="form-check-label"
+                           th:text="#{create-box.page.form.username.label}"></label>
+                    <select id="username" class="form-select" th:field="*{username}"
+                            th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''">
+                        <option th:each="organization : ${organizations}"
+                                th:value="${organization.name}" th:text="${organization.name}"></option>
+                    </select>
+                    <div id="usernameFeedback" class="invalid-feedback">
+                        <span th:errors="*{username}"></span>
+                    </div>
                 </div>
-                <div id="nameFeedback" class="invalid-feedback">
-                    <span th:errors="*{name}"></span>
+                <div class="col-4">
+                    <label for="name" class="form-check-label"
+                           th:text="#{create-box.page.form.name.label}"></label>
+                    <input id="name" class="form-control" th:type="text" th:field="*{name}"
+                           th:placeholder="#{create-box.page.form.name.placeholder}"
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                    <div id="nameFeedback" class="invalid-feedback">
+                        <span th:errors="*{name}"></span>
+                    </div>
+                </div>
+                <div class="col-4"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col">
+                    <label for="description" class="form-check-label"
+                           th:text="#{create-box.page.form.description.label}"></label>
+                    <textarea id="description" class="form-control" th:field="*{description}"
+                              th:placeholder="#{create-box.page.form.description.placeholder}"
+                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                              th:rows="2"></textarea>
+                    <div id="descriptionFeedback" class="invalid-feedback">
+                        <span th:errors="*{description}"></span>
+                    </div>
                 </div>
             </div>
-            <div class="form-group mb-3">
-                <input type="text" id="description" th:field="*{description}" class="form-control"
-                       th:placeholder="#{create-box.page.form.description.placeholder}"
-                       th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''">
-                <div id="descriptionFeedback" class="invalid-feedback">
-                    <span th:errors="*{description}"></span>
+            <div class="row mb-3">
+                <div class="form-group col">
+                    <input id="private" class="form-check-input" th:type="checkbox" th:field="*{private}">
+                    <label for="private" class="form-check-label"
+                           th:text="#{create-box.page.form.private.label}"></label>
                 </div>
             </div>
-            <div class="form-group mb-3">
-                <input type="checkbox" id="private" th:field="*{private}" class="form-check-input" value="">
-                <label for="private" class="form-check-label" th:text="#{create-box.page.form.private.label}"></label>
-            </div>
-            <div class="form-group mb-3">
-                <button type="submit" class="btn btn-primary w-100" th:text="#{create-box.page.form.button}"></button>
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <button id="button" class="btn btn-primary w-100" th:type="submit"
+                            th:text="#{create-box.page.form.button}"></button>
+                </div>
+                <div class="col-8"></div>
             </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>

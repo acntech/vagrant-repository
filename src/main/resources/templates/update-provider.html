@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{navbar.brand}"></title>
+</head>
+<body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/organizations}">
+                <span>organizations</span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{organization}/boxes(organization=${box.username})}">
+                <span th:text="${box.username}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
+                <span th:text="${box.name}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.name})}">
+                <span th:text="${version.name}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:href="@{/{organization}/boxes/{box}/versions/{version}/provider/{provider}(organization=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}">
+                <span th:text="${provider.name}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container-fluid mt-4" role="main">
+    <section class="content content-provider">
+        <h3 class="mb-4" th:text="#{update-provider.page.title}"></h3>
+        <form class="mb-3"
+              th:action="@{/{organization}/boxes/{box}/versions/{version}/provider/{provider}(organization=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}"
+              th:object="${formData}" th:method="post">
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <label for="name" class="form-check-label"
+                           th:text="#{update-provider.page.form.name.label}"></label>
+                    <select id="name" class="form-select" th:field="*{name}"
+                            th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                        <option th:each="providerType : ${providerTypes}"
+                                th:value="${providerType.name}" th:text="${providerType}"></option>
+                    </select>
+                    <div id="nameFeedback" class="invalid-feedback">
+                        <span th:errors="*{name}"></span>
+                    </div>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <label for="checksumType" class="form-check-label"
+                           th:text="#{update-provider.page.form.checksum-type.label}"></label>
+                    <select id="checksumType" class="form-select" th:field="*{checksumType}"
+                            th:classappend="${#fields.hasErrors('checksumType')} ? 'is-invalid' : ''">
+                        <option th:each="checksumType : ${checksumTypes}"
+                                th:value="${checksumType.name}" th:text="${checksumType}"></option>
+                    </select>
+                    <div id="checksumTypeFeedback" class="invalid-feedback">
+                        <span th:errors="*{checksumType}"></span>
+                    </div>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col">
+                    <label for="checksum" class="form-check-label"
+                           th:text="#{update-provider.page.form.checksum.label}"></label>
+                    <input id="checksum" class="form-control" th:type="text" th:field="*{checksum}"
+                           th:placeholder="#{update-provider.page.form.checksum.placeholder}"
+                           th:classappend="${#fields.hasErrors('checksum')} ? 'is-invalid' : ''">
+                    <div id="checksumFeedback" class="invalid-feedback">
+                        <span th:errors="*{checksum}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col">
+                    <input id="hosted" class="form-check-input" th:type="checkbox" th:checked="${formData.url == null}"
+                           value="">
+                    <label for="hosted" class="form-check-label"
+                           th:text="#{update-provider.page.form.hosted.label}"></label>
+                </div>
+            </div>
+            <div id="externalUrlWrapper" class="row mb-3">
+                <div class="form-group col">
+                    <label for="externalUrl" class="form-check-label"
+                           th:text="#{update-provider.page.form.url.label}"></label>
+                    <input id="externalUrl" class="form-control" th:type="text" th:field="*{url}"
+                           th:placeholder="#{update-provider.page.form.url.placeholder}"
+                           th:classappend="${#fields.hasErrors('url')} ? 'is-invalid' : ''">
+                    <div id="urlFeedback" class="invalid-feedback">
+                        <span th:errors="*{url}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <button id="button" class="btn btn-primary w-100" th:type="submit"
+                            th:text="#{update-provider.page.form.button}"></button>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </section>
+</main>
+</body>
+</html>

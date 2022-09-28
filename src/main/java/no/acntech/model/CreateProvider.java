@@ -11,7 +11,6 @@ public record CreateProvider(
         @NotNull ProviderType name,
         @NotBlank @Size(max = 200) String checksum,
         @NotNull @JsonProperty("checksum_type") Algorithm checksumType,
-        @NotNull Boolean hosted,
         @Size(max = 200) String url) {
 
     public record Request(@Valid @NotNull CreateProvider provider) {

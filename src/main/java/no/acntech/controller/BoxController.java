@@ -1,8 +1,10 @@
 package no.acntech.controller;
 
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,6 +32,7 @@ import no.acntech.model.ProviderType;
 import no.acntech.model.UpdateBox;
 import no.acntech.model.UpdateBoxForm;
 import no.acntech.model.UpdateOrganization;
+import no.acntech.model.UpdateProvider;
 import no.acntech.model.UpdateVersion;
 import no.acntech.model.VersionForm;
 import no.acntech.service.BoxService;
@@ -43,6 +46,7 @@ import no.acntech.service.VersionService;
 @Controller
 public class BoxController {
 
+    private final ConversionService conversionService;
     private final SecurityService securityService;
     private final OrganizationService organizationService;
     private final BoxService boxService;
@@ -51,13 +55,15 @@ public class BoxController {
     private final UploadService uploadService;
     private final StorageService storageService;
 
-    public BoxController(final SecurityService securityService,
+    public BoxController(final ConversionService conversionService,
+                         final SecurityService securityService,
                          final OrganizationService organizationService,
                          final BoxService boxService,
                          final VersionService versionService,
                          final ProviderService providerService,
                          final UploadService uploadService,
                          final StorageService storageService) {
+        this.conversionService = conversionService;
         this.securityService = securityService;
         this.organizationService = organizationService;
         this.boxService = boxService;
@@ -78,17 +84,17 @@ public class BoxController {
     }
 
     @GetMapping(path = "/organization")
-    public ModelAndView getOrganizationPage() {
+    public ModelAndView getCreateOrganizationPage() {
         final var modelAndView = new ModelAndView("create-organization");
         modelAndView.addObject("formData", new OrganizationForm());
         return modelAndView;
     }
 
     @PostMapping(path = "/organization")
-    public ModelAndView postOrganizationPage(@ModelAttribute(name = "formData") @Valid @NotNull final OrganizationForm form,
-                                             final BindingResult bindingResult) {
+    public ModelAndView postCreateOrganizationPage(@ModelAttribute(name = "formData") @Valid @NotNull final OrganizationForm form,
+                                                   final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = getOrganizationPage();
+            final var modelAndView = getCreateOrganizationPage();
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
@@ -100,7 +106,7 @@ public class BoxController {
     }
 
     @GetMapping(path = "/organization/{name}")
-    public ModelAndView getOrganizationPage(@PathVariable(name = "name") final String name) {
+    public ModelAndView getUpdateOrganizationPage(@PathVariable(name = "name") final String name) {
         final var modelAndView = new ModelAndView("update-organization");
         try {
             final var organization = organizationService.getOrganization(name);
@@ -115,11 +121,11 @@ public class BoxController {
     }
 
     @PostMapping(path = "/organization/{name}")
-    public ModelAndView postOrganizationPage(@PathVariable(name = "name") final String name,
-                                             @ModelAttribute(name = "formData") @Valid @NotNull final OrganizationForm form,
-                                             final BindingResult bindingResult) {
+    public ModelAndView postUpdateOrganizationPage(@PathVariable(name = "name") final String name,
+                                                   @ModelAttribute(name = "formData") @Valid @NotNull final OrganizationForm form,
+                                                   final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = getOrganizationPage(name);
+            final var modelAndView = getUpdateOrganizationPage(name);
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
@@ -139,7 +145,7 @@ public class BoxController {
     }
 
     @GetMapping(path = "/box")
-    public ModelAndView getBoxPage() {
+    public ModelAndView getCreateBoxPage() {
         final var username = securityService.getUsername();
         final var organizations = organizationService.findOrganizations(username);
         final var modelAndView = new ModelAndView("create-box");
@@ -149,10 +155,10 @@ public class BoxController {
     }
 
     @PostMapping(path = "/box")
-    public ModelAndView postBoxPage(@ModelAttribute(name = "formData") @Valid @NotNull final CreateBoxForm form,
-                                    final BindingResult bindingResult) {
+    public ModelAndView postCreateBoxPage(@ModelAttribute(name = "formData") @Valid @NotNull final CreateBoxForm form,
+                                          final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = getBoxPage();
+            final var modelAndView = getCreateBoxPage();
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
@@ -164,8 +170,8 @@ public class BoxController {
     }
 
     @GetMapping(path = "/box/{username}/{name}")
-    public ModelAndView getBoxPage(@PathVariable(name = "username") final String username,
-                                   @PathVariable(name = "name") final String name) {
+    public ModelAndView getUpdateBoxPage(@PathVariable(name = "username") final String username,
+                                         @PathVariable(name = "name") final String name) {
         final var modelAndView = new ModelAndView("update-box");
         try {
             final var organization = organizationService.getOrganization(username);
@@ -183,12 +189,12 @@ public class BoxController {
     }
 
     @PostMapping(path = "/box/{username}/{name}")
-    public ModelAndView postBoxPage(@PathVariable(name = "username") final String username,
-                                    @PathVariable(name = "name") final String name,
-                                    @ModelAttribute(name = "formData") @Valid @NotNull final UpdateBoxForm form,
-                                    final BindingResult bindingResult) {
+    public ModelAndView postUpdateBoxPage(@PathVariable(name = "username") final String username,
+                                          @PathVariable(name = "name") final String name,
+                                          @ModelAttribute(name = "formData") @Valid @NotNull final UpdateBoxForm form,
+                                          final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = getBoxPage(username, name);
+            final var modelAndView = getUpdateBoxPage(username, name);
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
@@ -220,8 +226,8 @@ public class BoxController {
     }
 
     @GetMapping(path = "/{username}/boxes/{name}/version")
-    public ModelAndView getVersionPage(@PathVariable(name = "username") final String username,
-                                       @PathVariable(name = "name") final String name) {
+    public ModelAndView getCreateVersionPage(@PathVariable(name = "username") final String username,
+                                             @PathVariable(name = "name") final String name) {
         final var box = boxService.getBox(username, name);
         final var modelAndView = new ModelAndView("create-version");
         modelAndView.addObject("box", box);
@@ -230,26 +236,26 @@ public class BoxController {
     }
 
     @PostMapping(path = "/{username}/boxes/{name}/version")
-    public ModelAndView postVersionPage(@PathVariable(name = "username") final String username,
-                                        @PathVariable(name = "name") final String name,
-                                        @ModelAttribute(name = "formData") @Valid @NotNull final VersionForm form,
-                                        final BindingResult bindingResult) {
+    public ModelAndView postCreateVersionPage(@PathVariable(name = "username") final String username,
+                                              @PathVariable(name = "name") final String name,
+                                              @ModelAttribute(name = "formData") @Valid @NotNull final VersionForm form,
+                                              final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = getVersionPage(username, name);
+            final var modelAndView = getCreateVersionPage(username, name);
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
         }
         final var box = boxService.getBox(username, name);
         versionService.createVersion(box.username(), box.name(), new CreateVersion(form.getName(), form.getDescription()));
-        final var version = versionService.getVersion(username, name, form.getName());
+        final var version = versionService.getVersion(box.username(), box.name(), form.getName());
         return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
     }
 
     @GetMapping(path = "/{username}/boxes/{name}/version/{version}")
-    public ModelAndView getVersionPage(@PathVariable(name = "username") final String username,
-                                       @PathVariable(name = "name") final String name,
-                                       @PathVariable(name = "version") final String versionParam) {
+    public ModelAndView getUpdateVersionPage(@PathVariable(name = "username") final String username,
+                                             @PathVariable(name = "name") final String name,
+                                             @PathVariable(name = "version") final String versionParam) {
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(username, name, versionParam);
         final var modelAndView = new ModelAndView("update-version");
@@ -260,13 +266,13 @@ public class BoxController {
     }
 
     @PostMapping(path = "/{username}/boxes/{name}/version/{version}")
-    public ModelAndView postVersionPage(@PathVariable(name = "username") final String username,
-                                        @PathVariable(name = "name") final String name,
-                                        @PathVariable(name = "version") final String versionParam,
-                                        @ModelAttribute(name = "formData") @Valid @NotNull final VersionForm form,
-                                        final BindingResult bindingResult) {
+    public ModelAndView postUpdateVersionPage(@PathVariable(name = "username") final String username,
+                                              @PathVariable(name = "name") final String name,
+                                              @PathVariable(name = "version") final String versionParam,
+                                              @ModelAttribute(name = "formData") @Valid @NotNull final VersionForm form,
+                                              final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = getVersionPage(username, name, versionParam);
+            final var modelAndView = getUpdateVersionPage(username, name, versionParam);
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
@@ -292,12 +298,12 @@ public class BoxController {
     }
 
     @GetMapping(path = "/{username}/boxes/{name}/versions/{version}/provider")
-    public ModelAndView getProviderPage(@PathVariable(name = "username") final String username,
-                                        @PathVariable(name = "name") final String name,
-                                        @PathVariable(name = "version") final String versionParam) {
+    public ModelAndView getCreateProviderPage(@PathVariable(name = "username") final String username,
+                                              @PathVariable(name = "name") final String name,
+                                              @PathVariable(name = "version") final String versionParam) {
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
-        final var modelAndView = new ModelAndView("provider");
+        final var modelAndView = new ModelAndView("create-provider");
         modelAndView.addObject("box", box);
         modelAndView.addObject("version", version);
         modelAndView.addObject("providerTypes", ProviderType.values());
@@ -307,25 +313,78 @@ public class BoxController {
     }
 
     @PostMapping(path = "/{username}/boxes/{name}/versions/{version}/provider")
-    public ModelAndView postProviderPage(@PathVariable(name = "username") final String username,
-                                         @PathVariable(name = "name") final String name,
-                                         @PathVariable(name = "version") final String versionParam,
-                                         @ModelAttribute(name = "formData") @Valid @NotNull final ProviderForm form,
-                                         final BindingResult bindingResult) {
+    public ModelAndView postCreateProviderPage(@PathVariable(name = "username") final String username,
+                                               @PathVariable(name = "name") final String name,
+                                               @PathVariable(name = "version") final String versionParam,
+                                               @ModelAttribute(name = "formData") @Valid @NotNull final ProviderForm form,
+                                               final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final var modelAndView = getProviderPage(username, name, versionParam);
+            final var modelAndView = getCreateProviderPage(username, name, versionParam);
             modelAndView.addObject("formData", form);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
         }
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
-        final var createProvider = new CreateProvider(form.getName(), form.getChecksum(), form.getChecksumType(), form.getHosted(), form.getUrl());
+        final var createProvider = conversionService.convert(form, CreateProvider.class);
+        Assert.notNull(createProvider, "Converting ProviderForm to CreateProvider produced null");
         providerService.createProvider(box.username(), box.name(), version.name(), createProvider);
-        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
+        final var provider = providerService.getProvider(box.username(), box.name(), version.name(), createProvider.name());
+        if (provider.hosted()) {
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers/" + provider.name() + "/upload");
+        } else {
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers");
+        }
     }
 
-    @GetMapping(path = "/{username}/boxes/{name}/versions/{version}/providers/{provider}")
+    @GetMapping(path = "/{username}/boxes/{name}/versions/{version}/provider/{provider}")
+    public ModelAndView getUpdateProviderPage(@PathVariable(name = "username") final String username,
+                                              @PathVariable(name = "name") final String name,
+                                              @PathVariable(name = "version") final String versionParam,
+                                              @PathVariable(name = "provider") final String providerParam) {
+        final var providerType = ProviderType.fromProvider(providerParam);
+        final var box = boxService.getBox(username, name);
+        final var version = versionService.getVersion(box.username(), box.name(), versionParam);
+        final var provider = providerService.getProvider(box.username(), box.name(), version.name(), providerType);
+        final var modelAndView = new ModelAndView("update-provider");
+        modelAndView.addObject("box", box);
+        modelAndView.addObject("version", version);
+        modelAndView.addObject("provider", provider);
+        modelAndView.addObject("providerTypes", ProviderType.values());
+        modelAndView.addObject("checksumTypes", Algorithm.values());
+        modelAndView.addObject("formData", new ProviderForm(provider.name(), provider.checksumType(), provider.checksum(), provider.downloadUrl()));
+        return modelAndView;
+    }
+
+    @SuppressWarnings("DuplicatedCode")
+    @PostMapping(path = "/{username}/boxes/{name}/versions/{version}/provider/{provider}")
+    public ModelAndView postUpdateProviderPage(@PathVariable(name = "username") final String username,
+                                               @PathVariable(name = "name") final String name,
+                                               @PathVariable(name = "version") final String versionParam,
+                                               @PathVariable(name = "provider") final String providerParam,
+                                               @ModelAttribute(name = "formData") @Valid @NotNull final ProviderForm form,
+                                               final BindingResult bindingResult) {
+        final var providerType = ProviderType.fromProvider(providerParam);
+        if (bindingResult.hasErrors()) {
+            final var modelAndView = getUpdateProviderPage(username, name, versionParam, providerParam);
+            modelAndView.addObject("formData", form);
+            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
+            return modelAndView;
+        }
+        final var box = boxService.getBox(username, name);
+        final var version = versionService.getVersion(box.username(), box.name(), versionParam);
+        final var updateProvider = conversionService.convert(form, UpdateProvider.class);
+        Assert.notNull(updateProvider, "Converting ProviderForm to UpdateProvider produced null");
+        providerService.updateProvider(box.username(), box.name(), version.name(), providerType, updateProvider);
+        final var provider = providerService.getProvider(box.username(), box.name(), version.name(), updateProvider.name());
+        if (provider.hosted()) {
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers/" + provider.name() + "/upload");
+        } else {
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers");
+        }
+    }
+
+    @GetMapping(path = "/{username}/boxes/{name}/versions/{version}/providers/{provider}/upload")
     public ModelAndView getUploadPage(@PathVariable(name = "username") final String username,
                                       @PathVariable(name = "name") final String name,
                                       @PathVariable(name = "version") final String versionParam,
@@ -346,24 +405,13 @@ public class BoxController {
                     .toUri().toString();
             modelAndView.addObject("upload", upload.with(uploadPathUrl));
         } catch (ItemNotFoundException e) {
-            modelAndView.addObject("upload", null);
+            final var uid = uploadService.createUpload(username, name, versionParam, ProviderType.fromProvider(providerParam));
+            final var upload = uploadService.getUpload(uid);
+            final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
+                    .buildAndExpand(upload.uid())
+                    .toUri().toString();
+            modelAndView.addObject("upload", upload.with(uploadPathUrl));
         }
-        return modelAndView;
-    }
-
-    @PostMapping(path = "/{username}/boxes/{name}/versions/{version}/providers/{provider}")
-    public ModelAndView postUploadPage(@PathVariable(name = "username") final String username,
-                                       @PathVariable(name = "name") final String name,
-                                       @PathVariable(name = "version") final String versionParam,
-                                       @PathVariable(name = "provider") final String providerParam,
-                                       final UriComponentsBuilder uriBuilder) {
-        final var modelAndView = getUploadPage(username, name, versionParam, providerParam, uriBuilder);
-        final var uid = uploadService.createUpload(username, name, versionParam, ProviderType.fromProvider(providerParam));
-        final var upload = uploadService.getUpload(uid);
-        final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
-                .buildAndExpand(uid)
-                .toUri().toString();
-        modelAndView.addObject("upload", upload.with(uploadPathUrl));
         return modelAndView;
     }
 

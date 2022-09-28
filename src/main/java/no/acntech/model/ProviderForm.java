@@ -13,10 +13,18 @@ public class ProviderForm {
     @NotBlank
     @Size(max = 200)
     private String checksum;
-    @NotNull
-    private Boolean hosted;
     @Size(max = 200)
     private String url;
+
+    public ProviderForm() {
+    }
+
+    public ProviderForm(ProviderType name, Algorithm checksumType, String checksum, String url) {
+        this.name = name;
+        this.checksumType = checksumType;
+        this.checksum = checksum;
+        this.url = url;
+    }
 
     public ProviderType getName() {
         return name;
@@ -40,14 +48,6 @@ public class ProviderForm {
 
     public void setChecksum(String checksum) {
         this.checksum = checksum;
-    }
-
-    public Boolean getHosted() {
-        return hosted;
-    }
-
-    public void setHosted(Boolean hosted) {
-        this.hosted = hosted;
     }
 
     public String getUrl() {

@@ -83,7 +83,7 @@
         </div>
 
         <div class="list-group" th:each="provider : ${providers}">
-            <a th:href="@{/{organization}/boxes/{box}/versions/{version}/providers/{provider}(organization=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}"
+            <a th:href="@{/{organization}/boxes/{box}/versions/{version}/provider/{provider}(organization=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}"
                class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
                     <div>

@@ -27,7 +27,7 @@ public class ProviderConverter implements Converter<ProvidersRecord, Provider> {
                 source.getHostedToken(),
                 ProviderStatus.valueOf(source.getStatus()),
                 source.getVersionId(),
-                null, // TODO: Handle
+                source.getOriginalUrl(),
                 null, // Is set in resource
                 source.getCreated().atZone(ZoneId.systemDefault()),
                 source.getModified() == null ? null : source.getModified().atZone(ZoneId.systemDefault()));

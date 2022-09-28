@@ -14,6 +14,7 @@ import java.util.Collections;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.model.Login;
 import no.acntech.model.Token;
+import no.acntech.model.TokenUser;
 import no.acntech.model.User;
 import no.acntech.repository.TokenRepository;
 
@@ -48,7 +49,8 @@ public class AuthenticateService {
                 final var signedJWT = tokenService.createToken(user.username(), Collections.singletonList(user.role().name()));
                 final var jwt = signedJWT.serialize();
                 final var createdAt = tokenService.getIssuedDateTime(signedJWT);
-                final var token = new Token(login.token().description(), jwt, "", createdAt);
+                final var tokenUser = new TokenUser(user.username());
+                final var token = new Token(login.token().description(), jwt, null, createdAt, tokenUser);
                 tokenRepository.saveToken(login.user().login(), token);
                 return token;
             }

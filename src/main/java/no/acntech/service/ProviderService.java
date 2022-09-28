@@ -1,5 +1,6 @@
 package no.acntech.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.exception.NoDataFoundException;
 import org.slf4j.Logger;
@@ -105,6 +106,7 @@ public class ProviderService {
                         PROVIDERS.CHECKSUM,
                         PROVIDERS.CHECKSUM_TYPE,
                         PROVIDERS.HOSTED,
+                        PROVIDERS.ORIGINAL_URL,
                         PROVIDERS.STATUS,
                         PROVIDERS.VERSION_ID,
                         PROVIDERS.CREATED)) {
@@ -113,7 +115,8 @@ public class ProviderService {
                             createProvider.name().name(),
                             createProvider.checksum().toLowerCase(),
                             createProvider.checksumType().name(),
-                            createProvider.hosted(),
+                            StringUtils.isBlank(createProvider.url()),
+                            createProvider.url(),
                             ProviderStatus.PENDING.name(),
                             version.id(),
                             LocalDateTime.now())
@@ -140,6 +143,8 @@ public class ProviderService {
                 .set(PROVIDERS.NAME, updateProvider.name().name())
                 .set(PROVIDERS.CHECKSUM, updateProvider.checksum())
                 .set(PROVIDERS.CHECKSUM_TYPE, updateProvider.checksumType().name())
+                .set(PROVIDERS.HOSTED, StringUtils.isBlank(updateProvider.url()))
+                .set(PROVIDERS.ORIGINAL_URL, updateProvider.url())
                 .set(PROVIDERS.MODIFIED, LocalDateTime.now())) {
             final var rowsAffected = update
                     .where(PROVIDERS.ID.eq(provider.id()))
