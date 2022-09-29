@@ -4,5 +4,6 @@ public enum ProviderStatus {
 
     PENDING,
     UPLOADED,
-    VERIFIED;
+    EXTERNAL,
+    VERIFIED
 }

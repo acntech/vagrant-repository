@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import no.acntech.exception.CannotSaveItemException;
 import no.acntech.exception.ChecksumException;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
@@ -81,8 +82,10 @@ public class UploadService {
                                @NotNull final ProviderType providerParam) {
         final var tag = username + "/" + name;
         LOGGER.info("Create upload for provider {} and version {} of box {}", providerParam, version, tag);
-        final var uid = UUID.randomUUID().toString();
         final var provider = providerService.getProvider(username, name, version, providerParam);
+        if (!provider.hosted()) {
+            throw new CannotSaveItemException("Cannot upload image for externally hosted boxes");
+        }
         try (final var update = context
                 .update(UPLOADS)
                 .set(UPLOADS.STATUS, UpdateStatus.INACTIVE.name())
@@ -93,6 +96,7 @@ public class UploadService {
                     .execute();
             LOGGER.debug("Updated record in UPLOADS table affected {} rows", rowsAffected);
         }
+        final var uid = UUID.randomUUID().toString();
         try (final var insert = context
                 .insertInto(UPLOADS,
                         UPLOADS.UID,

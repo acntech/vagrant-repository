@@ -18,7 +18,7 @@ import no.acntech.model.Login;
 import no.acntech.model.Token;
 import no.acntech.service.AuthenticateService;
 
-@RequestMapping(path = "/api/authenticate")
+@RequestMapping(path = "/api/v1/authenticate")
 @RestController
 public class AuthenticateResource {
 

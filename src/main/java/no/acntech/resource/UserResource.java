@@ -16,7 +16,7 @@ import no.acntech.model.UpdateUser;
 import no.acntech.model.User;
 import no.acntech.service.UserService;
 
-@RequestMapping(path = "/api/user")
+@RequestMapping(path = "/api/v1/user")
 @RestController
 public class UserResource {
 

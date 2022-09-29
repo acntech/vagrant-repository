@@ -100,6 +100,7 @@ public class ProviderService {
         final var tag = username + "/" + name;
         LOGGER.info("Create provider {} for version {} of box {}", createProvider.name(), versionParam, tag);
         final var version = versionService.getVersion(username, name, versionParam);
+        final var status = StringUtils.isBlank(createProvider.url()) ? ProviderStatus.PENDING : ProviderStatus.EXTERNAL;
         try (final var insert = context
                 .insertInto(PROVIDERS,
                         PROVIDERS.NAME,
@@ -117,7 +118,7 @@ public class ProviderService {
                             createProvider.checksumType().name(),
                             StringUtils.isBlank(createProvider.url()),
                             createProvider.url(),
-                            ProviderStatus.PENDING.name(),
+                            status.name(),
                             version.id(),
                             LocalDateTime.now())
                     .execute();
@@ -138,6 +139,7 @@ public class ProviderService {
         final var tag = username + "/" + name;
         LOGGER.info("Update provider {} for version {} of box {}", providerParam, version, tag);
         final var provider = getProvider(username, name, version, providerParam);
+        final var status = StringUtils.isBlank(updateProvider.url()) ? ProviderStatus.PENDING : ProviderStatus.EXTERNAL;
         try (final var update = context
                 .update(PROVIDERS)
                 .set(PROVIDERS.NAME, updateProvider.name().name())
@@ -145,6 +147,7 @@ public class ProviderService {
                 .set(PROVIDERS.CHECKSUM_TYPE, updateProvider.checksumType().name())
                 .set(PROVIDERS.HOSTED, StringUtils.isBlank(updateProvider.url()))
                 .set(PROVIDERS.ORIGINAL_URL, updateProvider.url())
+                .set(PROVIDERS.STATUS, status.name())
                 .set(PROVIDERS.MODIFIED, LocalDateTime.now())) {
             final var rowsAffected = update
                     .where(PROVIDERS.ID.eq(provider.id()))

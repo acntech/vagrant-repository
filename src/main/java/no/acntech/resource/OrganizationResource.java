@@ -18,7 +18,7 @@ import no.acntech.model.UpdateOrganization;
 import no.acntech.service.OrganizationService;
 import no.acntech.service.SecurityService;
 
-@RequestMapping(path = "/api/organization")
+@RequestMapping(path = "/api/v1/organization")
 @RestController
 public class OrganizationResource {
 

@@ -28,7 +28,7 @@ import no.acntech.service.ProviderService;
 import no.acntech.service.UploadService;
 import no.acntech.service.VersionService;
 
-@RequestMapping(path = "/api/box")
+@RequestMapping(path = "/api/v1/box")
 @RestController
 public class BoxResource {
 

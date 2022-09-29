@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import no.acntech.service.StorageService;
 import no.acntech.service.UploadService;
 
-@RequestMapping(path = "/api/storage")
+@RequestMapping(path = "/api/v1/storage")
 @RestController
 public class StorageResource {
 

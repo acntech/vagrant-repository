@@ -1,23 +1,14 @@
 $(document).ready(() => {
     $("#hosted").change(() => {
-        if ($("#externalUrlWrapper").hasClass("d-none")) {
-            $("#externalUrlWrapper").removeClass("d-none");
-        } else {
+        if ($("#hosted").is(':checked')) {
             $("#externalUrlWrapper").addClass("d-none");
+        } else {
+            $("#externalUrlWrapper").removeClass("d-none");
         }
     });
 });
 
-const postRequest = (url) => {
-    $.ajax({
-        type: "POST",
-        url: url,
-        async: false,
-        success: (result) => {
-            console.log(result);
-        },
-        error: function (xhr, statusText, err) {
-            alert("error" + xhr.status);
-        }
-    });
+const submitDeleteItemForm = () => {
+    $('#deleteItemModal').modal('hide');
+    $("#deleteItemForm").submit();
 };

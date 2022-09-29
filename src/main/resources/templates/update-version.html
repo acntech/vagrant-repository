@@ -77,23 +77,45 @@
                     <button id="button" class="btn btn-primary w-100" th:type="submit"
                             th:text="#{update-version.page.form.update-button}"></button>
                 </div>
-                <div class="col-8"></div>
-            </div>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        </form>
-        <form class="mb-3"
-              th:action="@{/{username}/boxes/{box}/version/{version}/delete(username=${box.username},box=${box.name},version=${version.name})}"
-              th:method="post">
-            <div class="row mb-3">
-                <div class="col-8"></div>
-                <div class="form-group col-4">
-                    <button id="delete-button" class="btn btn-danger w-100" th:type="submit"
-                            th:text="#{update-version.page.form.delete-button}"></button>
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <button id="delete-modal-button" class="btn btn-danger" th:type="button" data-bs-toggle="modal"
+                            data-bs-target="#deleteItemModal"
+                            th:text="#{update-version.page.modal.delete-item.delete-button}">
+                    </button>
                 </div>
             </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>
+        <form id="deleteItemForm" class="mb-3" th:method="post"
+              th:action="@{/{username}/boxes/{box}/version/{version}/delete(username=${box.username},box=${box.name},version=${version.name})}">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
     </section>
+    <div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog"
+         aria-labelledby="deleteItemModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteItemModalLabel"
+                        th:text="#{update-version.page.modal.delete-item.title}"></h5>
+                    <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <p th:utext="#{update-version.page.modal.delete-item.text.delete-warning}"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            th:text="#{update-version.page.modal.delete-item.cancel-button}"></button>
+                    <button id="confirm-button" class="btn btn-danger" onclick="submitDeleteItemForm()"
+                            th:text="#{update-version.page.modal.delete-item.confirm-button}"></button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 </body>
 </html>

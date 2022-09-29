@@ -404,7 +404,7 @@ public class BoxController {
         if (provider.hosted()) {
             return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers/" + provider.name() + "/upload");
         } else {
-            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers");
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
         }
     }
 
