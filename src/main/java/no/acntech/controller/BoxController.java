@@ -135,6 +135,13 @@ public class BoxController {
         return new ModelAndView("redirect:/" + organization.name() + "/boxes");
     }
 
+    @PostMapping(path = "/organization/{name}/delete")
+    public ModelAndView postDeleteOrganizationPage(@PathVariable(name = "name") final String name) {
+        final var organization = organizationService.getOrganization(name);
+        organizationService.deleteOrganization(organization.name());
+        return new ModelAndView("redirect:/organizations");
+    }
+
     @GetMapping(path = "/organizations")
     public ModelAndView getOrganizationsPage() {
         final var username = securityService.getUsername();
@@ -202,6 +209,14 @@ public class BoxController {
         boxService.updateBox(username, name, new UpdateBox(form.getName(), form.getDescription(), form.getDescription(), form.getPrivate()));
         final var box = boxService.getBox(username, form.getName().toLowerCase());
         return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name());
+    }
+
+    @PostMapping(path = "/box/{username}/{name}/delete")
+    public ModelAndView postDeleteBoxPage(@PathVariable(name = "username") final String username,
+                                          @PathVariable(name = "name") final String name) {
+        final var box = boxService.getBox(username, name);
+        boxService.deleteBox(username, name);
+        return new ModelAndView("redirect:/" + box.username() + "/boxes");
     }
 
     @GetMapping(path = "/{username}/boxes")
@@ -281,6 +296,15 @@ public class BoxController {
         versionService.updateVersion(box.username(), box.name(), versionParam, new UpdateVersion(form.getName(), form.getDescription()));
         final var version = versionService.getVersion(username, name, form.getName());
         return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
+    }
+
+    @PostMapping(path = "/{username}/boxes/{name}/version/{version}/delete")
+    public ModelAndView postDeleteVersionPage(@PathVariable(name = "username") final String username,
+                                              @PathVariable(name = "name") final String name,
+                                              @PathVariable(name = "version") final String versionParam) {
+        final var box = boxService.getBox(username, name);
+        versionService.deleteVersion(box.username(), box.name(), versionParam);
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name());
     }
 
     @GetMapping(path = "/{username}/boxes/{name}/versions/{version}")
@@ -382,6 +406,18 @@ public class BoxController {
         } else {
             return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers");
         }
+    }
+
+    @PostMapping(path = "/{username}/boxes/{name}/versions/{version}/provider/{provider}/delete")
+    public ModelAndView postDeleteProviderPage(@PathVariable(name = "username") final String username,
+                                               @PathVariable(name = "name") final String name,
+                                               @PathVariable(name = "version") final String versionParam,
+                                               @PathVariable(name = "provider") final String providerParam) {
+        final var providerType = ProviderType.fromProvider(providerParam);
+        final var box = boxService.getBox(username, name);
+        final var version = versionService.getVersion(box.username(), box.name(), versionParam);
+        providerService.deleteProvider(box.username(), box.name(), version.name(), providerType);
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
     }
 
     @GetMapping(path = "/{username}/boxes/{name}/versions/{version}/providers/{provider}/upload")

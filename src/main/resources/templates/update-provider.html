@@ -21,27 +21,27 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{organization}/boxes(organization=${box.username})}">
+            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}">
                 <span th:text="${box.username}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
+            <a class="nav-link" th:href="@{/{username}/boxes/{box}(username=${box.username},box=${box.name})}">
                 <span th:text="${box.name}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.name})}">
+               th:href="@{/{username}/boxes/{box}/versions/{version}(username=${box.username},box=${box.name},version=${version.name})}">
                 <span th:text="${version.name}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{organization}/boxes/{box}/versions/{version}/provider/{provider}(organization=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}">
+               th:href="@{/{username}/boxes/{box}/versions/{version}/provider/{provider}(username=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}">
                 <span th:text="${provider.name}"></span>
             </a>
         </li>
@@ -51,7 +51,7 @@
     <section class="content content-provider">
         <h3 class="mb-4" th:text="#{update-provider.page.title}"></h3>
         <form class="mb-3"
-              th:action="@{/{organization}/boxes/{box}/versions/{version}/provider/{provider}(organization=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}"
+              th:action="@{/{username}/boxes/{box}/versions/{version}/provider/{provider}(username=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}"
               th:object="${formData}" th:method="post">
             <div class="row mb-3">
                 <div class="form-group col-4">
@@ -117,10 +117,22 @@
             </div>
             <div class="row mb-3">
                 <div class="form-group col-4">
-                    <button id="button" class="btn btn-primary w-100" th:type="submit"
-                            th:text="#{update-provider.page.form.button}"></button>
+                    <button id="update-button" class="btn btn-primary w-100" th:type="submit"
+                            th:text="#{update-provider.page.form.update-button}"></button>
                 </div>
                 <div class="col-8"></div>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+        <form class="mb-3"
+              th:action="@{/{username}/boxes/{box}/versions/{version}/provider/{provider}/delete(username=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}"
+              th:method="post">
+            <div class="row mb-3">
+                <div class="col-8"></div>
+                <div class="form-group col-4">
+                    <button id="delete-button" class="btn btn-danger w-100" th:type="submit"
+                            th:text="#{update-provider.page.form.delete-button}"></button>
+                </div>
             </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>
