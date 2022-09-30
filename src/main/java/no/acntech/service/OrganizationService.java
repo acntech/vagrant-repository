@@ -161,7 +161,7 @@ public class OrganizationService {
         if (OrganizationRole.OWNER.name().equals(organizationMember.getRole())) {
             final int numberOfOwners = memberRepository.getMemberCount(organizationMember.getOrganizationId(), OrganizationRole.OWNER);
             if (numberOfOwners == 1) {
-                throw new CannotDeleteItemException("Cannot delete membership of single organization owner");
+                throw new CannotDeleteItemException("Cannot delete membership of last organization owner");
             }
         }
 

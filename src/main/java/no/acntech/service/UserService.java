@@ -19,12 +19,15 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import no.acntech.exception.CannotDeleteItemException;
 import no.acntech.exception.ItemAlreadyExistsException;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
 import no.acntech.model.CreateUser;
+import no.acntech.model.OrganizationRole;
 import no.acntech.model.UpdateUser;
 import no.acntech.model.User;
+import no.acntech.repository.MemberRepository;
 import no.acntech.repository.UserRepository;
 
 @Validated
@@ -35,13 +38,16 @@ public class UserService {
     private final ConversionService conversionService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     public UserService(final ConversionService conversionService,
                        final PasswordEncoder passwordEncoder,
-                       final UserRepository userRepository) {
+                       final UserRepository userRepository,
+                       final MemberRepository memberRepository) {
         this.conversionService = conversionService;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
     }
 
     public User getUser(@NotBlank final String username) {
@@ -111,7 +117,15 @@ public class UserService {
 
     public void deleteUser(@NotBlank final String username) {
         LOGGER.debug("Delete user {}", username);
-        // TODO: Verify that user isn't last member or last owner of organization
+        final var memberships = memberRepository.findMemberships(username);
+        if (!memberships.isEmpty()) {
+            for (var membership : memberships) {
+                final var numberOfOwners = memberRepository.getMemberCount(membership.getOrganizationId(), OrganizationRole.OWNER);
+                if (numberOfOwners == 1) {
+                    throw new CannotDeleteItemException("Cannot delete membership of last organization owner");
+                }
+            }
+        }
         final var rowsAffected = userRepository.deleteUser(username);
         LOGGER.debug("Delete record in USERS table affected {} rows", rowsAffected);
         if (rowsAffected == 0) {
