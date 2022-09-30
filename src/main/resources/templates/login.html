@@ -31,13 +31,15 @@
             </a>
         </div>
         <div th:if="${param.error != null && param.error == 'failed'}" class="alert alert-danger" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
             <span th:text="#{login.page.alert.invalid-credentials}"></span>
         </div>
         <div th:if="${param.logout != null && param.logout == 'success'}" class="alert alert-success" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>
             <span th:text="#{login.page.alert.logout-success}"></span>
         </div>
-        <div th:if="${param.register != null && param.register == 'success'}" class="alert alert-success"
-             role="alert">
+        <div th:if="${param.register != null && param.register == 'success'}" class="alert alert-success" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>
             <span th:text="#{login.page.alert.register-success}"></span>
         </div>
     </section>

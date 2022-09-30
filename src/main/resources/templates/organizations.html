@@ -30,10 +30,6 @@
                role="button" th:text="#{organizations.page.button.create}"></a>
         </div>
 
-        <div th:if="${#lists.isEmpty(organizations)}" class="list-group-item">
-            <span th:text="#{organizations.page.text.not-a-member}"></span>
-        </div>
-
         <div class="list-group" th:each="organization : ${organizations}">
             <a th:href="@{/{org}/boxes(org=${organization.name})}" class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
@@ -47,6 +43,11 @@
                     </div>
                 </div>
             </a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(organizations)}" class="alert alert-warning mt-3" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            <span th:text="#{organizations.page.alert.has-no-organizations}"></span>
         </div>
     </section>
 </main>

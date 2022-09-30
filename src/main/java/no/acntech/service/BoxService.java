@@ -144,7 +144,6 @@ public class BoxService {
                           @NotBlank final String name) {
         final var tag = username + "/" + name;
         LOGGER.info("Delete box {}", tag);
-        // TODO: Verify that box has no versions
         final var box = getBox(username, name);
         try (final var delete = context.deleteFrom(BOXES)) {
             final var rowsAffected = delete

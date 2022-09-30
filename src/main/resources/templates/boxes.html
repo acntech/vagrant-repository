@@ -51,10 +51,6 @@
                role="button" th:text="#{boxes.page.button.update-organization}"></a>
         </div>
 
-        <div th:if="${#lists.isEmpty(boxes)}" class="list-group-item">
-            <span th:text="#{boxes.page.text.no-boxes}"></span>
-        </div>
-
         <div class="list-group" th:each="box : ${boxes}">
             <a th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}"
                class="list-group-item list-group-item-action">
@@ -75,6 +71,11 @@
                     </div>
                 </div>
             </a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(boxes)}" class="alert alert-warning mt-3" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            <span th:text="#{boxes.page.alert.has-no-boxes}"></span>
         </div>
     </section>
 </main>

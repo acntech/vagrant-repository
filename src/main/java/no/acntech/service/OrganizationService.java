@@ -130,7 +130,6 @@ public class OrganizationService {
     @Transactional
     public void deleteOrganization(@NotBlank final String name) {
         LOGGER.debug("Delete organizations {}", name);
-        // TODO: Verify that organization has no boxes
         final var rowsAffected = organizationRepository.deleteOrganization(name);
         LOGGER.debug("Delete record in ORGANIZATIONS table affected {} rows", rowsAffected);
         if (rowsAffected == 0) {

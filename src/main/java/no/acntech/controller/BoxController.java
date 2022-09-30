@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import no.acntech.exception.CannotSaveItemException;
 import no.acntech.exception.ChecksumException;
 import no.acntech.exception.ItemNotFoundException;
+import no.acntech.filter.StreamFilters;
 import no.acntech.model.Algorithm;
 import no.acntech.model.CreateBox;
 import no.acntech.model.CreateBoxForm;
@@ -36,6 +37,7 @@ import no.acntech.model.UpdateOrganization;
 import no.acntech.model.UpdateProvider;
 import no.acntech.model.UpdateVersion;
 import no.acntech.model.VersionForm;
+import no.acntech.model.VersionStatus;
 import no.acntech.service.BoxService;
 import no.acntech.service.OrganizationService;
 import no.acntech.service.ProviderService;
@@ -308,6 +310,24 @@ public class BoxController {
         return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name());
     }
 
+    @PostMapping(path = "/{username}/boxes/{name}/version/{version}/release")
+    public ModelAndView postReleaseVersionPage(@PathVariable(name = "username") final String username,
+                                               @PathVariable(name = "name") final String name,
+                                               @PathVariable(name = "version") final String versionParam) {
+        final var box = boxService.getBox(username, name);
+        versionService.updateVersionStatus(box.username(), box.name(), versionParam, VersionStatus.ACTIVE);
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name());
+    }
+
+    @PostMapping(path = "/{username}/boxes/{name}/version/{version}/revoke")
+    public ModelAndView postRevokeVersionPage(@PathVariable(name = "username") final String username,
+                                              @PathVariable(name = "name") final String name,
+                                              @PathVariable(name = "version") final String versionParam) {
+        final var box = boxService.getBox(username, name);
+        versionService.updateVersionStatus(box.username(), box.name(), versionParam, VersionStatus.INACTIVE);
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name());
+    }
+
     @GetMapping(path = "/{username}/boxes/{name}/versions/{version}")
     public ModelAndView getProvidersPage(@PathVariable(name = "username") final String username,
                                          @PathVariable(name = "name") final String name,
@@ -315,10 +335,16 @@ public class BoxController {
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
         final var providers = providerService.findProviders(box.username(), box.name(), version.name());
+        final var nonVerifiedProviders = providers.stream()
+                .filter(StreamFilters::hasStatusNoneVerified)
+                .count();
         final var modelAndView = new ModelAndView("providers");
         modelAndView.addObject("box", box);
         modelAndView.addObject("version", version);
         modelAndView.addObject("providers", providers);
+        modelAndView.addObject("hasNoProviders", providers.isEmpty());
+        modelAndView.addObject("hasNonVerifiedProviders", nonVerifiedProviders > 0);
+        modelAndView.addObject("canNotReleaseVersion", providers.isEmpty() || nonVerifiedProviders > 0);
         return modelAndView;
     }
 

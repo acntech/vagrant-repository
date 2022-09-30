@@ -68,6 +68,7 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>
         <div th:if="${verified != null && verified != true}" class="alert alert-danger" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
             <span th:text="#{upload.page.alert.not-verified}"></span>
         </div>
     </section>

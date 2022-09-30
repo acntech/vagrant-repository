@@ -8,7 +8,11 @@ $(document).ready(() => {
     });
 });
 
-const submitDeleteItemForm = () => {
-    $('#deleteItemModal').modal('hide');
-    $("#deleteItemForm").submit();
+const closeModalAndSubmitForm = (modal, form) => {
+    $(modal).modal('hide');
+    $(form).submit();
+};
+
+const submitForm = (form) => {
+    $(form).submit();
 };

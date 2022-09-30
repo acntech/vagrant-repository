@@ -21,20 +21,20 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{organization}/boxes(organization=${box.username})}">
+            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}">
                 <span th:text="${box.username}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
+            <a class="nav-link" th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}">
                 <span th:text="${box.name}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.name})}">
+               th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.name})}">
                 <span th:text="${version.name}"></span>
             </a>
         </li>
@@ -47,17 +47,17 @@
         <div class="d-flex w-100 justify-content-between mb-2">
             <div class="box-breadcrumb">
                 <h5 class="mb-1">
-                    <a class="link-dark" th:href="@{/{organization}/boxes(organization=${box.username})}">
+                    <a class="link-dark" th:href="@{/{username}/boxes(username=${box.username})}">
                         <span th:text="${box.username}"></span>
                     </a>
                     /
                     <a class="link-dark"
-                       th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}">
+                       th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}">
                         <span th:text="${box.name}"></span>
                     </a>
                     /
                     <a class="link-dark"
-                       th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.name})}">
+                       th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.name})}">
                         <span th:text="${version.name}"></span>
                     </a>
                 </h5>
@@ -66,24 +66,32 @@
             <div>
                 <small class="text-muted d-block mb-2"
                        th:text="${#temporals.format(version.created, 'yyyy-MM-dd')}"></small>
+                <p class="text-end mb-0">
+                            <span class="badge bg-success rounded-pill" th:if="${version.status.name() == 'ACTIVE'}"
+                                  th:text="${version.status.name()}"></span>
+                    <span class="badge bg-danger rounded-pill" th:if="${version.status.name() == 'INACTIVE'}"
+                          th:text="${version.status.name()}"></span>
+                </p>
             </div>
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end pb-2 mb-4">
-            <a th:href="@{/{organization}/boxes/{box}/versions/{version}/provider(organization=${box.username},box=${box.name},version=${version.name})}"
-               class="btn btn-primary me-md-2"
-               role="button" th:text="#{providers.page.button.create-provider}"></a>
-            <a th:href="@{/{organization}/boxes/{box}/version/{version}(organization=${box.username},box=${box.name},version=${version.name})}"
-               class="btn btn-primary me-md-2"
-               role="button" th:text="#{providers.page.button.update-version}"></a>
-        </div>
-
-        <div th:if="${#lists.isEmpty(providers)}" class="list-group-item">
-            <span th:text="#{providers.page.text.no-providers}"></span>
+            <a class="btn btn-primary me-md-2" role="button"
+               th:href="@{/{username}/boxes/{box}/versions/{version}/provider(username=${box.username},box=${box.name},version=${version.name})}"
+               th:text="#{providers.page.button.create-provider}"></a>
+            <a class="btn btn-primary me-md-2" role="button" onclick="submitForm('#releaseVersionForm')"
+               th:if="${version.status.name() == 'INACTIVE'}" th:text="#{providers.page.button.release-version}"
+               th:classappend="${canNotReleaseVersion} ? 'disabled' : ''"
+               th:attrappend="aria-disabled=${canNotReleaseVersion} ? 'true' : 'false'"></a>
+            <a class="btn btn-primary me-md-2" role="button" onclick="submitForm('#revokeVersionForm')"
+               th:if="${version.status.name() == 'ACTIVE'}" th:text="#{providers.page.button.revoke-version}"></a>
+            <a class="btn btn-primary me-md-2" role="button"
+               th:href="@{/{username}/boxes/{name}/version/{version}(username=${box.username},name=${box.name},version=${version.name})}"
+               th:text="#{providers.page.button.update-version}"></a>
         </div>
 
         <div class="list-group" th:each="provider : ${providers}">
-            <a th:href="@{/{organization}/boxes/{box}/versions/{version}/provider/{provider}(organization=${box.username},box=${box.name},version=${version.name},provider=${provider.name})}"
+            <a th:href="@{/{username}/boxes/{name}/versions/{version}/provider/{provider}(username=${box.username},name=${box.name},version=${version.name},provider=${provider.name})}"
                class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
                     <div>
@@ -96,11 +104,36 @@
                     <div>
                         <small class="text-muted d-block mb-2"
                                th:text="${#temporals.format(provider.created, 'yyyy-MM-dd')}"></small>
+                        <span class="badge bg-success rounded-pill" th:if="${provider.status.name() == 'VERIFIED'}"
+                              th:text="${provider.status.name()}"></span>
+                        <span class="badge bg-warning rounded-pill" th:if="${provider.status.name() == 'EXTERNAL'}"
+                              th:text="${provider.status.name()}"></span>
+                        <span class="badge bg-danger rounded-pill" th:if="${provider.status.name() == 'PENDING'}"
+                              th:text="PENDING"></span>
+                        <span class="badge bg-danger rounded-pill" th:if="${provider.status.name() == 'UPLOADED'}"
+                              th:text="PENDING"></span>
                     </div>
                 </div>
             </a>
         </div>
+
+        <div th:if="${hasNoProviders}" class="alert alert-warning mt-3" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            <span th:text="#{providers.page.alert.has-no-providers}"></span>
+        </div>
+        <div th:if="${hasNonVerifiedProviders}" class="alert alert-warning mt-3" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            <span th:text="#{providers.page.alert.has-non-verified-providers}"></span>
+        </div>
     </section>
+    <form id="releaseVersionForm" class="mb-3" th:method="post"
+          th:action="@{/{username}/boxes/{name}/version/{version}/release(username=${box.username},name=${box.name},version=${version.name})}">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    </form>
+    <form id="revokeVersionForm" class="mb-3" th:method="post"
+          th:action="@{/{username}/boxes/{name}/version/{version}/revoke(username=${box.username},name=${box.name},version=${version.name})}">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    </form>
 </main>
 </body>
 </html>

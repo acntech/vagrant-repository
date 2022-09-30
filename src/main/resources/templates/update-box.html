@@ -92,11 +92,11 @@
             </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>
-        <form id="deleteItemForm" class="mb-3" th:method="post"
-              th:action="@{/box/{username}/{name}/delete(username=${box.username},name=${box.name})}">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        </form>
     </section>
+    <form id="deleteItemForm" class="mb-3" th:method="post"
+          th:action="@{/box/{username}/{name}/delete(username=${box.username},name=${box.name})}">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    </form>
     <div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog"
          aria-labelledby="deleteItemModalLabel"
          aria-hidden="true">
@@ -115,7 +115,8 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             th:text="#{update-box.page.modal.delete-item.cancel-button}"></button>
-                    <button id="confirm-button" class="btn btn-danger" onclick="submitDeleteItemForm()"
+                    <button id="confirm-button" class="btn btn-danger"
+                            onclick="closeModalAndSubmitForm('#deleteItemModal', '#deleteItemForm')"
                             th:text="#{update-box.page.modal.delete-item.confirm-button}"></button>
                 </div>
             </div>
