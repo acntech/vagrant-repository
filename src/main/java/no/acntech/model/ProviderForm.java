@@ -8,21 +8,21 @@ public class ProviderForm {
 
     @NotNull
     private ProviderType name;
-    @NotNull
-    private Algorithm checksumType;
     @NotBlank
     @Size(max = 200)
     private String checksum;
+    @NotNull
+    private Algorithm checksumType;
     @Size(max = 200)
     private String url;
 
     public ProviderForm() {
     }
 
-    public ProviderForm(ProviderType name, Algorithm checksumType, String checksum, String url) {
+    public ProviderForm(ProviderType name, String checksum, Algorithm checksumType, String url) {
         this.name = name;
-        this.checksumType = checksumType;
         this.checksum = checksum;
+        this.checksumType = checksumType;
         this.url = url;
     }
 
@@ -34,20 +34,20 @@ public class ProviderForm {
         this.name = name;
     }
 
-    public Algorithm getChecksumType() {
-        return checksumType;
-    }
-
-    public void setChecksumType(Algorithm checksumType) {
-        this.checksumType = checksumType;
-    }
-
     public String getChecksum() {
         return checksum;
     }
 
     public void setChecksum(String checksum) {
         this.checksum = checksum;
+    }
+
+    public Algorithm getChecksumType() {
+        return checksumType;
+    }
+
+    public void setChecksumType(Algorithm checksumType) {
+        this.checksumType = checksumType;
     }
 
     public String getUrl() {

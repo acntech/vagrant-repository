@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import no.acntech.exception.CannotSaveItemException;
 import no.acntech.exception.ChecksumException;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.model.Algorithm;
@@ -336,6 +337,7 @@ public class BoxController {
         return modelAndView;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @PostMapping(path = "/{username}/boxes/{name}/versions/{version}/provider")
     public ModelAndView postCreateProviderPage(@PathVariable(name = "username") final String username,
                                                @PathVariable(name = "name") final String name,
@@ -357,10 +359,11 @@ public class BoxController {
         if (provider.hosted()) {
             return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers/" + provider.name() + "/upload");
         } else {
-            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers");
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
         }
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @GetMapping(path = "/{username}/boxes/{name}/versions/{version}/provider/{provider}")
     public ModelAndView getUpdateProviderPage(@PathVariable(name = "username") final String username,
                                               @PathVariable(name = "name") final String name,
@@ -370,13 +373,15 @@ public class BoxController {
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
         final var provider = providerService.getProvider(box.username(), box.name(), version.name(), providerType);
+        final var providerForm = conversionService.convert(provider, ProviderForm.class);
+        Assert.notNull(providerForm, "Converting Provider to ProviderForm produced null");
         final var modelAndView = new ModelAndView("update-provider");
         modelAndView.addObject("box", box);
         modelAndView.addObject("version", version);
         modelAndView.addObject("provider", provider);
         modelAndView.addObject("providerTypes", ProviderType.values());
         modelAndView.addObject("checksumTypes", Algorithm.values());
-        modelAndView.addObject("formData", new ProviderForm(provider.name(), provider.checksumType(), provider.checksum(), provider.downloadUrl()));
+        modelAndView.addObject("formData", providerForm);
         return modelAndView;
     }
 
@@ -420,6 +425,7 @@ public class BoxController {
         return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @GetMapping(path = "/{username}/boxes/{name}/versions/{version}/providers/{provider}/upload")
     public ModelAndView getUploadPage(@PathVariable(name = "username") final String username,
                                       @PathVariable(name = "name") final String name,
@@ -430,6 +436,9 @@ public class BoxController {
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
         final var provider = providerService.getProvider(box.username(), box.name(), version.name(), providerType);
+        if (!provider.hosted()) {
+            throw new CannotSaveItemException("Cannot upload box image for externally hosted boxes");
+        }
         final var modelAndView = new ModelAndView("upload");
         modelAndView.addObject("box", box);
         modelAndView.addObject("version", version);

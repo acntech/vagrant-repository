@@ -84,7 +84,7 @@ public class UploadService {
         LOGGER.info("Create upload for provider {} and version {} of box {}", providerParam, version, tag);
         final var provider = providerService.getProvider(username, name, version, providerParam);
         if (!provider.hosted()) {
-            throw new CannotSaveItemException("Cannot upload image for externally hosted boxes");
+            throw new CannotSaveItemException("Cannot upload box image for externally hosted boxes");
         }
         try (final var update = context
                 .update(UPLOADS)

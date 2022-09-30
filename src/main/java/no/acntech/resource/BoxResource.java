@@ -66,11 +66,15 @@ public class BoxResource {
                     final var providers = providerService.findProviders(username, name, version.name());
                     final var augmentedProviders = providers.stream()
                             .map(provider -> {
-                                final var upload = uploadService.getUpload(username, name, version.name(), provider.name());
-                                final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
-                                        .buildAndExpand(upload.uid())
-                                        .toUri().toString();
-                                return provider.with(uploadPathUrl);
+                                if (provider.hosted()) {
+                                    final var upload = uploadService.getUpload(username, name, version.name(), provider.name());
+                                    final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
+                                            .buildAndExpand(upload.uid())
+                                            .toUri().toString();
+                                    return provider.with(uploadPathUrl);
+                                } else {
+                                    return provider.with(provider.originalUrl());
+                                }
                             }).toList();
                     return version.with(releaseUrl, revokeUrl, augmentedProviders);
                 }).toList();
@@ -177,11 +181,15 @@ public class BoxResource {
                                                 final UriComponentsBuilder uriBuilder) {
         final var providerType = ProviderType.fromProvider(providerParam);
         final var provider = providerService.getProvider(username, name, version, providerType);
-        final var upload = uploadService.getUpload(username, name, version, providerType);
-        final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
-                .buildAndExpand(upload.uid())
-                .toUri().toString();
-        return ResponseEntity.ok(provider.with(uploadPathUrl));
+        if (provider.hosted()) {
+            final var upload = uploadService.getUpload(username, name, version, providerType);
+            final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
+                    .buildAndExpand(upload.uid())
+                    .toUri().toString();
+            return ResponseEntity.ok(provider.with(uploadPathUrl));
+        } else {
+            return ResponseEntity.ok(provider.with(provider.originalUrl()));
+        }
     }
 
     @PostMapping(path = "{username}/{name}/version/{version}/provider")
