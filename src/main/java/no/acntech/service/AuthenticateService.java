@@ -76,7 +76,7 @@ public class AuthenticateService {
         }
     }
 
-    public User getUser(@NotBlank final String username) {
+    private User getUser(@NotBlank final String username) {
         try {
             return userService.getUser(username);
         } catch (ItemNotFoundException e) {

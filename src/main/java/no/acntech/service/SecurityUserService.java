@@ -6,15 +6,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
-import no.acntech.model.SecurityUserDetails;
+import no.acntech.model.SecurityUser;
 
-public class SecurityUserDetailsService implements UserDetailsService {
+public class SecurityUserService implements UserDetailsService {
 
     private final UserService userService;
     private final SecurityService securityService;
 
-    public SecurityUserDetailsService(final UserService userService,
-                                      final SecurityService securityService) {
+    public SecurityUserService(final UserService userService,
+                               final SecurityService securityService) {
         this.userService = userService;
         this.securityService = securityService;
     }
@@ -25,7 +25,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
         try {
             final var users = userService.getUser(username);
             final var authorities = securityService.getAuthorities(users.role().name());
-            return SecurityUserDetails.builder()
+            return SecurityUser.builder()
                     .username(users.username())
                     .password(users.passwordHash())
                     .authorities(authorities)

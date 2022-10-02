@@ -1,5 +1,6 @@
 package no.acntech.model;
 
+import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -7,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
-public class SecurityUserDetails implements UserDetails {
+public class SecurityUser implements UserDetails, AuthenticatedPrincipal {
 
     @NotBlank
     private String username;
@@ -20,7 +21,7 @@ public class SecurityUserDetails implements UserDetails {
     private boolean credentialsNonExpired;
     private boolean enabled;
 
-    private SecurityUserDetails() {
+    private SecurityUser() {
     }
 
     @Override
@@ -58,6 +59,11 @@ public class SecurityUserDetails implements UserDetails {
         return enabled;
     }
 
+    @Override
+    public String getName() {
+        return username;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -86,8 +92,8 @@ public class SecurityUserDetails implements UserDetails {
             return this;
         }
 
-        public SecurityUserDetails build() {
-            final var target = new SecurityUserDetails();
+        public SecurityUser build() {
+            final var target = new SecurityUser();
             target.username = this.username;
             target.password = this.password;
             target.authorities = this.authorities;

@@ -6,6 +6,10 @@ acntech:
     public-key: classpath:public.pem
     private-key: classpath:private.pem
   security:
+    admin-user:
+      username: admin
+    system-user:
+      username: system
     cookie:
       name: ACNTECH_SESSION
       max-age: -1 # -1 = no expiry

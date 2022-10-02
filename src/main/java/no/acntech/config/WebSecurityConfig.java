@@ -15,7 +15,7 @@ import no.acntech.handler.TokenAuthenticationSuccessHandler;
 import no.acntech.repository.InMemorySecurityContextRepository;
 import no.acntech.service.HttpRequestService;
 import no.acntech.service.SecurityService;
-import no.acntech.service.SecurityUserDetailsService;
+import no.acntech.service.SecurityUserService;
 import no.acntech.service.TokenService;
 import no.acntech.service.UserService;
 
@@ -90,7 +90,7 @@ public class WebSecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new SecurityUserDetailsService(userService, securityService);
+        return new SecurityUserService(userService, securityService);
     }
 
     @Bean
