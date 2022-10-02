@@ -147,6 +147,22 @@ public class UserController {
         return new ModelAndView("redirect:/users");
     }
 
+    @PostMapping(path = "/user/{username}/delete")
+    public ModelAndView postDeleteUserPage(@PathVariable(name = "username") final String username) {
+        final var user = userService.getUser(username);
+        userService.deleteUser(user.username());
+        return new ModelAndView("redirect:/users");
+    }
+
+    @GetMapping(path = "/organizations")
+    public ModelAndView getOrganizationsPage() {
+        final var username = securityService.getUsername();
+        final var organizations = organizationService.findOrganizations(username);
+        final var modelAndView = new ModelAndView("organizations");
+        modelAndView.addObject("organizations", organizations);
+        return modelAndView;
+    }
+
     @GetMapping(path = "/organization")
     public ModelAndView getCreateOrganizationPage() {
         final var modelAndView = new ModelAndView("create-organization");
@@ -204,14 +220,5 @@ public class UserController {
         final var organization = organizationService.getOrganization(name);
         organizationService.deleteOrganization(organization.name());
         return new ModelAndView("redirect:/organizations");
-    }
-
-    @GetMapping(path = "/organizations")
-    public ModelAndView getOrganizationsPage() {
-        final var username = securityService.getUsername();
-        final var organizations = organizationService.findOrganizations(username);
-        final var modelAndView = new ModelAndView("organizations");
-        modelAndView.addObject("organizations", organizations);
-        return modelAndView;
     }
 }

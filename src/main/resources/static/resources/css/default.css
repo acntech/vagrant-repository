@@ -7,13 +7,13 @@
     margin: 0 auto;
 }
 
-.content-register {
+.content-password {
     max-width: 300px;
     margin: 0 auto;
 }
 
-.content-password {
-    max-width: 300px;
+.content-user {
+    max-width: 30%;
     margin: 0 auto;
 }
 

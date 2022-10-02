@@ -82,9 +82,9 @@
                 </div>
                 <div class="col-4"></div>
                 <div class="col-4">
-                    <button id="delete-modal-button" class="btn btn-danger" th:type="button" data-bs-toggle="modal"
-                            data-bs-target="#deleteItemModal"
-                            th:text="#{update-version.page.modal.delete-item.delete-button}">
+                    <button id="delete-modal-button" class="btn btn-danger w-100" th:type="button"
+                            data-bs-toggle="modal" data-bs-target="#deleteItemModal"
+                            th:text="#{update-version.page.delete-button}">
                     </button>
                 </div>
             </div>
@@ -101,20 +101,20 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" th:text="#{update-version.page.modal.delete-item.title}"></h5>
+                    <h5 class="modal-title" th:text="#{delete-version.modal.title}"></h5>
                     <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
                     </a>
                 </div>
                 <div class="modal-body">
-                    <p th:utext="#{update-version.page.modal.delete-item.text.delete-warning}"></p>
+                    <p th:utext="#{delete-version.modal.text.delete-warning}"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                            th:text="#{update-version.page.modal.delete-item.cancel-button}"></button>
+                            th:text="#{delete-version.modal.cancel-button}"></button>
                     <button id="confirm-button" class="btn btn-danger"
                             onclick="closeModalAndSubmitForm('#deleteItemModal', '#deleteItemForm')"
-                            th:text="#{update-version.page.modal.delete-item.confirm-button}"></button>
+                            th:text="#{delete-version.modal.confirm-button}"></button>
                 </div>
             </div>
         </div>
