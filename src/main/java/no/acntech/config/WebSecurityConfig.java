@@ -55,7 +55,7 @@ public class WebSecurityConfig {
                 .antMatchers(
                         "/error",
                         "/register",
-                        "/api/authenticate",
+                        "/api/*/authenticate",
                         "/webjars/**",
                         "/resources/**").permitAll()
                 .anyRequest().authenticated()
@@ -72,7 +72,7 @@ public class WebSecurityConfig {
                                 "/error",
                                 "/login",
                                 "/register",
-                                "/api/authenticate",
+                                "/api/*/authenticate",
                                 "/webjars/**",
                                 "/resources/**"))
                 .and()

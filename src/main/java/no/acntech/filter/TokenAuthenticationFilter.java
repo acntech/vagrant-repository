@@ -46,6 +46,7 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
             final var securityContext = SecurityContextHolder.createEmptyContext();
             if (authenticationToken != null) {
                 securityContext.setAuthentication(authenticationToken);
+                SecurityContextHolder.setContext(securityContext);
             }
             securityContextRepository.saveContext(securityContext, request, response);
         }
