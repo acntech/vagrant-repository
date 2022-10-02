@@ -4,37 +4,40 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
-    <title th:text="#{navbar.brand}"></title>
+    <title th:text="#{site.title}"></title>
 </head>
 <body>
 <div layout:fragment="main-menu" class="collapse navbar-collapse">
     <ul class="navbar-nav me-auto">
         <li class="nav-item me-4">
-            <a class="nav-link" th:href="@{/}">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
                 <i class="fa-solid fa-house"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/organizations}">
-                <span>organizations</span>
+            <a class="nav-link" th:href="@{/organizations}" th:title="#{header.navbar.link.organizations}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.organizations}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}">
+            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}"
+               th:title="#{header.navbar.link.organization}">
                 <span th:text="${box.username}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{username}/boxes/{box}(username=${box.username},box=${box.name})}">
+            <a class="nav-link" th:href="@{/{username}/boxes/{box}(username=${box.username},box=${box.name})}"
+               th:title="#{header.navbar.link.box}">
                 <span th:text="${box.name}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{username}/boxes/{box}/versions/{version}(username=${box.username},box=${box.name},version=${version.name})}">
+               th:href="@{/{username}/boxes/{box}/versions/{version}(username=${box.username},box=${box.name},version=${version.name})}"
+               th:title="#{header.navbar.link.version}">
                 <span th:text="${version.name}"></span>
             </a>
         </li>
@@ -98,8 +101,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteItemModalLabel"
-                        th:text="#{update-version.page.modal.delete-item.title}"></h5>
+                    <h5 class="modal-title" th:text="#{update-version.page.modal.delete-item.title}"></h5>
                     <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
                     </a>

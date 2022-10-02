@@ -4,24 +4,25 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
-    <title th:text="#{navbar.brand}"></title>
+    <title th:text="#{site.title}"></title>
 </head>
 <body>
 <div layout:fragment="main-menu" class="collapse navbar-collapse">
     <ul class="navbar-nav me-auto">
         <li class="nav-item me-4">
-            <a class="nav-link" th:href="@{/}">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
                 <i class="fa-solid fa-house"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/organizations}">
-                <span>organizations</span>
+            <a class="nav-link" th:href="@{/organizations}" th:title="#{header.navbar.link.organizations}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.organizations}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{organization}/boxes(organization=${organization.name})}">
+            <a class="nav-link" th:href="@{/{organization}/boxes(organization=${organization.name})}"
+               th:title="#{header.navbar.link.organization}">
                 <span th:text="${organization.name}"></span>
             </a>
         </li>
@@ -47,7 +48,8 @@
         <div class="d-grid gap-2 d-md-flex justify-content-md-end pb-2 mb-4">
             <a th:href="@{/box}" class="btn btn-primary me-md-2"
                role="button" th:text="#{boxes.page.button.create-box}"></a>
-            <a th:href="@{/organization/{organization}(organization=${organization.name})}" class="btn btn-primary me-md-2"
+            <a th:href="@{/organization/{organization}(organization=${organization.name})}"
+               class="btn btn-primary me-md-2"
                role="button" th:text="#{boxes.page.button.update-organization}"></a>
         </div>
 

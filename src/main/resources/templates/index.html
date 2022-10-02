@@ -4,18 +4,9 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
-    <title th:text="#{navbar.brand}"></title>
+    <title th:text="#{site.title}"></title>
 </head>
 <body>
-<div layout:fragment="main-menu" class="collapse navbar-collapse">
-    <ul class="navbar-nav me-auto">
-        <li class="nav-item me-4">
-            <a class="nav-link" th:href="@{/}">
-                <i class="fa-solid fa-house"></i>
-            </a>
-        </li>
-    </ul>
-</div>
 <main layout:fragment="content" class="container mt-4" role="main">
     <section class="content content-home">
         <div class="row gx-5">

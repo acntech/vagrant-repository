@@ -4,12 +4,12 @@
         xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark px-4 py-3">
         <a class="navbar-brand me-4" th:href="@{/}">
-            <span th:text="#{navbar.brand}"></span>
+            <span th:text="#{header.navbar.brand}"></span>
         </a>
         <div layout:fragment="main-menu" class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item me-4">
-                    <a class="nav-link" th:href="@{/}">
+                    <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
                         <i class="fa-solid fa-house"></i>
                     </a>
                 </li>
@@ -18,25 +18,57 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto me-5">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/about}">
+                    <a class="nav-link" href="#" th:title="#{header.navbar.link.about}"
+                       data-bs-toggle="modal" data-bs-target="#aboutModal">
                         <i class="fa-solid fa-circle-info"></i>
                     </a>
                 </li>
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a id="navbarUserDropdown" href="#" class="nav-link dropdown-toggle" role="button"
-                       data-bs-toggle="dropdown">
+                       data-bs-toggle="dropdown" th:title="#{header.navbar.link.options}">
+                        <i class="fa-solid fa-gear me-2"></i>
                         <span th:text="${#authentication.principal.name}"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
-                        <a class="dropdown-item" th:href="@{/logout}">
-                            <span th:text="#{navbar.link.logout}"></span>
+                        <a class="dropdown-item" th:href="@{/users}"
+                           th:title="#{header.navbar.link.users}" sec:authorize="hasRole('ROLE_ADMIN')">
+                            <i class="fa-solid fa-user me-1"></i>
+                            <span th:text="#{header.navbar.link.users}"></span>
                         </a>
-                        <a class="dropdown-item" th:href="@{/password}">
-                            <span th:text="#{navbar.link.password}"></span>
+                        <hr class="dropdown-divider" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <a class="dropdown-item" th:href="@{/logout}" th:title="#{header.navbar.link.logout}">
+                            <i class="fa-solid fa-right-from-bracket me-1"></i>
+                            <span th:text="#{header.navbar.link.logout}"></span>
+                        </a>
+                        <a class="dropdown-item" th:href="@{/password}" th:title="#{header.navbar.link.password}">
+                            <i class="fa-solid fa-lock me-1"></i>
+                            <span th:text="#{header.navbar.link.password}"></span>
                         </a>
                     </div>
                 </li>
             </ul>
         </div>
     </nav>
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog"
+         aria-labelledby="aboutModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"
+                        th:text="#{header.modal.about.title}"></h5>
+                    <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <p th:utext="#{header.modal.about.text.about}"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            th:text="#{header.modal.about.close-button}"></button>
+                </div>
+            </div>
+        </div>
+    </div>
 </header>

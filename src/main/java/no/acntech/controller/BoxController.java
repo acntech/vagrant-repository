@@ -25,15 +25,12 @@ import no.acntech.filter.StreamFilters;
 import no.acntech.model.Algorithm;
 import no.acntech.model.CreateBox;
 import no.acntech.model.CreateBoxForm;
-import no.acntech.model.CreateOrganization;
 import no.acntech.model.CreateProvider;
 import no.acntech.model.CreateVersion;
-import no.acntech.model.OrganizationForm;
 import no.acntech.model.ProviderForm;
 import no.acntech.model.ProviderType;
 import no.acntech.model.UpdateBox;
 import no.acntech.model.UpdateBoxForm;
-import no.acntech.model.UpdateOrganization;
 import no.acntech.model.UpdateProvider;
 import no.acntech.model.UpdateVersion;
 import no.acntech.model.VersionForm;
@@ -79,79 +76,6 @@ public class BoxController {
     @GetMapping(path = "/")
     public ModelAndView getIndexPage() {
         return new ModelAndView("index");
-    }
-
-    @GetMapping(path = "/about")
-    public ModelAndView getAboutPage() {
-        return new ModelAndView("about");
-    }
-
-    @GetMapping(path = "/organization")
-    public ModelAndView getCreateOrganizationPage() {
-        final var modelAndView = new ModelAndView("create-organization");
-        modelAndView.addObject("formData", new OrganizationForm());
-        return modelAndView;
-    }
-
-    @PostMapping(path = "/organization")
-    public ModelAndView postCreateOrganizationPage(@ModelAttribute(name = "formData") @Valid @NotNull final OrganizationForm form,
-                                                   final BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            final var modelAndView = getCreateOrganizationPage();
-            modelAndView.addObject("formData", form);
-            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
-            return modelAndView;
-        }
-        final var username = securityService.getUsername();
-        organizationService.createOrganization(username, new CreateOrganization(form.getName(), form.getDescription()));
-        final var organization = organizationService.getOrganization(form.getName().toLowerCase());
-        return new ModelAndView("redirect:/" + organization.name() + "/boxes");
-    }
-
-    @GetMapping(path = "/organization/{name}")
-    public ModelAndView getUpdateOrganizationPage(@PathVariable(name = "name") final String name) {
-        final var modelAndView = new ModelAndView("update-organization");
-        try {
-            final var organization = organizationService.getOrganization(name);
-            modelAndView.addObject("organization", organization);
-            modelAndView.addObject("formData", new OrganizationForm(organization.name(), organization.description()));
-        } catch (ItemNotFoundException e) {
-            modelAndView.addObject("organization", null);
-            modelAndView.addObject("formData", new OrganizationForm());
-            modelAndView.setStatus(HttpStatus.NOT_FOUND);
-        }
-        return modelAndView;
-    }
-
-    @PostMapping(path = "/organization/{name}")
-    public ModelAndView postUpdateOrganizationPage(@PathVariable(name = "name") final String name,
-                                                   @ModelAttribute(name = "formData") @Valid @NotNull final OrganizationForm form,
-                                                   final BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            final var modelAndView = getUpdateOrganizationPage(name);
-            modelAndView.addObject("formData", form);
-            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
-            return modelAndView;
-        }
-        organizationService.updateOrganization(name, new UpdateOrganization(form.getName(), form.getDescription()));
-        final var organization = organizationService.getOrganization(form.getName().toLowerCase());
-        return new ModelAndView("redirect:/" + organization.name() + "/boxes");
-    }
-
-    @PostMapping(path = "/organization/{name}/delete")
-    public ModelAndView postDeleteOrganizationPage(@PathVariable(name = "name") final String name) {
-        final var organization = organizationService.getOrganization(name);
-        organizationService.deleteOrganization(organization.name());
-        return new ModelAndView("redirect:/organizations");
-    }
-
-    @GetMapping(path = "/organizations")
-    public ModelAndView getOrganizationsPage() {
-        final var username = securityService.getUsername();
-        final var organizations = organizationService.findOrganizations(username);
-        final var modelAndView = new ModelAndView("organizations");
-        modelAndView.addObject("organizations", organizations);
-        return modelAndView;
     }
 
     @GetMapping(path = "/box")

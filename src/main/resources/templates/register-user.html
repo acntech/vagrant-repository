@@ -4,40 +4,47 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/anonymous}">
 <head>
-    <title th:text="#{navbar.brand}"></title>
+    <title th:text="#{site.title}"></title>
 </head>
 <body>
 <main layout:fragment="content" class="container-fluid mt-4" role="main">
     <section class="content content-register">
-        <h3 class="mb-4" th:text="#{register.page.title}"></h3>
+        <h3 class="mb-4" th:text="#{register-user.page.title}"></h3>
         <form th:action="@{/register}" th:object="${formData}" method="post"
               class="mb-3">
             <div class="form-group mb-3">
+                <label for="username" class="form-check-label"
+                       th:text="#{register-user.page.form.username.label}"></label>
                 <input type="text" id="username" th:field="*{username}" class="form-control"
-                       th:placeholder="#{register.page.form.username.placeholder}"
+                       th:placeholder="#{register-user.page.form.username.placeholder}"
                        th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''">
                 <div id="usernameFeedback" class="invalid-feedback">
                     <span th:errors="*{username}"></span>
                 </div>
             </div>
             <div class="form-group mb-3">
+                <label for="newPassword" class="form-check-label"
+                       th:text="#{register-user.page.form.new-password.label}"></label>
                 <input type="password" id="newPassword" th:field="*{newPassword}" class="form-control"
-                       th:placeholder="#{register.page.form.new-password.placeholder}"
+                       th:placeholder="#{register-user.page.form.new-password.placeholder}"
                        th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid' : ''">
                 <div id="newPasswordFeedback" class="invalid-feedback">
                     <span th:errors="*{newPassword}"></span>
                 </div>
             </div>
             <div class="form-group mb-3">
+                <label for="confirmPassword" class="form-check-label"
+                       th:text="#{register-user.page.form.confirm-password.label}"></label>
                 <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control"
-                       th:placeholder="#{register.page.form.confirm-password.placeholder}"
+                       th:placeholder="#{register-user.page.form.confirm-password.placeholder}"
                        th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''">
                 <div id="confirmPasswordFeedback" class="invalid-feedback">
                     <span th:errors="*{confirmPassword}"></span>
                 </div>
             </div>
             <div class="form-group mb-3">
-                <button type="submit" class="btn btn-primary w-100" th:text="#{register.page.form.button}"></button>
+                <button type="submit" class="btn btn-primary w-100"
+                        th:text="#{register-user.page.form.register-button}"></button>
             </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>

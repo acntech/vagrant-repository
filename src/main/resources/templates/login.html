@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/anonymous}">
 <head>
-    <title th:text="#{navbar.brand}"></title>
+    <title th:text="#{site.title}"></title>
 </head>
 <body>
 <main layout:fragment="content" class="container-fluid mt-4" role="main">
@@ -30,15 +30,16 @@
                 <span th:text="#{login.page.link.register-here}"></span>
             </a>
         </div>
-        <div th:if="${param.error != null && param.error == 'failed'}" class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" th:if="${param.login != null and param.login[0] == 'failed'}" role="alert">
             <i class="fa-solid fa-triangle-exclamation me-2"></i>
             <span th:text="#{login.page.alert.invalid-credentials}"></span>
         </div>
-        <div th:if="${param.logout != null && param.logout == 'success'}" class="alert alert-success" role="alert">
+        <div class="alert alert-success" th:if="${param.logout != null && param.logout[0] == 'success'}" role="alert">
             <i class="fa-solid fa-circle-check me-2"></i>
             <span th:text="#{login.page.alert.logout-success}"></span>
         </div>
-        <div th:if="${param.register != null && param.register == 'success'}" class="alert alert-success" role="alert">
+        <div class="alert alert-success" th:if="${param.register != null && param.register[0] == 'success'}"
+             role="alert">
             <i class="fa-solid fa-circle-check me-2"></i>
             <span th:text="#{login.page.alert.register-success}"></span>
         </div>

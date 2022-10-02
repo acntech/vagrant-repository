@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import no.acntech.model.UserRole;
 import no.acntech.service.HttpRequestService;
 import no.acntech.service.SecurityService;
 import no.acntech.service.TokenService;
@@ -47,7 +48,10 @@ public class TokenAuthenticationSuccessHandler extends AbstractAuthenticationTar
                                 final Authentication authentication) {
         final var username = authentication.getName();
         final var roles = securityService.getRoles(authentication.getAuthorities());
-        final var signedJWT = tokenService.createToken(username, roles);
+        final var userRoles = roles.stream()
+                .map(UserRole::name)
+                .toList();
+        final var signedJWT = tokenService.createToken(username, userRoles);
         final var token = signedJWT.serialize();
         httpRequestService.addCookie(response, token);
     }

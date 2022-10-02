@@ -60,7 +60,7 @@ public class WebSecurityConfig {
                         "/resources/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/login").failureUrl("/login?error=failed").permitAll()
+                .formLogin().loginPage("/login").failureUrl("/login?login=failed").permitAll()
                 .successHandler(authenticationSuccessHandler())
                 .and()
                 .logout().logoutSuccessUrl("/login?logout=success").deleteCookies(cookieName).permitAll()

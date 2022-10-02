@@ -27,6 +27,7 @@ import no.acntech.model.CreateUser;
 import no.acntech.model.OrganizationRole;
 import no.acntech.model.UpdateUser;
 import no.acntech.model.User;
+import no.acntech.model.UserRole;
 import no.acntech.repository.MemberRepository;
 import no.acntech.repository.UserRepository;
 
@@ -37,15 +38,18 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final ConversionService conversionService;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityService securityService;
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
 
     public UserService(final ConversionService conversionService,
                        final PasswordEncoder passwordEncoder,
+                       final SecurityService securityService,
                        final UserRepository userRepository,
                        final MemberRepository memberRepository) {
         this.conversionService = conversionService;
         this.passwordEncoder = passwordEncoder;
+        this.securityService = securityService;
         this.userRepository = userRepository;
         this.memberRepository = memberRepository;
     }
@@ -89,10 +93,10 @@ public class UserService {
 
     public void updateUser(@NotBlank final String username,
                            @Valid @NotNull final UpdateUser updateUser) {
-        LOGGER.debug("Update password for user {}", username);
+        LOGGER.debug("Update user {}", username);
         final var user = getUser(username);
 
-        if (StringUtils.isNoneBlank(updateUser.newPassword())) {
+        if (StringUtils.isNoneBlank(updateUser.newPassword()) && !securityService.hasRole(UserRole.ADMIN)) {
             Assert.hasText(updateUser.oldPassword(), "Missing passwords");
             if (!passwordEncoder.matches(updateUser.oldPassword(), user.passwordHash())) {
                 throw new BadCredentialsException("Incorrect username and password combination");
@@ -101,7 +105,7 @@ public class UserService {
 
         final var newUsername = StringUtils.isBlank(updateUser.username()) ? user.username() : updateUser.username();
         final var newRole = updateUser.role() == null ? user.role() : updateUser.role();
-        final var newPasswordHash = StringUtils.isNoneBlank(updateUser.oldPassword()) && StringUtils.isNoneBlank(updateUser.newPassword()) ?
+        final var newPasswordHash = StringUtils.isBlank(updateUser.newPassword()) ?
                 user.passwordHash() : passwordEncoder.encode(updateUser.newPassword());
 
         final var rowsAffected = userRepository.updateUser(
@@ -111,7 +115,7 @@ public class UserService {
                 newPasswordHash);
         LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
         if (rowsAffected == 0) {
-            throw new SaveItemFailedException("Failed to update password for user " + username);
+            throw new SaveItemFailedException("Failed to update user " + username);
         }
     }
 

@@ -48,7 +48,7 @@ public class SecurityService {
         }
     }
 
-    public List<String> getRoles() {
+    public List<UserRole> getRoles() {
         final var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof final UsernamePasswordAuthenticationToken authenticationToken) {
             final var authorities = authenticationToken.getAuthorities();
@@ -58,7 +58,7 @@ public class SecurityService {
         }
     }
 
-    public List<String> getRoles(final Collection<? extends GrantedAuthority> authorities) {
+    public List<UserRole> getRoles(final Collection<? extends GrantedAuthority> authorities) {
         if (authorities == null) {
             return Collections.emptyList();
         } else {
@@ -68,7 +68,7 @@ public class SecurityService {
         }
     }
 
-    public List<GrantedAuthority> getAuthorities(final String... roles) {
+    public List<GrantedAuthority> getAuthorities(final UserRole... roles) {
         if (roles == null) {
             return Collections.emptyList();
         } else {
@@ -78,7 +78,7 @@ public class SecurityService {
         }
     }
 
-    public List<GrantedAuthority> getAuthorities(final Collection<String> roles) {
+    public List<GrantedAuthority> getAuthorities(final Collection<UserRole> roles) {
         if (roles == null) {
             return Collections.emptyList();
         } else {
@@ -88,12 +88,18 @@ public class SecurityService {
         }
     }
 
-    public String getRole(GrantedAuthority authority) {
-        return authority.getAuthority().replace(AUTHORITY_ROLE_PREFIX, "");
+    public UserRole getRole(final GrantedAuthority authority) {
+        final var role = authority.getAuthority().replace(AUTHORITY_ROLE_PREFIX, "");
+        return UserRole.valueOf(role);
     }
 
-    public GrantedAuthority getAuthority(String role) {
-        return new SimpleGrantedAuthority(AUTHORITY_ROLE_PREFIX.concat(role));
+    public GrantedAuthority getAuthority(final UserRole role) {
+        return new SimpleGrantedAuthority(AUTHORITY_ROLE_PREFIX.concat(role.name()));
+    }
+
+    public boolean hasRole(final UserRole role) {
+        final var roles = getRoles();
+        return roles.contains(role);
     }
 
     public boolean isAuthenticated() {
@@ -107,7 +113,7 @@ public class SecurityService {
         if (isAuthenticated()) {
             throw new SessionAuthenticationException("Session already set");
         }
-        final var authorities = getAuthorities(UserRole.ADMIN.name());
+        final var authorities = getAuthorities(UserRole.ADMIN);
         final var principal = SecurityUser.builder()
                 .username(systemUsername)
                 .authorities(authorities)

@@ -24,7 +24,7 @@ public class SecurityUserService implements UserDetailsService {
         Assert.hasText(username, "Username is blank");
         try {
             final var users = userService.getUser(username);
-            final var authorities = securityService.getAuthorities(users.role().name());
+            final var authorities = securityService.getAuthorities(users.role());
             return SecurityUser.builder()
                     .username(users.username())
                     .password(users.passwordHash())

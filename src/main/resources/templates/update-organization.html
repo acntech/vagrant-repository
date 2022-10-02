@@ -4,24 +4,25 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
-    <title th:text="#{navbar.brand}"></title>
+    <title th:text="#{site.title}"></title>
 </head>
 <body>
 <div layout:fragment="main-menu" class="collapse navbar-collapse">
     <ul class="navbar-nav me-auto">
         <li class="nav-item me-4">
-            <a class="nav-link" th:href="@{/}">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
                 <i class="fa-solid fa-house"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/organizations}">
-                <span>organizations</span>
+            <a class="nav-link" th:href="@{/organizations}" th:title="#{header.navbar.link.organizations}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.organizations}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/{username}/boxes(username=${organization.name})}">
+            <a class="nav-link" th:href="@{/{username}/boxes(username=${organization.name})}"
+               th:title="#{header.navbar.link.organization}">
                 <span th:text="${organization.name}"></span>
             </a>
         </li>
@@ -84,8 +85,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteItemModalLabel"
-                        th:text="#{update-organization.page.modal.delete-item.title}"></h5>
+                    <h5 class="modal-title" th:text="#{update-organization.page.modal.delete-item.title}"></h5>
                     <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
                     </a>
@@ -96,7 +96,8 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             th:text="#{update-organization.page.modal.delete-item.cancel-button}"></button>
-                    <button id="confirm-button" class="btn btn-danger" onclick="closeModalAndSubmitForm('#deleteItemModal', '#deleteItemForm')"
+                    <button id="confirm-button" class="btn btn-danger"
+                            onclick="closeModalAndSubmitForm('#deleteItemModal', '#deleteItemForm')"
                             th:text="#{update-organization.page.modal.delete-item.confirm-button}"></button>
                 </div>
             </div>

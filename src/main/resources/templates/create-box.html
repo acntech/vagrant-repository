@@ -4,19 +4,19 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
-    <title th:text="#{navbar.brand}"></title>
+    <title th:text="#{site.title}"></title>
 </head>
 <body>
 <div layout:fragment="main-menu" class="collapse navbar-collapse">
     <ul class="navbar-nav me-auto">
         <li class="nav-item me-4">
-            <a class="nav-link" th:href="@{/}">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
                 <i class="fa-solid fa-house"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/organizations}">
-                <span>organizations</span>
+            <a class="nav-link" th:href="@{/organizations}" th:title="#{header.navbar.link.organizations}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.organizations}"></span>
             </a>
         </li>
     </ul>

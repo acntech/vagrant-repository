@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import no.acntech.model.SecurityUser;
+import no.acntech.model.UserRole;
 import no.acntech.service.HttpRequestService;
 import no.acntech.service.SecurityService;
 import no.acntech.service.TokenService;
@@ -73,7 +74,10 @@ public class TokenAuthenticationConverter implements AuthenticationConverter {
             }
         }
         final var roles = getRolesClaim(claims);
-        final var authorities = securityService.getAuthorities(roles);
+        final var userRoles = roles.stream()
+                .map(UserRole::valueOf)
+                .toList();
+        final var authorities = securityService.getAuthorities(userRoles);
         final var principal = SecurityUser.builder()
                 .username(subject)
                 .authorities(authorities)

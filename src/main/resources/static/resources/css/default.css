@@ -1,3 +1,7 @@
+.navbar .dropdown-toggle::after {
+    display: none !important;
+}
+
 .content-login {
     max-width: 300px;
     margin: 0 auto;
