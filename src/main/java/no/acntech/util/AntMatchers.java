@@ -1,4 +1,4 @@
-package no.acntech.config;
+package no.acntech.util;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;

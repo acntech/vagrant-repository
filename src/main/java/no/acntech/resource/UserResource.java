@@ -15,6 +15,7 @@ import no.acntech.model.CreateUser;
 import no.acntech.model.UpdateUser;
 import no.acntech.model.User;
 import no.acntech.service.UserService;
+import no.acntech.util.UrlBuilder;
 
 @RequestMapping(path = "/api/v1/user")
 @RestController
@@ -37,9 +38,7 @@ public class UserResource {
                                            final UriComponentsBuilder uriBuilder) {
         final var createUser = createUserRequest.user();
         userService.createUser(createUser);
-        final var uri = uriBuilder.path("/api/user/{username}")
-                .buildAndExpand(createUser.username().toLowerCase())
-                .toUri();
+        final var uri = UrlBuilder.userUri(uriBuilder, createUser.username());
         return ResponseEntity.created(uri).build();
     }
 

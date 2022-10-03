@@ -1,7 +1,6 @@
 package no.acntech.service;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.jooq.DSLContext;
 import org.jooq.exception.NoDataFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,38 +20,23 @@ import no.acntech.exception.SaveItemFailedException;
 import no.acntech.model.Box;
 import no.acntech.model.CreateBox;
 import no.acntech.model.UpdateBox;
-
-import static no.acntech.model.tables.Boxes.BOXES;
+import no.acntech.repository.BoxRepository;
 
 @Validated
 @Service
 public class BoxService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BoxService.class);
-    private final DSLContext context;
     private final ConversionService conversionService;
     private final OrganizationService organizationService;
+    private final BoxRepository boxRepository;
 
-    public BoxService(final DSLContext context,
-                      final ConversionService conversionService,
-                      final OrganizationService organizationService) {
-        this.context = context;
+    public BoxService(final ConversionService conversionService,
+                      final OrganizationService organizationService,
+                      final BoxRepository boxRepository) {
         this.conversionService = conversionService;
         this.organizationService = organizationService;
-    }
-
-    public Box getBox(@NotNull final Integer id) {
-        LOGGER.info("Get box for ID {}", id);
-        try (final var select = context.selectFrom(BOXES)) {
-            final var record = select
-                    .where(BOXES.ID.eq(id))
-                    .fetchSingle();
-            final var organization = organizationService.getOrganization(record.getOrganizationId());
-            final var pair = Pair.of(record, organization);
-            return conversionService.convert(pair, Box.class);
-        } catch (NoDataFoundException e) {
-            throw new ItemNotFoundException("No box found for ID " + id, e);
-        }
+        this.boxRepository = boxRepository;
     }
 
     public Box getBox(@NotBlank final String username,
@@ -61,11 +44,8 @@ public class BoxService {
         final var tag = username + "/" + name;
         LOGGER.info("Get box {}", tag);
         final var organization = organizationService.getOrganization(username);
-        try (final var select = context.selectFrom(BOXES)) {
-            final var record = select
-                    .where(BOXES.NAME.eq(name))
-                    .and(BOXES.ORGANIZATION_ID.eq(organization.id()))
-                    .fetchSingle();
+        try {
+            final var record = boxRepository.getBox(name, organization.id());
             final var pair = Pair.of(record, organization);
             return conversionService.convert(pair, Box.class);
         } catch (NoDataFoundException e) {
@@ -76,15 +56,11 @@ public class BoxService {
     public List<Box> findBoxes(@NotBlank final String username) {
         LOGGER.info("Find boxes for {}", username);
         final var organization = organizationService.getOrganization(username);
-        try (final var select = context.selectFrom(BOXES)) {
-            final var result = select
-                    .where(BOXES.ORGANIZATION_ID.eq(organization.id()))
-                    .fetch();
-            return result.stream()
-                    .map(record -> Pair.of(record, organization))
-                    .map(pair -> conversionService.convert(pair, Box.class))
-                    .collect(Collectors.toList());
-        }
+        final var result = boxRepository.findBoxes(organization.id());
+        return result.stream()
+                .map(record -> Pair.of(record, organization))
+                .map(pair -> conversionService.convert(pair, Box.class))
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -92,27 +68,14 @@ public class BoxService {
         final var tag = createBox.username() + "/" + createBox.name();
         LOGGER.info("Create box {}", tag);
         final var organization = organizationService.getOrganization(createBox.username());
-        try (final var insert = context.insertInto(
-                BOXES,
-                BOXES.NAME,
-                BOXES.DESCRIPTION,
-                BOXES.ORGANIZATION_ID,
-                BOXES.PRIVATE,
-                BOXES.DOWNLOADS,
-                BOXES.CREATED)) {
-            final var rowsAffected = insert
-                    .values(
-                            createBox.name().toLowerCase(),
-                            createBox.description(),
-                            organization.id(),
-                            createBox.isPrivate(),
-                            0,
-                            LocalDateTime.now())
-                    .execute();
-            LOGGER.debug("Insert into BOXES table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to create box " + tag);
-            }
+        final var rowsAffected = boxRepository.createBox(
+                createBox.name().toLowerCase(),
+                createBox.description(),
+                createBox.isPrivate(),
+                organization.id());
+        LOGGER.debug("Insert into BOXES table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to create box " + tag);
         }
     }
 
@@ -122,20 +85,16 @@ public class BoxService {
                           @Valid @NotNull final UpdateBox updateBox) {
         final var tag = username + "/" + name;
         LOGGER.info("Update box {}", tag);
-        final var box = getBox(username, name);
-        try (final var update = context
-                .update(BOXES)
-                .set(BOXES.NAME, updateBox.name())
-                .set(BOXES.DESCRIPTION, updateBox.description())
-                .set(BOXES.PRIVATE, updateBox.isPrivate())
-                .set(BOXES.MODIFIED, LocalDateTime.now())) {
-            final var rowsAffected = update
-                    .where(BOXES.ID.eq(box.id()))
-                    .execute();
-            LOGGER.debug("Updated record in BOXES table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to update box " + tag);
-            }
+        final var organization = organizationService.getOrganization(username);
+        final var record = boxRepository.getBox(username, organization.id());
+        final var rowsAffected = boxRepository.updateBox(
+                updateBox.name().toLowerCase(),
+                updateBox.description(),
+                updateBox.isPrivate(),
+                record.getId());
+        LOGGER.debug("Updated record in BOXES table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to update box " + tag);
         }
     }
 
@@ -144,32 +103,23 @@ public class BoxService {
                           @NotBlank final String name) {
         final var tag = username + "/" + name;
         LOGGER.info("Delete box {}", tag);
-        final var box = getBox(username, name);
-        try (final var delete = context.deleteFrom(BOXES)) {
-            final var rowsAffected = delete
-                    .where(BOXES.ID.eq(box.id()))
-                    .execute();
-            LOGGER.debug("Delete record in BOXES table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to delete box " + tag);
-            }
+        final var organization = organizationService.getOrganization(username);
+        final var record = boxRepository.getBox(username, organization.id());
+        final var rowsAffected = boxRepository.deleteBox(record.getId());
+        LOGGER.debug("Delete record in BOXES table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to delete box " + tag);
         }
     }
 
     @Transactional
-    public void postDownload(@NotNull final Integer id) {
-        final var box = getBox(id);
-        try (final var update = context
-                .update(BOXES)
-                .set(BOXES.DOWNLOADS, box.downloads() + 1)
-                .set(BOXES.MODIFIED, LocalDateTime.now())) {
-            final var rowsAffected = update
-                    .where(BOXES.ID.eq(box.id()))
-                    .execute();
-            LOGGER.debug("Updated record in BOXES table affected {} rows", rowsAffected);
-            if (rowsAffected == 0) {
-                throw new SaveItemFailedException("Failed to update box with ID " + id);
-            }
+    public void postDownload(@NotNull final Integer boxId) {
+        final var record = boxRepository.getBox(boxId);
+        final var downloads = record.getDownloads() + 1;
+        final var rowsAffected = boxRepository.updateBoxDownload(downloads, record.getId());
+        LOGGER.debug("Updated record in BOXES table affected {} rows", rowsAffected);
+        if (rowsAffected == 0) {
+            throw new SaveItemFailedException("Failed to update box with ID " + boxId);
         }
     }
 }

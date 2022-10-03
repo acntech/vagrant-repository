@@ -23,10 +23,10 @@ public record Box(
         @NotNull @JsonIgnore Integer organizationId,
         @NotNull @JsonProperty("created_at") ZonedDateTime created,
         @JsonProperty("updated_at") ZonedDateTime modified,
-        @Valid Version currentVersion,
+        @Valid @JsonProperty("current_version") Version currentVersion,
         @Valid List<Version> versions) {
 
-    public Box with(@Valid @NotNull List<Version> versions) {
+    public Box with(Version currentVersion, @Valid @NotNull List<Version> versions) {
         return new Box(
                 this.id,
                 this.tag,
@@ -40,7 +40,7 @@ public record Box(
                 this.organizationId,
                 this.created,
                 this.modified,
-                null, // TODO: Handle
+                currentVersion,
                 versions);
     }
 }

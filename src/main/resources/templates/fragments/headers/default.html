@@ -18,6 +18,11 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto me-5">
                 <li class="nav-item">
+                    <a class="nav-link" th:href="@{/search}" th:title="#{header.navbar.link.search}">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#" th:title="#{header.navbar.link.about}"
                        data-bs-toggle="modal" data-bs-target="#aboutModal">
                         <i class="fa-solid fa-circle-info"></i>

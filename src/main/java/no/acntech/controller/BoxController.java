@@ -29,6 +29,10 @@ import no.acntech.model.CreateProvider;
 import no.acntech.model.CreateVersion;
 import no.acntech.model.ProviderForm;
 import no.acntech.model.ProviderType;
+import no.acntech.model.SearchBoxForm;
+import no.acntech.model.SearchOrder;
+import no.acntech.model.SearchProviderType;
+import no.acntech.model.SearchSort;
 import no.acntech.model.UpdateBox;
 import no.acntech.model.UpdateBoxForm;
 import no.acntech.model.UpdateProvider;
@@ -38,6 +42,7 @@ import no.acntech.model.VersionStatus;
 import no.acntech.service.BoxService;
 import no.acntech.service.OrganizationService;
 import no.acntech.service.ProviderService;
+import no.acntech.service.SearchService;
 import no.acntech.service.SecurityService;
 import no.acntech.service.StorageService;
 import no.acntech.service.UploadService;
@@ -48,6 +53,7 @@ public class BoxController {
 
     private final ConversionService conversionService;
     private final SecurityService securityService;
+    private final SearchService searchService;
     private final OrganizationService organizationService;
     private final BoxService boxService;
     private final VersionService versionService;
@@ -57,6 +63,7 @@ public class BoxController {
 
     public BoxController(final ConversionService conversionService,
                          final SecurityService securityService,
+                         final SearchService searchService,
                          final OrganizationService organizationService,
                          final BoxService boxService,
                          final VersionService versionService,
@@ -65,6 +72,7 @@ public class BoxController {
                          final StorageService storageService) {
         this.conversionService = conversionService;
         this.securityService = securityService;
+        this.searchService = searchService;
         this.organizationService = organizationService;
         this.boxService = boxService;
         this.versionService = versionService;
@@ -75,7 +83,46 @@ public class BoxController {
 
     @GetMapping(path = "/")
     public ModelAndView getIndexPage() {
-        return new ModelAndView("index");
+        final var modelAndView = new ModelAndView("index");
+        modelAndView.addObject("boxes", null);
+        modelAndView.addObject("formData", new SearchBoxForm());
+        return modelAndView;
+    }
+
+    @GetMapping(path = "/search")
+    public ModelAndView getSearchPage() {
+        final var modelAndView = new ModelAndView("search");
+        modelAndView.addObject("boxes", null);
+        modelAndView.addObject("formData", new SearchBoxForm());
+        return modelAndView;
+    }
+
+    @PostMapping(path = "/search")
+    public ModelAndView postSearchPage(@ModelAttribute(name = "formData") @Valid @NotNull final SearchBoxForm form,
+                                       final BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            final var modelAndView = getIndexPage();
+            modelAndView.addObject("formData", form);
+            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
+            return modelAndView;
+        }
+        final var searchProvider = SearchProviderType.fromProvider(form.getProvider());
+        final var searchSort = SearchSort.fromSort(form.getSort());
+        final var searchOrder = SearchOrder.fromOrder(form.getOrder());
+        final var limit = form.getLimit() == null ? 10 : form.getLimit();
+        final var page = form.getPage() == null ? 1 : form.getPage();
+        final var boxes = searchService.searchBoxes(
+                form.getQ(),
+                searchProvider,
+                searchSort,
+                searchOrder,
+                limit,
+                page
+        );
+        final var modelAndView = new ModelAndView("search");
+        modelAndView.addObject("boxes", boxes);
+        modelAndView.addObject("formData", form);
+        return modelAndView;
     }
 
     @GetMapping(path = "/box")
