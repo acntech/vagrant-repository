@@ -48,7 +48,7 @@ public class VersionRepository {
     }
 
     @Transactional
-    public int createVersion(final String name,
+    public int createVersion(final String version,
                              final String description,
                              final Integer boxId) {
         try (final var insert = context
@@ -60,9 +60,9 @@ public class VersionRepository {
                         VERSIONS.CREATED)) {
             return insert
                     .values(
-                            name,
+                            version,
                             description,
-                            VersionStatus.INACTIVE.name(),
+                            VersionStatus.UNRELEASED.name(),
                             boxId,
                             LocalDateTime.now())
                     .execute();
@@ -70,12 +70,12 @@ public class VersionRepository {
     }
 
     @Transactional
-    public int updateVersion(final String name,
+    public int updateVersion(final String version,
                              final String description,
                              final Integer versionId) {
         try (final var update = context
                 .update(VERSIONS)
-                .set(VERSIONS.NAME, name)
+                .set(VERSIONS.NAME, version)
                 .set(VERSIONS.DESCRIPTION, description)
                 .set(VERSIONS.MODIFIED, LocalDateTime.now())) {
             return update

@@ -36,9 +36,9 @@
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.name})}"
+               th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}"
                th:title="#{header.navbar.link.version}">
-                <span th:text="${version.name}"></span>
+                <span th:text="${version.version}"></span>
             </a>
         </li>
     </ul>
@@ -60,8 +60,8 @@
                     </a>
                     /
                     <a class="link-dark"
-                       th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.name})}">
-                        <span th:text="${version.name}"></span>
+                       th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}">
+                        <span th:text="${version.version}"></span>
                     </a>
                 </h5>
                 <p class="text-muted mb-1" th:text="${version.descriptionHtml}"></p>
@@ -70,9 +70,11 @@
                 <small class="text-muted d-block mb-2"
                        th:text="${#temporals.format(version.created, 'yyyy-MM-dd')}"></small>
                 <p class="text-end mb-0">
-                            <span class="badge bg-success rounded-pill" th:if="${version.status.name() == 'ACTIVE'}"
-                                  th:text="${version.status.name()}"></span>
-                    <span class="badge bg-danger rounded-pill" th:if="${version.status.name() == 'INACTIVE'}"
+                    <span class="badge bg-success rounded-pill" th:if="${version.status.name() == 'ACTIVE'}"
+                          th:text="${version.status.name()}"></span>
+                    <span class="badge bg-danger rounded-pill" th:if="${version.status.name() == 'UNRELEASED'}"
+                          th:text="${version.status.name()}"></span>
+                    <span class="badge bg-danger rounded-pill" th:if="${version.status.name() == 'REVOKED'}"
                           th:text="${version.status.name()}"></span>
                 </p>
             </div>
@@ -80,21 +82,22 @@
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end pb-2 mb-4">
             <a class="btn btn-primary me-md-2" role="button"
-               th:href="@{/{username}/boxes/{box}/versions/{version}/provider(username=${box.username},box=${box.name},version=${version.name})}"
+               th:href="@{/{username}/boxes/{box}/versions/{version}/provider(username=${box.username},box=${box.name},version=${version.version})}"
                th:text="#{providers.page.button.create-provider}"></a>
             <a class="btn btn-primary me-md-2" role="button" onclick="submitForm('#releaseVersionForm')"
-               th:if="${version.status.name() == 'INACTIVE'}" th:text="#{providers.page.button.release-version}"
-               th:classappend="${canNotReleaseVersion} ? 'disabled' : ''"
-               th:attrappend="aria-disabled=${canNotReleaseVersion} ? 'true' : 'false'"></a>
+               th:if="${version.status.name() != 'ACTIVE'}"
+               th:text="#{providers.page.button.release-version}"
+               th:classappend="${canReleaseVersion} ? '' : 'disabled'"
+               th:attrappend="aria-disabled=${canReleaseVersion} ? 'false' : 'true'"></a>
             <a class="btn btn-primary me-md-2" role="button" onclick="submitForm('#revokeVersionForm')"
                th:if="${version.status.name() == 'ACTIVE'}" th:text="#{providers.page.button.revoke-version}"></a>
             <a class="btn btn-primary me-md-2" role="button"
-               th:href="@{/{username}/boxes/{name}/version/{version}(username=${box.username},name=${box.name},version=${version.name})}"
+               th:href="@{/{username}/boxes/{name}/version/{version}(username=${box.username},name=${box.name},version=${version.version})}"
                th:text="#{providers.page.button.update-version}"></a>
         </div>
 
         <div class="list-group" th:each="provider : ${providers}">
-            <a th:href="@{/{username}/boxes/{name}/versions/{version}/provider/{provider}(username=${box.username},name=${box.name},version=${version.name},provider=${provider.name})}"
+            <a th:href="@{/{username}/boxes/{name}/versions/{version}/provider/{provider}(username=${box.username},name=${box.name},version=${version.version},provider=${provider.name})}"
                class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
                     <div>
@@ -130,11 +133,11 @@
         </div>
     </section>
     <form id="releaseVersionForm" class="mb-3" th:method="post"
-          th:action="@{/{username}/boxes/{name}/version/{version}/release(username=${box.username},name=${box.name},version=${version.name})}">
+          th:action="@{/{username}/boxes/{name}/version/{version}/release(username=${box.username},name=${box.name},version=${version.version})}">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
     <form id="revokeVersionForm" class="mb-3" th:method="post"
-          th:action="@{/{username}/boxes/{name}/version/{version}/revoke(username=${box.username},name=${box.name},version=${version.name})}">
+          th:action="@{/{username}/boxes/{name}/version/{version}/revoke(username=${box.username},name=${box.name},version=${version.version})}">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
 </main>

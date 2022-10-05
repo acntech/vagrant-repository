@@ -19,7 +19,7 @@ public class VersionConverter implements Converter<VersionsRecord, Version> {
         return new Version(
                 source.getId(),
                 source.getName(),
-                source.getName(), // TODO: What is this?
+                source.getName(),
                 source.getDescription(),
                 null, // TODO: What is this?
                 VersionStatus.valueOf(source.getStatus()),

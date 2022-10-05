@@ -236,9 +236,9 @@ public class BoxController {
             return modelAndView;
         }
         final var box = boxService.getBox(username, name);
-        versionService.createVersion(box.username(), box.name(), new CreateVersion(form.getName(), form.getDescription()));
-        final var version = versionService.getVersion(box.username(), box.name(), form.getName());
-        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
+        versionService.createVersion(box.username(), box.name(), new CreateVersion(form.getVersion(), form.getDescription()));
+        final var version = versionService.getVersion(box.username(), box.name(), form.getVersion());
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.version());
     }
 
     @GetMapping(path = "/{username}/boxes/{name}/version/{version}")
@@ -250,7 +250,7 @@ public class BoxController {
         final var modelAndView = new ModelAndView("update-version");
         modelAndView.addObject("box", box);
         modelAndView.addObject("version", version);
-        modelAndView.addObject("formData", new VersionForm(version.name(), version.descriptionHtml()));
+        modelAndView.addObject("formData", new VersionForm(version.version(), version.descriptionHtml()));
         return modelAndView;
     }
 
@@ -267,9 +267,9 @@ public class BoxController {
             return modelAndView;
         }
         final var box = boxService.getBox(username, name);
-        versionService.updateVersion(box.username(), box.name(), versionParam, new UpdateVersion(form.getName(), form.getDescription()));
-        final var version = versionService.getVersion(username, name, form.getName());
-        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
+        versionService.updateVersion(box.username(), box.name(), versionParam, new UpdateVersion(form.getVersion(), form.getDescription()));
+        final var version = versionService.getVersion(username, name, form.getVersion());
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.version());
     }
 
     @PostMapping(path = "/{username}/boxes/{name}/version/{version}/delete")
@@ -295,7 +295,7 @@ public class BoxController {
                                               @PathVariable(name = "name") final String name,
                                               @PathVariable(name = "version") final String versionParam) {
         final var box = boxService.getBox(username, name);
-        versionService.updateVersionStatus(box.username(), box.name(), versionParam, VersionStatus.INACTIVE);
+        versionService.updateVersionStatus(box.username(), box.name(), versionParam, VersionStatus.REVOKED);
         return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name());
     }
 
@@ -305,17 +305,18 @@ public class BoxController {
                                          @PathVariable(name = "version") final String versionParam) {
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
-        final var providers = providerService.findProviders(box.username(), box.name(), version.name());
+        final var providers = providerService.findProviders(box.username(), box.name(), version.version());
         final var nonVerifiedProviders = providers.stream()
                 .filter(StreamFilters::hasStatusNoneVerified)
                 .count();
+        final var canReleaseVersion = !providers.isEmpty() && nonVerifiedProviders == 0;
         final var modelAndView = new ModelAndView("providers");
         modelAndView.addObject("box", box);
         modelAndView.addObject("version", version);
         modelAndView.addObject("providers", providers);
         modelAndView.addObject("hasNoProviders", providers.isEmpty());
         modelAndView.addObject("hasNonVerifiedProviders", nonVerifiedProviders > 0);
-        modelAndView.addObject("canNotReleaseVersion", providers.isEmpty() || nonVerifiedProviders > 0);
+        modelAndView.addObject("canReleaseVersion", canReleaseVersion);
         return modelAndView;
     }
 
@@ -351,12 +352,12 @@ public class BoxController {
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
         final var createProvider = conversionService.convert(form, CreateProvider.class);
         Assert.notNull(createProvider, "Converting ProviderForm to CreateProvider produced null");
-        providerService.createProvider(box.username(), box.name(), version.name(), createProvider);
-        final var provider = providerService.getProvider(box.username(), box.name(), version.name(), createProvider.name());
+        providerService.createProvider(box.username(), box.name(), version.version(), createProvider);
+        final var provider = providerService.getProvider(box.username(), box.name(), version.version(), createProvider.name());
         if (provider.hosted()) {
-            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers/" + provider.name() + "/upload");
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.version() + "/providers/" + provider.name() + "/upload");
         } else {
-            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.version());
         }
     }
 
@@ -369,7 +370,7 @@ public class BoxController {
         final var providerType = ProviderType.fromProvider(providerParam);
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
-        final var provider = providerService.getProvider(box.username(), box.name(), version.name(), providerType);
+        final var provider = providerService.getProvider(box.username(), box.name(), version.version(), providerType);
         final var providerForm = conversionService.convert(provider, ProviderForm.class);
         Assert.notNull(providerForm, "Converting Provider to ProviderForm produced null");
         final var modelAndView = new ModelAndView("update-provider");
@@ -401,12 +402,12 @@ public class BoxController {
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
         final var updateProvider = conversionService.convert(form, UpdateProvider.class);
         Assert.notNull(updateProvider, "Converting ProviderForm to UpdateProvider produced null");
-        providerService.updateProvider(box.username(), box.name(), version.name(), providerType, updateProvider);
-        final var provider = providerService.getProvider(box.username(), box.name(), version.name(), updateProvider.name());
+        providerService.updateProvider(box.username(), box.name(), version.version(), providerType, updateProvider);
+        final var provider = providerService.getProvider(box.username(), box.name(), version.version(), updateProvider.name());
         if (provider.hosted()) {
-            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name() + "/providers/" + provider.name() + "/upload");
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.version() + "/providers/" + provider.name() + "/upload");
         } else {
-            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
+            return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.version());
         }
     }
 
@@ -418,8 +419,8 @@ public class BoxController {
         final var providerType = ProviderType.fromProvider(providerParam);
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
-        providerService.deleteProvider(box.username(), box.name(), version.name(), providerType);
-        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.name());
+        providerService.deleteProvider(box.username(), box.name(), version.version(), providerType);
+        return new ModelAndView("redirect:/" + box.username() + "/boxes/" + box.name() + "/versions/" + version.version());
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -432,7 +433,7 @@ public class BoxController {
         final var providerType = ProviderType.fromProvider(providerParam);
         final var box = boxService.getBox(username, name);
         final var version = versionService.getVersion(box.username(), box.name(), versionParam);
-        final var provider = providerService.getProvider(box.username(), box.name(), version.name(), providerType);
+        final var provider = providerService.getProvider(box.username(), box.name(), version.version(), providerType);
         if (!provider.hosted()) {
             throw new CannotSaveItemException("Cannot upload box image for externally hosted boxes");
         }
@@ -441,7 +442,7 @@ public class BoxController {
         modelAndView.addObject("version", version);
         modelAndView.addObject("provider", provider);
         try {
-            final var upload = uploadService.getUpload(box.username(), box.name(), version.name(), providerType);
+            final var upload = uploadService.getUpload(box.username(), box.name(), version.version(), providerType);
             final var uploadPathUrl = uriBuilder.path("/api/storage/{uid}")
                     .buildAndExpand(upload.uid())
                     .toUri().toString();

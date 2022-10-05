@@ -5,7 +5,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import no.acntech.model.Action;
-import no.acntech.model.CreateBox;
 import no.acntech.model.Resource;
 import no.acntech.service.MembershipService;
 import no.acntech.service.SecurityService;
@@ -38,8 +37,8 @@ public class ProviderPermissionRule extends MembershipAwarePermissionRule {
                                        @NonNull final Resource resource,
                                        @NonNull final Authentication authentication,
                                        @NonNull final Object[] arguments) {
-        if (arguments.length > 0 && arguments[0] instanceof final CreateBox createBox) {
-            return isAdmin() || isMemberOrOwner(createBox.username());
+        if (arguments.length > 0 && arguments[0] instanceof final String username) {
+            return isAdmin() || isMemberOrOwner(username);
         } else {
             return false;
         }

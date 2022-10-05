@@ -35,7 +35,11 @@
         <div class="d-flex w-100 justify-content-between mb-2">
             <div class="box-breadcrumb">
                 <a class="link-dark" th:href="@{/{organization}/boxes(organization=${organization.name})}">
-                    <h5 class="mb-1" th:text="${organization.name}"></h5>
+                    <h5 class="mb-1">
+                        <span th:text="${organization.name}"></span>
+                        <i class="fa-solid fa-lock text-muted fs-6 ms-2" th:if="${organization.isPrivate}"
+                           th:title="#{versions.page.text.private}"></i>
+                    </h5>
                 </a>
                 <p class="text-muted mb-1" th:text="${organization.description}"></p>
             </div>
@@ -60,7 +64,8 @@
                     <div>
                         <h5 class="mb-1">
                             <span th:text="${box.username} + '/' + ${box.name}"></span>
-                            <i class="fa-solid fa-lock text-muted fs-6 ms-2" th:if="${box.isPrivate}"></i>
+                            <i class="fa-solid fa-lock text-muted fs-6 ms-2" th:if="${box.isPrivate}"
+                               th:title="#{boxes.page.text.private}"></i>
                         </h5>
                         <p class="text-muted mb-1" th:text="${box.descriptionShort}"></p>
                     </div>
@@ -68,7 +73,8 @@
                         <small class="text-muted d-block mb-2"
                                th:text="${#temporals.format(box.created, 'yyyy-MM-dd')}"></small>
                         <p class="text-end mb-0">
-                            <span class="badge bg-secondary rounded-pill" th:text="${box.downloads}"></span>
+                            <span class="badge bg-secondary rounded-pill" th:text="${box.downloads}"
+                                  th:title="#{boxes.page.text.downloads}"></span>
                         </p>
                     </div>
                 </div>

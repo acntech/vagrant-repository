@@ -36,9 +36,9 @@
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.name})}"
+               th:href="@{/{organization}/boxes/{box}/versions/{version}(organization=${box.username},box=${box.name},version=${version.version})}"
                th:title="#{header.navbar.link.version}">
-                <span th:text="${version.name}"></span>
+                <span th:text="${version.version}"></span>
             </a>
         </li>
     </ul>
@@ -47,7 +47,7 @@
     <section class="content content-provider">
         <h3 class="mb-4" th:text="#{create-provider.page.title}"></h3>
         <form class="mb-3"
-              th:action="@{/{organization}/boxes/{box}/versions/{version}/provider(organization=${box.username},box=${box.name},version=${version.name})}"
+              th:action="@{/{organization}/boxes/{box}/versions/{version}/provider(organization=${box.username},box=${box.name},version=${version.version})}"
               th:object="${formData}" th:method="post">
             <div class="row mb-3">
                 <div class="form-group col-4">

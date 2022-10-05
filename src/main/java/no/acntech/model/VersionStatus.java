@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum VersionStatus {
 
     ACTIVE("active"),
-    INACTIVE("inactive");
+    UNRELEASED("unreleased"),
+    REVOKED("revoked");
 
     private final String status;
 

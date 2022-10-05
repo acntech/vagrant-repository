@@ -33,7 +33,7 @@ public class BoxConverter implements Converter<Pair<BoxesRecord, Organization>, 
                 boxesRecord.getOrganizationId(),
                 boxesRecord.getCreated().atZone(ZoneId.systemDefault()),
                 boxesRecord.getModified() == null ? null : boxesRecord.getModified().atZone(ZoneId.systemDefault()),
-                null, // TODO: Handle
+                null, // Is set in resource
                 null); // Is set in resource
     }
 }

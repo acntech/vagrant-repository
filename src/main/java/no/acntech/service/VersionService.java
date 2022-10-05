@@ -81,15 +81,15 @@ public class VersionService {
                               @NotBlank final String name,
                               @Valid @NotNull final CreateVersion createVersion) {
         final var tag = username + "/" + name;
-        LOGGER.info("Create version {} for box {}", createVersion.name(), tag);
+        LOGGER.info("Create version {} for box {}", createVersion.version(), tag);
         final var box = boxService.getBox(username, name);
         final var rowsAffected = versionRepository.createVersion(
-                createVersion.name(),
+                createVersion.version(),
                 createVersion.description(),
                 box.id());
         LOGGER.debug("Insert into VERSIONS table affected {} rows", rowsAffected);
         if (rowsAffected == 0) {
-            throw new SaveItemFailedException("Failed to create version " + createVersion.name() + " for box " + tag);
+            throw new SaveItemFailedException("Failed to create version " + createVersion.version() + " for box " + tag);
         }
     }
 

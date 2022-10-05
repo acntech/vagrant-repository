@@ -42,13 +42,13 @@
               th:object="${formData}" th:method="post">
             <div class="row mb-3">
                 <div class="form-group col-4">
-                    <label for="name" class="form-check-label"
-                           th:text="#{create-version.page.form.name.label}"></label>
-                    <input id="name" class="form-control" th:type="text" th:field="*{name}"
-                           th:placeholder="#{create-version.page.form.name.placeholder}"
-                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                    <label for="version" class="form-check-label"
+                           th:text="#{create-version.page.form.version.label}"></label>
+                    <input id="version" class="form-control" th:type="text" th:field="*{version}"
+                           th:placeholder="#{create-version.page.form.version.placeholder}"
+                           th:classappend="${#fields.hasErrors('version')} ? 'is-invalid' : ''">
                     <div id="nameFeedback" class="invalid-feedback">
-                        <span th:errors="*{name}"></span>
+                        <span th:errors="*{version}"></span>
                     </div>
                 </div>
                 <div class="col-8"></div>

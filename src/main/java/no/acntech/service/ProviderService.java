@@ -152,7 +152,6 @@ public class ProviderService {
         }
     }
 
-    @Permission(action = Action.UPDATE, resource = Resource.PROVIDERS)
     @Transactional
     public void updateProviderStatus(@NotNull final Integer id,
                                      @NotNull final ProviderStatus status) {

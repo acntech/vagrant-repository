@@ -96,8 +96,8 @@ public class BoxResource {
                                               final UriComponentsBuilder uriBuilder) {
         final var version = versionService.getVersion(username, name, versionParam);
         final var providers = providerService.findProviders(username, name, versionParam);
-        final var releaseUri = UrlBuilder.versionReleaseUri(uriBuilder, username.toLowerCase(), name.toLowerCase(), version.name());
-        final var revokeUri = UrlBuilder.versionRevokeUri(uriBuilder, username.toLowerCase(), name.toLowerCase(), version.name());
+        final var releaseUri = UrlBuilder.versionReleaseUri(uriBuilder, username.toLowerCase(), name.toLowerCase(), version.version());
+        final var revokeUri = UrlBuilder.versionRevokeUri(uriBuilder, username.toLowerCase(), name.toLowerCase(), version.version());
         return ResponseEntity.ok(version.with(releaseUri.toString(), revokeUri.toString(), providers));
     }
 
@@ -108,7 +108,7 @@ public class BoxResource {
                                                  final UriComponentsBuilder uriBuilder) {
         final var createVersion = createVersionRequest.version();
         versionService.createVersion(username, name, createVersion);
-        final var uri = UrlBuilder.versionUri(uriBuilder, username, name, createVersion.name());
+        final var uri = UrlBuilder.versionUri(uriBuilder, username, name, createVersion.version());
         return ResponseEntity.created(uri).build();
     }
 
@@ -142,7 +142,7 @@ public class BoxResource {
     public ResponseEntity<Version> revokeVersion(@PathVariable(name = "username") final String username,
                                                  @PathVariable(name = "name") final String name,
                                                  @PathVariable(name = "version") final String version) {
-        versionService.updateVersionStatus(username, name, version, VersionStatus.INACTIVE);
+        versionService.updateVersionStatus(username, name, version, VersionStatus.UNRELEASED);
         return ResponseEntity.ok().build();
     }
 

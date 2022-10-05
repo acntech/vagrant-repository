@@ -36,7 +36,7 @@ public class SearchBoxConverter implements Converter<Record, Box> {
                 source.get(ORGANIZATIONS.ID),
                 created.atZone(ZoneId.systemDefault()),
                 modified == null ? null : modified.atZone(ZoneId.systemDefault()),
-                null, // TODO: Handle
+                null, /// Is set in resource
                 null); // Is set in resource
     }
 }

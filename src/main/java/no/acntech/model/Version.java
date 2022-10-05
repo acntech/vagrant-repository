@@ -10,10 +10,12 @@ import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import no.acntech.validation.CorrectVersion;
+
 public record Version(
         @NotNull @JsonIgnore Integer id,
-        @NotBlank @Size(min = 1, max = 10) @JsonProperty("version") String name,
-        @NotBlank @Size(min = 1, max = 10) String number,
+        @NotBlank @CorrectVersion String version,
+        @NotBlank @CorrectVersion String number,
         @Size(max = 4000) @JsonProperty("description_html") String descriptionHtml,
         @Size(max = 4000) @JsonProperty("description_markdown") String descriptionMarkdown,
         @NotNull VersionStatus status,
@@ -29,7 +31,7 @@ public record Version(
                         @Valid @NotNull List<Provider> providers) {
         return new Version(
                 this.id,
-                this.name,
+                this.version,
                 this.number,
                 this.descriptionHtml,
                 this.descriptionMarkdown,

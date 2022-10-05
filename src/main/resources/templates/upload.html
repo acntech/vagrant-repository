@@ -36,15 +36,15 @@
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.name})}"
+               th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}"
                th:title="#{header.navbar.link.version}">
-                <span th:text="${version.name}"></span>
+                <span th:text="${version.version}"></span>
                 <i class="fa-solid fa-caret-right"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{username}/boxes/{name}/versions/{version}/provider/{provider}(username=${box.username},name=${box.name},version=${version.name},provider=${provider.name})}"
+               th:href="@{/{username}/boxes/{name}/versions/{version}/provider/{provider}(username=${box.username},name=${box.name},version=${version.version},provider=${provider.name})}"
                th:title="#{header.navbar.link.provider}">
                 <span th:text="${provider.name}"></span>
             </a>
@@ -55,7 +55,7 @@
     <section class="content content-upload">
         <h3 class="mb-4" th:text="#{upload.page.title}"></h3>
         <form class="mb-3"
-              th:action="@{/{organization}/boxes/{box}/versions/{version}/providers/{provider}/upload/{uid}(organization=${box.username},box=${box.name},version=${version.name},provider=${provider.name},uid=${upload.uid})}"
+              th:action="@{/{organization}/boxes/{box}/versions/{version}/providers/{provider}/upload/{uid}(organization=${box.username},box=${box.name},version=${version.version},provider=${provider.name},uid=${upload.uid})}"
               enctype="multipart/form-data" th:method="post">
             <div class="row mb-3">
                 <div class="form-group col">

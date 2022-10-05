@@ -36,9 +36,9 @@
         </li>
         <li class="nav-item">
             <a class="nav-link"
-               th:href="@{/{username}/boxes/{box}/versions/{version}(username=${box.username},box=${box.name},version=${version.name})}"
+               th:href="@{/{username}/boxes/{box}/versions/{version}(username=${box.username},box=${box.name},version=${version.version})}"
                th:title="#{header.navbar.link.version}">
-                <span th:text="${version.name}"></span>
+                <span th:text="${version.version}"></span>
             </a>
         </li>
     </ul>
@@ -47,17 +47,17 @@
     <section class="content content-version">
         <h3 class="mb-4" th:text="#{update-version.page.title}"></h3>
         <form class="mb-3"
-              th:action="@{/{username}/boxes/{name}/version/{version}(username=${box.username},name=${box.name},version=${version.name})}"
+              th:action="@{/{username}/boxes/{name}/version/{version}(username=${box.username},name=${box.name},version=${version.version})}"
               th:object="${formData}" th:method="post">
             <div class="row mb-3">
                 <div class="form-group col-4">
-                    <label for="name" class="form-check-label"
-                           th:text="#{update-version.page.form.name.label}"></label>
-                    <input id="name" class="form-control" th:type="text" th:field="*{name}"
-                           th:placeholder="#{update-version.page.form.name.placeholder}"
-                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                    <label for="version" class="form-check-label"
+                           th:text="#{update-version.page.form.version.label}"></label>
+                    <input id="version" class="form-control" th:type="text" th:field="*{version}"
+                           th:placeholder="#{update-version.page.form.version.placeholder}"
+                           th:classappend="${#fields.hasErrors('version')} ? 'is-invalid' : ''">
                     <div id="nameFeedback" class="invalid-feedback">
-                        <span th:errors="*{name}"></span>
+                        <span th:errors="*{version}"></span>
                     </div>
                 </div>
                 <div class="col-8"></div>
@@ -92,7 +92,7 @@
         </form>
     </section>
     <form id="deleteItemForm" class="mb-3" th:method="post"
-          th:action="@{/{username}/boxes/{box}/version/{version}/delete(username=${box.username},box=${box.name},version=${version.name})}">
+          th:action="@{/{username}/boxes/{box}/version/{version}/delete(username=${box.username},box=${box.name},version=${version.version})}">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
     <div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog"

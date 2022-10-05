@@ -34,7 +34,11 @@
             <a th:href="@{/{org}/boxes(org=${organization.name})}" class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
                     <div>
-                        <h5 class="mb-1" th:text="${organization.name}"></h5>
+                        <h5 class="mb-1">
+                            <span th:text="${organization.name}"></span>
+                            <i class="fa-solid fa-lock text-muted fs-6 ms-2" th:if="${organization.isPrivate}"
+                               th:title="#{boxes.page.text.private}"></i>
+                        </h5>
                         <p class="text-muted mb-1" th:text="${organization.description}"></p>
                     </div>
                     <div>

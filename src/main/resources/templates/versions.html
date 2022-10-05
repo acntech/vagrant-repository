@@ -50,7 +50,8 @@
                        th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}">
                         <span th:text="${box.name}"></span>
                     </a>
-                    <i class="fa-solid fa-lock text-muted fs-6 ms-2" th:if="${box.isPrivate}"></i>
+                    <i class="fa-solid fa-lock text-muted fs-6 ms-2" th:if="${box.isPrivate}"
+                       th:title="#{versions.page.text.private}"></i>
                 </h5>
                 <p class="text-muted mb-1" th:text="${box.descriptionShort}"></p>
             </div>
@@ -70,20 +71,22 @@
         </div>
 
         <div class="list-group" th:each="version : ${versions}">
-            <a th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.name})}"
+            <a th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}"
                class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
                     <div>
-                        <h5 class="mb-1" th:text="${version.name}"></h5>
+                        <h5 class="mb-1" th:text="${version.version}"></h5>
                         <p class="text-muted mb-1" th:text="${version.descriptionHtml}"></p>
                     </div>
                     <div>
                         <small class="text-muted d-block mb-2"
                                th:text="${#temporals.format(version.created, 'yyyy-MM-dd')}"></small>
                         <p class="text-end mb-0">
-                            <span class="badge bg-danger rounded-pill" th:if="${version.status.name() == 'INACTIVE'}"
-                                  th:text="${version.status.name()}"></span>
                             <span class="badge bg-success rounded-pill" th:if="${version.status.name() == 'ACTIVE'}"
+                                  th:text="${version.status.name()}"></span>
+                            <span class="badge bg-danger rounded-pill" th:if="${version.status.name() == 'UNRELEASED'}"
+                                  th:text="${version.status.name()}"></span>
+                            <span class="badge bg-danger rounded-pill" th:if="${version.status.name() == 'REVOKED'}"
                                   th:text="${version.status.name()}"></span>
                         </p>
                     </div>

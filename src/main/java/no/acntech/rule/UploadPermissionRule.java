@@ -10,18 +10,18 @@ import no.acntech.service.MembershipService;
 import no.acntech.service.SecurityService;
 
 @Component
-public class VersionPermissionRule extends MembershipAwarePermissionRule {
+public class UploadPermissionRule extends MembershipAwarePermissionRule {
 
 
-    protected VersionPermissionRule(final SecurityService securityService,
-                                    final MembershipService membershipService) {
+    protected UploadPermissionRule(final SecurityService securityService,
+                                   final MembershipService membershipService) {
         super(securityService, membershipService);
     }
 
     @Override
     public boolean isRelevant(@NonNull final Action action,
                               @NonNull final Resource resource) {
-        return resource == Resource.VERSIONS;
+        return resource == Resource.UPLOADS;
     }
 
     @Override

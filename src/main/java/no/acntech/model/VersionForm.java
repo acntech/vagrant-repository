@@ -3,28 +3,30 @@ package no.acntech.model;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import no.acntech.validation.CorrectVersion;
+
 public class VersionForm {
 
     @NotBlank
-    @Size(min = 2, max = 50)
-    private String name;
+    @CorrectVersion
+    private String version;
     @Size(max = 4000)
     private String description;
 
     public VersionForm() {
     }
 
-    public VersionForm(String name, String description) {
-        this.name = name;
+    public VersionForm(String version, String description) {
+        this.version = version;
         this.description = description;
     }
 
-    public String getName() {
-        return name;
+    public String getVersion() {
+        return version;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getDescription() {

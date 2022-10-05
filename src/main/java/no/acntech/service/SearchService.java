@@ -23,6 +23,7 @@ import no.acntech.model.SearchOrder;
 import no.acntech.model.SearchProviderType;
 import no.acntech.model.SearchSort;
 import no.acntech.model.Version;
+import no.acntech.model.VersionStatus;
 
 import static no.acntech.model.tables.Boxes.BOXES;
 import static no.acntech.model.tables.Members.MEMBERS;
@@ -80,7 +81,7 @@ public class SearchService {
     public Version searchCurrentVersion(@NotNull final Integer boxId) {
         try (final var select = context.selectFrom(VERSIONS)) {
             final var record = select
-                    .where(VERSIONS.BOX_ID.eq(boxId))
+                    .where(VERSIONS.BOX_ID.eq(boxId).and(VERSIONS.STATUS.eq(VersionStatus.ACTIVE.name())))
                     .orderBy(VERSIONS.ID.desc())
                     .limit(1)
                     .fetchSingle();

@@ -9,6 +9,7 @@ import java.util.Comparator;
 import no.acntech.model.Box;
 import no.acntech.model.Provider;
 import no.acntech.model.Version;
+import no.acntech.model.VersionStatus;
 import no.acntech.util.UrlBuilder;
 
 @Validated
@@ -34,16 +35,19 @@ public class DecoratorService {
                 .map(version -> decorateVersion(box, version, uriBuilder))
                 .sorted(Comparator.comparingInt(Version::id).reversed())
                 .toList();
-        final var currentVersion = decoratedVersions.isEmpty() ? null : decoratedVersions.get(0);
+        final var currentVersion = decoratedVersions.stream()
+                .filter(version -> version.status() == VersionStatus.ACTIVE)
+                .max(Comparator.comparing(Version::id))
+                .orElse(null);
         return box.with(currentVersion, decoratedVersions);
     }
 
     public Version decorateVersion(final Box box,
                                    final Version version,
                                    final UriComponentsBuilder uriBuilder) {
-        final var releaseUri = UrlBuilder.versionReleaseUri(uriBuilder, box.username(), box.name(), version.name());
-        final var revokeUri = UrlBuilder.versionRevokeUri(uriBuilder, box.username(), box.name(), version.name());
-        final var providers = providerService.findProviders(box.username(), box.name(), version.name());
+        final var releaseUri = UrlBuilder.versionReleaseUri(uriBuilder, box.username(), box.name(), version.version());
+        final var revokeUri = UrlBuilder.versionRevokeUri(uriBuilder, box.username(), box.name(), version.version());
+        final var providers = providerService.findProviders(box.username(), box.name(), version.version());
         final var decorateProviders = providers.stream()
                 .map(provider -> decorateProvider(box, version, provider, uriBuilder))
                 .toList();
@@ -55,7 +59,7 @@ public class DecoratorService {
                                       final Provider provider,
                                       final UriComponentsBuilder uriBuilder) {
         if (provider.hosted()) {
-            final var upload = uploadService.getUpload(box.username(), box.name(), version.name(), provider.name());
+            final var upload = uploadService.getUpload(box.username(), box.name(), version.version(), provider.name());
             final var uploadPathUri = UrlBuilder.uploadPathUri(uriBuilder, upload.uid());
             return provider.with(uploadPathUri.toString());
         } else {
