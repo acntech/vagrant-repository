@@ -1,6 +1,7 @@
 package no.acntech.model;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class OrganizationForm {
@@ -10,13 +11,16 @@ public class OrganizationForm {
     private String name;
     @Size(max = 4000)
     private String description;
+    @NotNull
+    private Boolean isPrivate;
 
     public OrganizationForm() {
     }
 
-    public OrganizationForm(String name, String description) {
+    public OrganizationForm(String name, String description, Boolean isPrivate) {
         this.name = name;
         this.description = description;
+        this.isPrivate = isPrivate;
     }
 
     public String getName() {
@@ -33,5 +37,13 @@ public class OrganizationForm {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(Boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 }

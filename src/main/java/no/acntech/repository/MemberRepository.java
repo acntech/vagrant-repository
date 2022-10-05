@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 
-import no.acntech.model.OrganizationRole;
+import no.acntech.model.MemberRole;
 import no.acntech.model.tables.records.MembersRecord;
 
 import static no.acntech.model.tables.Members.MEMBERS;
@@ -23,33 +23,33 @@ public class MemberRepository {
         this.context = context;
     }
 
-    public MembersRecord getMember(final String name,
-                                   final String username) {
+    public MembersRecord getMember(final String name, final String username) {
         try (final var select = context.select(MEMBERS.fields())) {
             try (final var organizationJoin = select.from(MEMBERS)
                     .join(ORGANIZATIONS).on(MEMBERS.ORGANIZATION_ID.eq(ORGANIZATIONS.ID))) {
                 try (final var userJoin = organizationJoin
                         .join(USERS).on(MEMBERS.USER_ID.eq(USERS.ID))) {
-                    return (MembersRecord) userJoin
+                    final var record = userJoin
                             .where(ORGANIZATIONS.NAME.eq(name))
                             .and(USERS.USERNAME.eq(username))
                             .fetchSingle();
+                    return record.into(MembersRecord.class);
                 }
             }
         }
     }
 
     public int getMemberCount(final Integer organizationId,
-                              final OrganizationRole... organizationRoles) {
-        if (organizationRoles == null) {
+                              final MemberRole... memberRoles) {
+        if (memberRoles == null) {
             try (final var count = context.selectCount()) {
                 return count.from(MEMBERS)
                         .where(MEMBERS.ORGANIZATION_ID.eq(organizationId))
                         .execute();
             }
         } else {
-            final var roles = Arrays.stream(organizationRoles)
-                    .map(OrganizationRole::name).toList();
+            final var roles = Arrays.stream(memberRoles)
+                    .map(MemberRole::name).toList();
             try (final var count = context.selectCount()) {
                 return count.from(MEMBERS)
                         .where(MEMBERS.ORGANIZATION_ID.eq(organizationId))
@@ -79,7 +79,7 @@ public class MemberRepository {
     @Transactional
     public int addMember(final Integer organizationId,
                          final Integer userId,
-                         final OrganizationRole role) {
+                         final MemberRole role) {
         try (final var insert = context.insertInto(
                 MEMBERS,
                 MEMBERS.ORGANIZATION_ID,

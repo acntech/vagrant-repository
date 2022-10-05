@@ -15,12 +15,15 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import no.acntech.annotation.Permission;
 import no.acntech.exception.CannotSaveItemException;
 import no.acntech.exception.ChecksumException;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
+import no.acntech.model.Action;
 import no.acntech.model.ProviderStatus;
 import no.acntech.model.ProviderType;
+import no.acntech.model.Resource;
 import no.acntech.model.UpdateStatus;
 import no.acntech.model.Upload;
 
@@ -56,6 +59,7 @@ public class UploadService {
         }
     }
 
+    @Permission(action = Action.READ, resource = Resource.UPLOADS)
     public Upload getUpload(@NotBlank final String username,
                             @NotBlank final String name,
                             @NotBlank final String version,
@@ -75,6 +79,7 @@ public class UploadService {
         }
     }
 
+    @Permission(action = Action.CREATE, resource = Resource.UPLOADS)
     @Transactional
     public String createUpload(@NotBlank final String username,
                                @NotBlank final String name,

@@ -14,11 +14,14 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import no.acntech.annotation.Permission;
 import no.acntech.exception.CannotSaveItemException;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
 import no.acntech.filter.StreamFilters;
+import no.acntech.model.Action;
 import no.acntech.model.CreateVersion;
+import no.acntech.model.Resource;
 import no.acntech.model.UpdateVersion;
 import no.acntech.model.Version;
 import no.acntech.model.VersionStatus;
@@ -45,16 +48,7 @@ public class VersionService {
         this.providerRepository = providerRepository;
     }
 
-    public Version getVersion(@NotNull final Integer id) {
-        LOGGER.info("Get version for ID {}", id);
-        try {
-            final var record = versionRepository.getVersion(id);
-            return conversionService.convert(record, Version.class);
-        } catch (NoDataFoundException e) {
-            throw new ItemNotFoundException("No version found for ID " + id, e);
-        }
-    }
-
+    @Permission(action = Action.READ, resource = Resource.VERSIONS)
     public Version getVersion(@NotBlank final String username,
                               @NotBlank final String name,
                               @NotBlank final String version) {
@@ -69,6 +63,7 @@ public class VersionService {
         }
     }
 
+    @Permission(action = Action.READ, resource = Resource.VERSIONS)
     public List<Version> findVersions(@NotBlank final String username,
                                       @NotBlank final String name) {
         final var tag = username + "/" + name;
@@ -80,6 +75,7 @@ public class VersionService {
                 .collect(Collectors.toList());
     }
 
+    @Permission(action = Action.CREATE, resource = Resource.VERSIONS)
     @Transactional
     public void createVersion(@NotBlank final String username,
                               @NotBlank final String name,
@@ -97,6 +93,7 @@ public class VersionService {
         }
     }
 
+    @Permission(action = Action.UPDATE, resource = Resource.VERSIONS)
     @Transactional
     public void updateVersion(@NotBlank final String username,
                               @NotBlank final String name,
@@ -115,6 +112,7 @@ public class VersionService {
         }
     }
 
+    @Permission(action = Action.DELETE, resource = Resource.VERSIONS)
     @Transactional
     public void deleteVersion(@NotBlank final String username,
                               @NotBlank final String name,
@@ -129,6 +127,7 @@ public class VersionService {
         }
     }
 
+    @Permission(action = Action.UPDATE, resource = Resource.VERSIONS)
     @Transactional
     public void updateVersionStatus(@NotBlank final String username,
                                     @NotBlank final String name,
@@ -158,7 +157,11 @@ public class VersionService {
 
     @Transactional
     public void postDownload(@NotNull final Integer id) {
-        final var version = getVersion(id);
-        boxService.postDownload(version.boxId());
+        try {
+            final var record = versionRepository.getVersion(id);
+            boxService.postDownload(record.getBoxId());
+        } catch (NoDataFoundException e) {
+            throw new ItemNotFoundException("No version found for ID " + id, e);
+        }
     }
 }

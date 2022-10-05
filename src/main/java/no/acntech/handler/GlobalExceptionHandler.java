@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -58,6 +59,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUnauthorizedException(@NonNull final Exception exception,
                                                               @NonNull final WebRequest request) {
         return handleException(exception, HttpStatus.UNAUTHORIZED, request);
+    }
+
+    @ExceptionHandler({
+            AccessDeniedException.class
+    })
+    @NonNull
+    public ResponseEntity<Object> handleForbiddenException(@NonNull final Exception exception,
+                                                           @NonNull final WebRequest request) {
+        return handleException(exception, HttpStatus.FORBIDDEN, request);
     }
 
 

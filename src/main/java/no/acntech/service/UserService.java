@@ -19,12 +19,15 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import no.acntech.annotation.Permission;
 import no.acntech.exception.CannotDeleteItemException;
 import no.acntech.exception.ItemAlreadyExistsException;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
+import no.acntech.model.Action;
 import no.acntech.model.CreateUser;
-import no.acntech.model.OrganizationRole;
+import no.acntech.model.MemberRole;
+import no.acntech.model.Resource;
 import no.acntech.model.UpdateUser;
 import no.acntech.model.User;
 import no.acntech.model.UserRole;
@@ -54,6 +57,7 @@ public class UserService {
         this.memberRepository = memberRepository;
     }
 
+    @Permission(action = Action.READ, resource = Resource.USERS)
     public User getUser(@NotBlank final String username) {
         LOGGER.debug("Get user {}", username);
         try {
@@ -64,6 +68,7 @@ public class UserService {
         }
     }
 
+    @Permission(action = Action.READ, resource = Resource.USERS)
     public List<User> findUsers() {
         LOGGER.debug("Find users");
         final var result = userRepository.findUsers();
@@ -72,11 +77,11 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Permission(action = Action.CREATE, resource = Resource.USERS)
     @Transactional
     public void createUser(@Valid @NotNull final CreateUser createUser) {
         LOGGER.debug("Create user {}", createUser.username());
         try {
-            // TODO: Access control for who can create admin users
             final var passwordHash = passwordEncoder.encode(createUser.password());
             final var rowsAffected = userRepository.createUser(
                     createUser.username().toLowerCase(),
@@ -91,6 +96,8 @@ public class UserService {
         }
     }
 
+    @Permission(action = Action.UPDATE, resource = Resource.USERS)
+    @Transactional
     public void updateUser(@NotBlank final String username,
                            @Valid @NotNull final UpdateUser updateUser) {
         LOGGER.debug("Update user {}", username);
@@ -119,12 +126,13 @@ public class UserService {
         }
     }
 
+    @Permission(action = Action.DELETE, resource = Resource.USERS)
     public void deleteUser(@NotBlank final String username) {
         LOGGER.debug("Delete user {}", username);
         final var memberships = memberRepository.findMemberships(username);
         if (!memberships.isEmpty()) {
             for (var membership : memberships) {
-                final var numberOfOwners = memberRepository.getMemberCount(membership.getOrganizationId(), OrganizationRole.OWNER);
+                final var numberOfOwners = memberRepository.getMemberCount(membership.getOrganizationId(), MemberRole.OWNER);
                 if (numberOfOwners == 1) {
                     throw new CannotDeleteItemException("Cannot delete membership of last organization owner");
                 }

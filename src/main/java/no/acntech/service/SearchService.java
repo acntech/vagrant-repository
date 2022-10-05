@@ -25,7 +25,9 @@ import no.acntech.model.SearchSort;
 import no.acntech.model.Version;
 
 import static no.acntech.model.tables.Boxes.BOXES;
+import static no.acntech.model.tables.Members.MEMBERS;
 import static no.acntech.model.tables.Organizations.ORGANIZATIONS;
+import static no.acntech.model.tables.Users.USERS;
 import static no.acntech.model.tables.Versions.VERSIONS;
 
 @Validated
@@ -35,11 +37,14 @@ public class SearchService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchService.class);
     private final DSLContext context;
     private final ConversionService conversionService;
+    private final SecurityService securityService;
 
     public SearchService(final DSLContext context,
-                         final ConversionService conversionService) {
+                         final ConversionService conversionService,
+                         final SecurityService securityService) {
         this.context = context;
         this.conversionService = conversionService;
+        this.securityService = securityService;
     }
 
     public List<Box> searchBoxes(final String q,
@@ -51,17 +56,23 @@ public class SearchService {
         LOGGER.info("Search for boxes");
         final var fields = ArrayUtils.addAll(BOXES.fields(), ORGANIZATIONS.NAME);
         try (final var select = context.select(fields)) {
-            try (final var join = select.from(BOXES)
+            try (final var organizationJoin = select.from(BOXES)
                     .join(ORGANIZATIONS).on(BOXES.ORGANIZATION_ID.eq(ORGANIZATIONS.ID))) {
-                final Integer offset = (page - 1) * limit;
-                final var result = join
-                        .where(where(q))
-                        .orderBy(orderBy(sort, order))
-                        .limit(offset, limit)
-                        .fetch();
-                return result.stream()
-                        .map(record -> conversionService.convert(record, Box.class))
-                        .collect(Collectors.toList());
+                try (final var membersJoin = organizationJoin
+                        .join(MEMBERS).on(MEMBERS.ORGANIZATION_ID.eq(ORGANIZATIONS.ID))) {
+                    try (final var usersJoin = membersJoin
+                            .join(USERS).on(USERS.ID.eq(MEMBERS.USER_ID))) {
+                        final Integer offset = (page - 1) * limit;
+                        final var result = usersJoin
+                                .where(where(q))
+                                .orderBy(orderBy(sort, order))
+                                .limit(offset, limit)
+                                .fetch();
+                        return result.stream()
+                                .map(record -> conversionService.convert(record, Box.class))
+                                .collect(Collectors.toList());
+                    }
+                }
             }
         }
     }
@@ -80,10 +91,14 @@ public class SearchService {
     }
 
     private Condition where(final String q) {
+        final var username = securityService.getUsername();
         if (StringUtils.isBlank(q)) {
-            return DSL.trueCondition();
+            return DSL.and(BOXES.PRIVATE.isFalse().or(USERS.USERNAME.eq(username)),
+                    ORGANIZATIONS.PRIVATE.isFalse().or(USERS.USERNAME.eq(username)));
         } else {
-            return BOXES.NAME.eq(q).or(ORGANIZATIONS.NAME.eq(q));
+            return DSL.and(BOXES.NAME.eq(q).or(ORGANIZATIONS.NAME.eq(q)),
+                    BOXES.PRIVATE.isFalse().or(USERS.USERNAME.eq(username)),
+                    ORGANIZATIONS.PRIVATE.isFalse().or(USERS.USERNAME.eq(username)));
         }
     }
 

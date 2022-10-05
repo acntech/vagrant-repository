@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import no.acntech.converter.RoleConverter;
 import no.acntech.model.UserRole;
 import no.acntech.service.HttpRequestService;
-import no.acntech.service.SecurityService;
 import no.acntech.service.TokenService;
 
 public class TokenAuthenticationSuccessHandler extends AbstractAuthenticationTargetUrlRequestHandler implements AuthenticationSuccessHandler {
@@ -19,18 +19,15 @@ public class TokenAuthenticationSuccessHandler extends AbstractAuthenticationTar
     private final RequestMatcher redirectForRequestMatcher;
     private final String redirectUrl;
     private final HttpRequestService httpRequestService;
-    private final SecurityService securityService;
     private final TokenService tokenService;
 
     public TokenAuthenticationSuccessHandler(final RequestMatcher redirectForRequestMatcher,
                                              final String redirectUrl,
                                              final HttpRequestService httpRequestService,
-                                             final SecurityService securityService,
                                              final TokenService tokenService) {
         this.redirectForRequestMatcher = redirectForRequestMatcher;
         this.redirectUrl = redirectUrl;
         this.httpRequestService = httpRequestService;
-        this.securityService = securityService;
         this.tokenService = tokenService;
     }
 
@@ -47,7 +44,7 @@ public class TokenAuthenticationSuccessHandler extends AbstractAuthenticationTar
     private void setTokenCookie(final HttpServletResponse response,
                                 final Authentication authentication) {
         final var username = authentication.getName();
-        final var roles = securityService.getRoles(authentication.getAuthorities());
+        final var roles = RoleConverter.getRoles(authentication.getAuthorities());
         final var userRoles = roles.stream()
                 .map(UserRole::name)
                 .toList();

@@ -1,6 +1,5 @@
 package no.acntech.config;
 
-import no.acntech.util.AntMatchers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,10 +14,8 @@ import no.acntech.converter.TokenAuthenticationConverter;
 import no.acntech.handler.TokenAuthenticationSuccessHandler;
 import no.acntech.repository.InMemorySecurityContextRepository;
 import no.acntech.service.HttpRequestService;
-import no.acntech.service.SecurityService;
-import no.acntech.service.SecurityUserService;
 import no.acntech.service.TokenService;
-import no.acntech.service.UserService;
+import no.acntech.util.AntMatchers;
 
 import static no.acntech.config.TokenSecurityConfig.tokenSecurity;
 
@@ -27,18 +24,15 @@ public class WebSecurityConfig {
 
     private final String cookieName;
     private final HttpRequestService httpRequestService;
-    private final SecurityService securityService;
-    private final UserService userService;
+    private final UserDetailsService userDetailsService;
     private final TokenService tokenService;
 
     public WebSecurityConfig(@Value("${acntech.security.cookie.name}") final String cookieName,
                              final HttpRequestService httpRequestService,
-                             final SecurityService securityService,
-                             final UserService userService,
+                             final UserDetailsService userDetailsService,
                              final TokenService tokenService) {
         this.httpRequestService = httpRequestService;
-        this.securityService = securityService;
-        this.userService = userService;
+        this.userDetailsService = userDetailsService;
         this.tokenService = tokenService;
         this.cookieName = cookieName;
     }
@@ -77,7 +71,7 @@ public class WebSecurityConfig {
                                 "/webjars/**",
                                 "/resources/**"))
                 .and()
-                .userDetailsService(userDetailsService())
+                .userDetailsService(userDetailsService)
                 .build();
     }
 
@@ -86,17 +80,12 @@ public class WebSecurityConfig {
         return new TokenAuthenticationSuccessHandler(AntMatchers.andMatcher(
                 AntMatchers.anyMatcher(),
                 AntMatchers.negatedAntMatcher("/api/**")
-        ), "/", httpRequestService, securityService, tokenService);
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new SecurityUserService(userService, securityService);
+        ), "/", httpRequestService, tokenService);
     }
 
     @Bean
     public TokenAuthenticationConverter tokenAuthenticationConverter() {
-        return new TokenAuthenticationConverter(AntMatchers.antMatcher("/api/**"), httpRequestService, securityService, tokenService);
+        return new TokenAuthenticationConverter(AntMatchers.antMatcher("/api/**"), httpRequestService, tokenService);
     }
 
     @Bean

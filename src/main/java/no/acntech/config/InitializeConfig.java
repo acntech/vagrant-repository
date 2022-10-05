@@ -33,10 +33,10 @@ public class InitializeConfig {
     @Transactional
     @PostConstruct
     public void init() {
-        if (userService.findUsers().isEmpty()) {
-            try {
+        try {
+            securityService.createSystemSession();
+            if (userService.findUsers().isEmpty()) {
                 LOGGER.warn("No users found in the database");
-                securityService.createSystemSession();
                 final var password = UUID.randomUUID().toString();
                 final var createUser = new CreateUser(adminUsername, password, UserRole.ADMIN);
                 userService.createUser(createUser);
@@ -49,9 +49,9 @@ public class InitializeConfig {
                                             
                         #########################################################
                         """, createUser.username(), createUser.password());
-            } finally {
-                securityService.clearSystemSession();
             }
+        } finally {
+            securityService.clearSystemSession();
         }
     }
 }

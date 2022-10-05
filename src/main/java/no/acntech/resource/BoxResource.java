@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import no.acntech.model.Box;
 import no.acntech.model.CreateBox;
 import no.acntech.model.CreateProvider;
@@ -62,7 +65,7 @@ public class BoxResource {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createBox(@RequestBody final CreateBox.Request createBoxRequest,
+    public ResponseEntity<Void> createBox(@RequestBody @Valid @NotNull final CreateBox.Request createBoxRequest,
                                           final UriComponentsBuilder uriBuilder) {
         final var createBox = createBoxRequest.box();
         boxService.createBox(createBox);
@@ -73,7 +76,7 @@ public class BoxResource {
     @PutMapping(path = "{username}/{name}")
     public ResponseEntity<Void> updateBox(@PathVariable(name = "username") final String username,
                                           @PathVariable(name = "name") final String name,
-                                          @RequestBody final UpdateBox.Request updateBoxRequest) {
+                                          @RequestBody @Valid @NotNull final UpdateBox.Request updateBoxRequest) {
         final var updateBox = updateBoxRequest.box();
         boxService.updateBox(username, name, updateBox);
         return ResponseEntity.ok().build();
@@ -101,7 +104,7 @@ public class BoxResource {
     @PostMapping(path = "{username}/{name}/version")
     public ResponseEntity<Version> createVersion(@PathVariable(name = "username") final String username,
                                                  @PathVariable(name = "name") final String name,
-                                                 @RequestBody final CreateVersion.Request createVersionRequest,
+                                                 @RequestBody @Valid @NotNull final CreateVersion.Request createVersionRequest,
                                                  final UriComponentsBuilder uriBuilder) {
         final var createVersion = createVersionRequest.version();
         versionService.createVersion(username, name, createVersion);
@@ -113,7 +116,7 @@ public class BoxResource {
     public ResponseEntity<Version> updateVersion(@PathVariable(name = "username") final String username,
                                                  @PathVariable(name = "name") final String name,
                                                  @PathVariable(name = "version") final String version,
-                                                 @RequestBody final UpdateVersion.Request updateVersionRequest) {
+                                                 @RequestBody @Valid @NotNull final UpdateVersion.Request updateVersionRequest) {
         final var updateVersion = updateVersionRequest.version();
         versionService.updateVersion(username, name, version, updateVersion);
         return ResponseEntity.ok().build();
@@ -164,7 +167,7 @@ public class BoxResource {
     public ResponseEntity<Version> createProvider(@PathVariable(name = "username") final String username,
                                                   @PathVariable(name = "name") final String name,
                                                   @PathVariable(name = "version") final String version,
-                                                  @RequestBody final CreateProvider.Request createProviderRequest,
+                                                  @RequestBody @Valid @NotNull final CreateProvider.Request createProviderRequest,
                                                   final UriComponentsBuilder uriBuilder) {
         final var createProvider = createProviderRequest.provider();
         providerService.createProvider(username, name, version, createProvider);
@@ -177,7 +180,7 @@ public class BoxResource {
                                                   @PathVariable(name = "name") final String name,
                                                   @PathVariable(name = "version") final String version,
                                                   @PathVariable(name = "provider") final String provider,
-                                                  @RequestBody final UpdateProvider.Request updateProviderRequest) {
+                                                  @RequestBody @Valid @NotNull final UpdateProvider.Request updateProviderRequest) {
         final var updateProvider = updateProviderRequest.provider();
         providerService.updateProvider(username, name, version, ProviderType.fromProvider(provider), updateProvider);
         return ResponseEntity.ok().build();

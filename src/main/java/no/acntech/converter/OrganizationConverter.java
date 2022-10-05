@@ -19,6 +19,7 @@ public class OrganizationConverter implements Converter<OrganizationsRecord, Org
                 source.getId(),
                 source.getName(),
                 source.getDescription(),
+                source.getPrivate(),
                 source.getCreated().atZone(ZoneId.systemDefault()),
                 source.getModified() == null ? null : source.getModified().atZone(ZoneId.systemDefault()));
     }

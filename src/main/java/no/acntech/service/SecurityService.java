@@ -6,8 +6,6 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
@@ -15,11 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import no.acntech.converter.RoleConverter;
 import no.acntech.model.SecurityUser;
 import no.acntech.model.UserRole;
 
@@ -27,7 +24,7 @@ import no.acntech.model.UserRole;
 @Service
 public class SecurityService {
 
-    public static final String AUTHORITY_ROLE_PREFIX = "ROLE_";
+
     private final String systemUsername;
 
     public SecurityService(@Value("${acntech.security.system-user.username}") final String systemUsername) {
@@ -52,54 +49,21 @@ public class SecurityService {
         final var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof final UsernamePasswordAuthenticationToken authenticationToken) {
             final var authorities = authenticationToken.getAuthorities();
-            return getRoles(authorities);
+            return RoleConverter.getRoles(authorities);
         } else {
             throw new AuthenticationCredentialsNotFoundException("Security context is empty or holds authentication object of illegal type");
         }
     }
 
-    public List<UserRole> getRoles(final Collection<? extends GrantedAuthority> authorities) {
-        if (authorities == null) {
-            return Collections.emptyList();
-        } else {
-            return authorities.stream()
-                    .map(this::getRole)
-                    .toList();
-        }
-    }
-
-    public List<GrantedAuthority> getAuthorities(final UserRole... roles) {
-        if (roles == null) {
-            return Collections.emptyList();
-        } else {
-            return Arrays.stream(roles)
-                    .map(this::getAuthority)
-                    .toList();
-        }
-    }
-
-    public List<GrantedAuthority> getAuthorities(final Collection<UserRole> roles) {
-        if (roles == null) {
-            return Collections.emptyList();
-        } else {
-            return roles.stream()
-                    .map(this::getAuthority)
-                    .toList();
-        }
-    }
-
-    public UserRole getRole(final GrantedAuthority authority) {
-        final var role = authority.getAuthority().replace(AUTHORITY_ROLE_PREFIX, "");
-        return UserRole.valueOf(role);
-    }
-
-    public GrantedAuthority getAuthority(final UserRole role) {
-        return new SimpleGrantedAuthority(AUTHORITY_ROLE_PREFIX.concat(role.name()));
-    }
 
     public boolean hasRole(final UserRole role) {
         final var roles = getRoles();
         return roles.contains(role);
+    }
+
+    public boolean hasAnyRole(final UserRole... roles) {
+        return roles.length > 0 && Arrays.stream(roles)
+                .anyMatch(this::hasRole);
     }
 
     public boolean isAuthenticated() {
@@ -113,7 +77,7 @@ public class SecurityService {
         if (isAuthenticated()) {
             throw new SessionAuthenticationException("Session already set");
         }
-        final var authorities = getAuthorities(UserRole.ADMIN);
+        final var authorities = RoleConverter.getAuthorities(UserRole.ADMIN);
         final var principal = SecurityUser.builder()
                 .username(systemUsername)
                 .authorities(authorities)

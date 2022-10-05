@@ -15,15 +15,15 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import no.acntech.exception.CannotDeleteItemException;
+import no.acntech.annotation.Permission;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
-import no.acntech.model.AddOrganizationMember;
+import no.acntech.model.Action;
 import no.acntech.model.CreateOrganization;
+import no.acntech.model.MemberRole;
 import no.acntech.model.Organization;
-import no.acntech.model.OrganizationRole;
+import no.acntech.model.Resource;
 import no.acntech.model.UpdateOrganization;
-import no.acntech.model.tables.records.MembersRecord;
 import no.acntech.repository.MemberRepository;
 import no.acntech.repository.OrganizationRepository;
 
@@ -33,53 +33,48 @@ public class OrganizationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationService.class);
     private final ConversionService conversionService;
+    private final SecurityService securityService;
     private final UserService userService;
     private final OrganizationRepository organizationRepository;
     private final MemberRepository memberRepository;
 
     public OrganizationService(final ConversionService conversionService,
+                               final SecurityService securityService,
                                final UserService userService,
                                final OrganizationRepository organizationRepository,
                                final MemberRepository memberRepository) {
         this.conversionService = conversionService;
+        this.securityService = securityService;
         this.userService = userService;
         this.organizationRepository = organizationRepository;
         this.memberRepository = memberRepository;
     }
 
-    public Organization getOrganization(@NotNull final Integer id) {
-        LOGGER.debug("Get organization for ID {}", id);
-        try {
-            final var record = organizationRepository.getOrganization(id);
-            return conversionService.convert(record, Organization.class);
-        } catch (NoDataFoundException e) {
-            throw new ItemNotFoundException("No organization found for ID " + id, e);
-        }
-    }
-
+    @Permission(action = Action.READ, resource = Resource.ORGANIZATIONS)
     public Organization getOrganization(@NotBlank final String name) {
         LOGGER.debug("Get organization {}", name);
         try {
             final var record = organizationRepository.getOrganization(name);
+            if (record.getPrivate()) {
+                final var username = securityService.getUsername();
+                memberRepository.getMember(name, username); // Will throw exception if user is not member
+            }
             return conversionService.convert(record, Organization.class);
         } catch (NoDataFoundException e) {
             throw new ItemNotFoundException("No organization found for name " + name, e);
         }
     }
 
+    @Permission(action = Action.READ, resource = Resource.ORGANIZATIONS)
     public List<Organization> findOrganizations(@NotBlank final String username) {
         LOGGER.debug("Find organizations for user {}", username);
-        final var membersResult = memberRepository.findMemberships(username);
-        final var ids = membersResult.stream()
-                .map(MembersRecord::getOrganizationId)
-                .toList();
-
-        final var result = organizationRepository.findOrganizations(ids);
+        final var result = organizationRepository.findOrganizationsForUser(username);
         return result.stream()
                 .map(record -> conversionService.convert(record, Organization.class))
                 .collect(Collectors.toList());
     }
 
+    @Permission(action = Action.CREATE, resource = Resource.ORGANIZATIONS)
     @Transactional
     public void createOrganization(@NotBlank final String username,
                                    @Valid @NotNull final CreateOrganization createOrganization) {
@@ -88,7 +83,8 @@ public class OrganizationService {
 
         var rowsAffected = organizationRepository.createOrganization(
                 createOrganization.name().toLowerCase(),
-                createOrganization.description());
+                createOrganization.description(),
+                createOrganization.isPrivate());
         LOGGER.debug("Insert into ORGANIZATIONS table affected {} rows", rowsAffected);
         if (rowsAffected == 0) {
             throw new SaveItemFailedException("Failed to create organization " + createOrganization.name().toLowerCase());
@@ -99,7 +95,7 @@ public class OrganizationService {
         rowsAffected = memberRepository.addMember(
                 organization.id(),
                 user.id(),
-                OrganizationRole.OWNER
+                MemberRole.OWNER
         );
         LOGGER.debug("Insert into MEMBERS table affected {} rows", rowsAffected);
         if (rowsAffected == 0) {
@@ -108,6 +104,7 @@ public class OrganizationService {
         }
     }
 
+    @Permission(action = Action.UPDATE, resource = Resource.ORGANIZATIONS)
     @Transactional
     public void updateOrganization(@NotBlank final String name,
                                    @Valid @NotNull final UpdateOrganization updateOrganization) {
@@ -119,7 +116,8 @@ public class OrganizationService {
         final var rowsAffected = organizationRepository.updateOrganization(
                 name,
                 newName,
-                newDescription
+                newDescription,
+                updateOrganization.isPrivate()
         );
         LOGGER.debug("Updated record in USERS table affected {} rows", rowsAffected);
         if (rowsAffected == 0) {
@@ -127,45 +125,12 @@ public class OrganizationService {
         }
     }
 
+    @Permission(action = Action.DELETE, resource = Resource.ORGANIZATIONS)
     @Transactional
     public void deleteOrganization(@NotBlank final String name) {
         LOGGER.debug("Delete organizations {}", name);
         final var rowsAffected = organizationRepository.deleteOrganization(name);
         LOGGER.debug("Delete record in ORGANIZATIONS table affected {} rows", rowsAffected);
-        if (rowsAffected == 0) {
-            throw new SaveItemFailedException("Failed to delete organization " + name);
-        }
-    }
-
-    @Transactional
-    public void addOrganizationMember(@NotBlank final String name,
-                                      @NotBlank final AddOrganizationMember addOrganizationMember) {
-        LOGGER.info("Add member {} to organization {}", addOrganizationMember.username(), name);
-
-        final var organization = getOrganization(name);
-        final var user = userService.getUser(addOrganizationMember.username());
-
-        final var rowsAffected = memberRepository.addMember(organization.id(), user.id(), addOrganizationMember.role());
-        if (rowsAffected == 0) {
-            throw new SaveItemFailedException("Failed to create membership to organization " +
-                    name + " for user " + user.username());
-        }
-    }
-
-    @Transactional
-    public void removeOrganizationMember(@NotBlank final String name,
-                                         @NotBlank final String username) {
-        LOGGER.info("Remove member {} from organization {}", username, name);
-        final var organizationMember = memberRepository.getMember(name, username);
-
-        if (OrganizationRole.OWNER.name().equals(organizationMember.getRole())) {
-            final int numberOfOwners = memberRepository.getMemberCount(organizationMember.getOrganizationId(), OrganizationRole.OWNER);
-            if (numberOfOwners == 1) {
-                throw new CannotDeleteItemException("Cannot delete membership of last organization owner");
-            }
-        }
-
-        final var rowsAffected = memberRepository.removeMember(organizationMember.getOrganizationId(), organizationMember.getUserId());
         if (rowsAffected == 0) {
             throw new SaveItemFailedException("Failed to delete organization " + name);
         }

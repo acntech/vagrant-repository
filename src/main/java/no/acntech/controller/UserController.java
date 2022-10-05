@@ -1,13 +1,16 @@
 package no.acntech.controller;
 
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -30,13 +33,16 @@ import no.acntech.service.UserService;
 @Controller
 public class UserController {
 
+    private final ConversionService conversionService;
     private final SecurityService securityService;
     private final UserService userService;
     private final OrganizationService organizationService;
 
-    public UserController(final SecurityService securityService,
+    public UserController(final ConversionService conversionService,
+                          final SecurityService securityService,
                           final UserService userService,
                           final OrganizationService organizationService) {
+        this.conversionService = conversionService;
         this.securityService = securityService;
         this.userService = userService;
         this.organizationService = organizationService;
@@ -56,6 +62,7 @@ public class UserController {
 
     @PostMapping(path = "/register")
     public ModelAndView postRegisterPage(@ModelAttribute(name = "formData") @Valid @NotNull final RegisterForm form,
+                                         final RedirectAttributes redirectAttributes,
                                          final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             final var modelAndView = new ModelAndView("register-user");
@@ -64,6 +71,7 @@ public class UserController {
             return modelAndView;
         }
         userService.createUser(new CreateUser(form.getUsername(), form.getNewPassword(), UserRole.USER));
+        redirectAttributes.addAttribute("register", "success");
         return new ModelAndView("redirect:/login");
     }
 
@@ -179,8 +187,10 @@ public class UserController {
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
         }
+        final var createOrganization = conversionService.convert(form, CreateOrganization.class);
+        Assert.notNull(createOrganization, "Conversion of OrganizationForm to CreateOrganization produced null");
         final var username = securityService.getUsername();
-        organizationService.createOrganization(username, new CreateOrganization(form.getName(), form.getDescription()));
+        organizationService.createOrganization(username, createOrganization);
         final var organization = organizationService.getOrganization(form.getName().toLowerCase());
         return new ModelAndView("redirect:/" + organization.name() + "/boxes");
     }
@@ -190,8 +200,9 @@ public class UserController {
         final var modelAndView = new ModelAndView("update-organization");
         try {
             final var organization = organizationService.getOrganization(name);
+            final var organizationForm = conversionService.convert(organization, OrganizationForm.class);
             modelAndView.addObject("organization", organization);
-            modelAndView.addObject("formData", new OrganizationForm(organization.name(), organization.description()));
+            modelAndView.addObject("formData", organizationForm);
         } catch (ItemNotFoundException e) {
             modelAndView.addObject("organization", null);
             modelAndView.addObject("formData", new OrganizationForm());
@@ -210,7 +221,9 @@ public class UserController {
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
         }
-        organizationService.updateOrganization(name, new UpdateOrganization(form.getName(), form.getDescription()));
+        final var updateOrganization = conversionService.convert(form, UpdateOrganization.class);
+        Assert.notNull(updateOrganization, "Conversion of OrganizationForm to UpdateOrganization produced null");
+        organizationService.updateOrganization(name, updateOrganization);
         final var organization = organizationService.getOrganization(form.getName().toLowerCase());
         return new ModelAndView("redirect:/" + organization.name() + "/boxes");
     }

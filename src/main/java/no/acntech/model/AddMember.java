@@ -5,10 +5,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public record AddOrganizationMember(
+public record AddMember(
         @NotBlank @Size(min = 2, max = 50) String username,
-        @NotNull OrganizationRole role) {
+        @NotNull MemberRole role) {
 
-    public record Request(@Valid @NotNull AddOrganizationMember organization) {
+    public record Request(@Valid @NotNull AddMember user) {
     }
 }

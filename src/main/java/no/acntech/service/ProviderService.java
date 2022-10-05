@@ -15,12 +15,15 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import no.acntech.annotation.Permission;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
+import no.acntech.model.Action;
 import no.acntech.model.CreateProvider;
 import no.acntech.model.Provider;
 import no.acntech.model.ProviderStatus;
 import no.acntech.model.ProviderType;
+import no.acntech.model.Resource;
 import no.acntech.model.UpdateProvider;
 import no.acntech.repository.ProviderRepository;
 
@@ -41,6 +44,7 @@ public class ProviderService {
         this.providerRepository = providerRepository;
     }
 
+    // Only use internally!!
     public Provider getProvider(@NotNull final Integer id) {
         LOGGER.info("Get provider for ID {}", id);
         try {
@@ -51,6 +55,7 @@ public class ProviderService {
         }
     }
 
+    @Permission(action = Action.READ, resource = Resource.PROVIDERS)
     public Provider getProvider(@NotBlank final String username,
                                 @NotBlank final String name,
                                 @NotBlank final String versionParam,
@@ -67,6 +72,7 @@ public class ProviderService {
         }
     }
 
+    @Permission(action = Action.READ, resource = Resource.PROVIDERS)
     public List<Provider> findProviders(@NotBlank final String username,
                                         @NotBlank final String name,
                                         @NotBlank final String versionParam) {
@@ -79,6 +85,7 @@ public class ProviderService {
                 .collect(Collectors.toList());
     }
 
+    @Permission(action = Action.CREATE, resource = Resource.PROVIDERS)
     @Transactional
     public void createProvider(@NotBlank final String username,
                                @NotBlank final String name,
@@ -102,6 +109,7 @@ public class ProviderService {
         }
     }
 
+    @Permission(action = Action.UPDATE, resource = Resource.PROVIDERS)
     @Transactional
     public void updateProvider(@NotBlank final String username,
                                @NotBlank final String name,
@@ -127,6 +135,7 @@ public class ProviderService {
         }
     }
 
+    @Permission(action = Action.DELETE, resource = Resource.PROVIDERS)
     @Transactional
     public void deleteProvider(@NotBlank final String username,
                                @NotBlank final String name,
@@ -143,6 +152,7 @@ public class ProviderService {
         }
     }
 
+    @Permission(action = Action.UPDATE, resource = Resource.PROVIDERS)
     @Transactional
     public void updateProviderStatus(@NotNull final Integer id,
                                      @NotNull final ProviderStatus status) {
@@ -156,7 +166,11 @@ public class ProviderService {
 
     @Transactional
     public void postDownload(@NotNull final Integer id) {
-        final var provider = getProvider(id);
-        versionService.postDownload(provider.versionId());
+        try {
+            final var record = providerRepository.getProvider(id);
+            versionService.postDownload(record.getVersionId());
+        } catch (NoDataFoundException e) {
+            throw new ItemNotFoundException("No provider found for ID " + id, e);
+        }
     }
 }

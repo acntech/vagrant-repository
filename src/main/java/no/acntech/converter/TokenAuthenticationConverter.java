@@ -32,7 +32,6 @@ import java.util.Optional;
 import no.acntech.model.SecurityUser;
 import no.acntech.model.UserRole;
 import no.acntech.service.HttpRequestService;
-import no.acntech.service.SecurityService;
 import no.acntech.service.TokenService;
 
 import static no.acntech.service.TokenService.ROLE_CLAIM_NAME;
@@ -41,16 +40,13 @@ public class TokenAuthenticationConverter implements AuthenticationConverter {
 
     private final RequestMatcher requiresAuthenticationRequestMatcher;
     private final HttpRequestService httpRequestService;
-    private final SecurityService securityService;
     private final TokenService tokenService;
 
     public TokenAuthenticationConverter(final RequestMatcher requiresAuthenticationRequestMatcher,
                                         final HttpRequestService httpRequestService,
-                                        final SecurityService securityService,
                                         final TokenService tokenService) {
         this.requiresAuthenticationRequestMatcher = requiresAuthenticationRequestMatcher;
         this.httpRequestService = httpRequestService;
-        this.securityService = securityService;
         this.tokenService = tokenService;
     }
 
@@ -77,7 +73,7 @@ public class TokenAuthenticationConverter implements AuthenticationConverter {
         final var userRoles = roles.stream()
                 .map(UserRole::valueOf)
                 .toList();
-        final var authorities = securityService.getAuthorities(userRoles);
+        final var authorities = RoleConverter.getAuthorities(userRoles);
         final var principal = SecurityUser.builder()
                 .username(subject)
                 .authorities(authorities)

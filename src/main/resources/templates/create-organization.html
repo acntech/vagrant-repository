@@ -52,6 +52,13 @@
                 </div>
             </div>
             <div class="row mb-3">
+                <div class="form-group col">
+                    <input id="private" class="form-check-input" th:type="checkbox" th:field="*{private}">
+                    <label for="private" class="form-check-label"
+                           th:text="#{create-organization.page.form.private.label}"></label>
+                </div>
+            </div>
+            <div class="row mb-3">
                 <div class="form-group col-4">
                     <button id="button" th:type="submit" class="btn btn-primary w-100"
                             th:text="#{create-organization.page.form.button}"></button>

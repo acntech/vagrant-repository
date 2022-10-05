@@ -15,10 +15,13 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import no.acntech.annotation.Permission;
 import no.acntech.exception.ItemNotFoundException;
 import no.acntech.exception.SaveItemFailedException;
+import no.acntech.model.Action;
 import no.acntech.model.Box;
 import no.acntech.model.CreateBox;
+import no.acntech.model.Resource;
 import no.acntech.model.UpdateBox;
 import no.acntech.repository.BoxRepository;
 
@@ -39,6 +42,7 @@ public class BoxService {
         this.boxRepository = boxRepository;
     }
 
+    @Permission(action = Action.READ, resource = Resource.BOXES)
     public Box getBox(@NotBlank final String username,
                       @NotBlank final String name) {
         final var tag = username + "/" + name;
@@ -53,6 +57,7 @@ public class BoxService {
         }
     }
 
+    @Permission(action = Action.READ, resource = Resource.BOXES)
     public List<Box> findBoxes(@NotBlank final String username) {
         LOGGER.info("Find boxes for {}", username);
         final var organization = organizationService.getOrganization(username);
@@ -63,6 +68,7 @@ public class BoxService {
                 .collect(Collectors.toList());
     }
 
+    @Permission(action = Action.CREATE, resource = Resource.BOXES)
     @Transactional
     public void createBox(@Valid @NotNull final CreateBox createBox) {
         final var tag = createBox.username() + "/" + createBox.name();
@@ -79,6 +85,7 @@ public class BoxService {
         }
     }
 
+    @Permission(action = Action.UPDATE, resource = Resource.BOXES)
     @Transactional
     public void updateBox(@NotBlank final String username,
                           @NotBlank final String name,
@@ -98,6 +105,7 @@ public class BoxService {
         }
     }
 
+    @Permission(action = Action.DELETE, resource = Resource.BOXES)
     @Transactional
     public void deleteBox(@NotBlank final String username,
                           @NotBlank final String name) {

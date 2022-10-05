@@ -29,7 +29,7 @@ public class AuthenticateResource {
     }
 
     @PostMapping
-    public ResponseEntity<Token> createToken(@Valid @NotNull @RequestBody final Login login) {
+    public ResponseEntity<Token> createToken(@RequestBody @Valid @NotNull final Login login) {
         final var token = authenticateService.createToken(login);
         return ResponseEntity.ok(token);
     }

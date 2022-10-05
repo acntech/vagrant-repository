@@ -1,6 +1,6 @@
 package no.acntech.model;
 
-public enum OrganizationRole {
+public enum MemberRole {
 
     MEMBER,
     OWNER

@@ -11,10 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import no.acntech.model.AddOrganizationMember;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import no.acntech.model.AddMember;
 import no.acntech.model.CreateOrganization;
 import no.acntech.model.Organization;
 import no.acntech.model.UpdateOrganization;
+import no.acntech.service.MemberService;
 import no.acntech.service.OrganizationService;
 import no.acntech.service.SecurityService;
 import no.acntech.util.UrlBuilder;
@@ -25,11 +29,14 @@ public class OrganizationResource {
 
     private final SecurityService securityService;
     private final OrganizationService organizationService;
+    private final MemberService memberService;
 
     public OrganizationResource(final SecurityService securityService,
-                                final OrganizationService organizationService) {
+                                final OrganizationService organizationService,
+                                final MemberService memberService) {
         this.securityService = securityService;
         this.organizationService = organizationService;
+        this.memberService = memberService;
     }
 
     @GetMapping(path = "{name}")
@@ -39,7 +46,7 @@ public class OrganizationResource {
     }
 
     @PostMapping
-    public ResponseEntity<Organization> createOrganization(@RequestBody final CreateOrganization.Request createOrganizationRequest,
+    public ResponseEntity<Organization> createOrganization(@RequestBody @Valid @NotNull final CreateOrganization.Request createOrganizationRequest,
                                                            final UriComponentsBuilder uriBuilder) {
         final var createOrganization = createOrganizationRequest.organization();
         final var username = securityService.getUsername();
@@ -50,7 +57,7 @@ public class OrganizationResource {
 
     @PutMapping(path = "{name}")
     public ResponseEntity<Organization> updateOrganization(@PathVariable(name = "name") final String name,
-                                                           @RequestBody final UpdateOrganization.Request updateOrganizationRequest) {
+                                                           @RequestBody @Valid @NotNull final UpdateOrganization.Request updateOrganizationRequest) {
         final var updateOrganization = updateOrganizationRequest.organization();
         organizationService.updateOrganization(name, updateOrganization);
         return ResponseEntity.ok().build();
@@ -64,18 +71,18 @@ public class OrganizationResource {
 
     @PostMapping(path = "{name}/user")
     public ResponseEntity<Organization> addOrganizationMember(@PathVariable(name = "name") final String name,
-                                                              @RequestBody final AddOrganizationMember.Request addOrganizationMemberRequest,
+                                                              @RequestBody @Valid @NotNull final AddMember.Request addMemberRequest,
                                                               final UriComponentsBuilder uriBuilder) {
-        final var addOrganizationMember = addOrganizationMemberRequest.organization();
-        final var uri = UrlBuilder.organizationMemberUri(uriBuilder, name, addOrganizationMember.username());
-        organizationService.addOrganizationMember(name, addOrganizationMember);
+        final var addMember = addMemberRequest.user();
+        final var uri = UrlBuilder.organizationMemberUri(uriBuilder, name, addMember.username());
+        memberService.addMember(name, addMember);
         return ResponseEntity.created(uri).build();
     }
 
     @DeleteMapping(path = "{name}/user/{username}")
     public ResponseEntity<Organization> removeOrganizationMember(@PathVariable(name = "name") final String name,
                                                                  @PathVariable(name = "username") final String username) {
-        organizationService.removeOrganizationMember(name, username);
+        memberService.removeMember(name, username);
         return ResponseEntity.ok().build();
     }
 }

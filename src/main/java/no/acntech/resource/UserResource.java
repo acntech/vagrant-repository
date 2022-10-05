@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import no.acntech.model.CreateUser;
 import no.acntech.model.UpdateUser;
 import no.acntech.model.User;
@@ -34,7 +37,7 @@ public class UserResource {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody final CreateUser.Request createUserRequest,
+    public ResponseEntity<Void> createUser(@RequestBody @Valid @NotNull final CreateUser.Request createUserRequest,
                                            final UriComponentsBuilder uriBuilder) {
         final var createUser = createUserRequest.user();
         userService.createUser(createUser);
@@ -44,7 +47,7 @@ public class UserResource {
 
     @PutMapping(path = "{username}")
     public ResponseEntity<Void> updateUser(@PathVariable(name = "username") final String username,
-                                           @RequestBody final UpdateUser.Request updateUserRequest) {
+                                           @RequestBody @Valid @NotNull final UpdateUser.Request updateUserRequest) {
         final var updateUser = updateUserRequest.user();
         userService.updateUser(username, updateUser);
         return ResponseEntity.ok().build();
