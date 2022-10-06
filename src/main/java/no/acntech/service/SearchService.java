@@ -49,7 +49,7 @@ public class SearchService {
     }
 
     public List<Box> searchBoxes(final String q,
-                                 final SearchProviderType provider, // TODO Handle
+                                 final SearchProviderType provider, // TODO: Handle
                                  @NotNull final SearchSort sort,
                                  @NotNull final SearchOrder order,
                                  @NotNull @Min(1) final Integer limit,

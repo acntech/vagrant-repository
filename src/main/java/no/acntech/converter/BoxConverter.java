@@ -26,7 +26,7 @@ public class BoxConverter implements Converter<Pair<BoxesRecord, Organization>, 
                 boxesRecord.getName(),
                 organization.name(),
                 boxesRecord.getDescription(),
-                null, // TODO: Handle
+                null, //  // TODO: Handle HTML conversion
                 null, // TODO: Handle
                 boxesRecord.getPrivate(),
                 boxesRecord.getDownloads(),

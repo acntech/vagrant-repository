@@ -21,7 +21,7 @@ public class UploadConverter implements Converter<UploadsRecord, Upload> {
                 source.getId(),
                 source.getUid(),
                 null, // Is set in resource
-                null, // TODO: Handle
+                null, // TODO: Needed?
                 source.getFileSize(),
                 source.getChecksum(),
                 Algorithm.valueOf(source.getChecksumType()),

@@ -71,7 +71,7 @@ public class UserController {
             return modelAndView;
         }
         userService.createUser(new CreateUser(form.getUsername(), form.getNewPassword(), UserRole.USER));
-        redirectAttributes.addAttribute("register", "success");
+        redirectAttributes.addAttribute("register", "success"); // TODO: Handle redirect params
         return new ModelAndView("redirect:/login");
     }
 

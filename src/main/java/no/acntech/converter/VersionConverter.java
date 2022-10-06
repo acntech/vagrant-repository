@@ -20,8 +20,8 @@ public class VersionConverter implements Converter<VersionsRecord, Version> {
                 source.getId(),
                 source.getName(),
                 source.getName(),
+                null, // TODO: Handle HTML conversion
                 source.getDescription(),
-                null, // TODO: What is this?
                 VersionStatus.valueOf(source.getStatus()),
                 source.getBoxId(),
                 null, // Is set in resource

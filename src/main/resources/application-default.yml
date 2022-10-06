@@ -30,13 +30,21 @@ spring:
       max-file-size: 10GB
       max-request-size: 10GB
       file-size-threshold: 2KB
+  # SQL
+  sql:
+    init:
+      platform: postgres
+  # Datasource
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/vagrant_repository
     username: vagrant_repository
     password: 64nd4lf
+  # Flyway
+  flyway:
+    locations: classpath:db/vendor/${spring.sql.init.platform}
 
-# Actuator
+### Actuator ###
 management:
   endpoints:
     enabled-by-default: true
