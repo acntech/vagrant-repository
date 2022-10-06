@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/anonymous}">
+<head>
+    <title th:text="#{site.title}"></title>
+</head>
+<body>
+<main layout:fragment="content" class="container mt-4" role="main">
+    <section class="content content-error">
+        <h3 class="mb-4" th:text="#{error.page.title}"></h3>
+        <div>
+            <table>
+                <tr>
+                    <td th:text="#{error.page.table.timestamp}"></td>
+                    <td th:text="${timestamp}"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{error.page.table.path}"></td>
+                    <td th:text="${path}"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{error.page.table.error}"></td>
+                    <td th:text="${error}"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{error.page.table.status}"></td>
+                    <td th:text="${status}"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{error.page.table.message}"></td>
+                    <td th:text="${message}"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{error.page.table.exception}"></td>
+                    <td th:text="${exception}"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{error.page.table.trace}"></td>
+                    <td>
+                        <pre th:text="${trace}"></pre>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

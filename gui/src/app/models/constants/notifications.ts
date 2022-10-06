@@ -1,7 +1,0 @@
-export enum NotificationType {
-    GENERIC_INFO,
-    GENERIC_WARNING,
-    GENERIC_ERROR,
-    GENERIC_SUCCESS,
-    GENERIC_IDEMPOTENT_WARNING
-}

@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  repository:
+    build:
+      context: .
+      args:
+        - BUILD_REVISION=UNKNOWN
+    image: acntechie/vagrant-repository:latest
+    container_name: acntech.vagrant.repository
+    ports:
+      - "8080:8080"
+    networks:
+      - repository
+
+networks:
+  repository:
+    name: acntech.vagrant.repository

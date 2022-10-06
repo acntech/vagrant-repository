@@ -1,35 +1,24 @@
-version: '3.5'
+version: '3.7'
 
 services:
-  gui:
-    build: gui
-    image: acntechie/vagrant-repository-gui:latest
-    container_name: vagrant-repository-gui
-    hostname: gui
-    domainname: vagrant-repository.local
-    depends_on:
-      - api
+  postgres:
+    image: postgres
+    container_name: acntech.postgres
     environment:
-      - API_URL=http://api:8080
+      - POSTGRES_DB=vagrant_repository
+      - POSTGRES_USER=vagrant_repository
+      - POSTGRES_PASSWORD=64nd4lf
     ports:
-      - 80:80
+      - "5433:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
     networks:
-      - vagrant_repository
+      - postgres
 
-  api:
-    build:
-      context: api
-      args:
-        - BUILD_REVISION=UNKNOWN
-    image: acntechie/vagrant-repository-api:latest
-    container_name: vagrant-repository-api
-    hostname: api
-    domainname: vagrant-repository.local
-    ports:
-      - 8080:8080
-    networks:
-      - vagrant_repository
+volumes:
+  postgres:
+    name: acntech.postgres
 
 networks:
-  vagrant_repository:
-    name: vagrant-repository
+  postgres:
+    name: acntech.postgres

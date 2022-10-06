@@ -1,0 +1,67 @@
+#########################
+# ACNTECH Configuration #
+#########################
+acntech:
+  keys:
+    public-key: classpath:public.pem
+    private-key: classpath:private.pem
+  security:
+    admin-user:
+      username: admin
+    system-user:
+      username: system
+    cookie:
+      name: ACNTECH_SESSION
+      max-age: -1 # -1 = no expiry
+      http-only: true # Having this as false is a big security vulnerability
+  storage:
+    file-name: image.box
+    upload-path: /tmp/vagrant-repository/uploads
+    overwrite-existing-files: true
+
+########################
+# SPRING Configuration #
+########################
+spring:
+  # Servlet
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10GB
+      max-request-size: 10GB
+      file-size-threshold: 2KB
+  # SQL
+  sql:
+    init:
+      platform: postgres
+  # Datasource
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/vagrant_repository
+    username: vagrant_repository
+    password: 64nd4lf
+  # Flyway
+  flyway:
+    locations: classpath:db/vendor/${spring.sql.init.platform}
+
+### Actuator ###
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: /management
+      exposure:
+        include: "*"
+
+### Server ###
+server:
+  error:
+    include-stacktrace: ALWAYS
+
+# Logging
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    org.jooq.Constants: WARN
+    no.acntech: DEBUG
