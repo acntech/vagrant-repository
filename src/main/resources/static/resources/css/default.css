@@ -65,3 +65,13 @@
 .box-breadcrumb a {
     text-decoration: none;
 }
+
+.code-block {
+    background-color: #e0e0e0;
+    border: 1px solid #b4b4b4;
+    padding: 1rem;
+}
+
+.code-block pre {
+    margin: 0;
+}

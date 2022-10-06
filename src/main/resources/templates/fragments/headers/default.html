@@ -54,26 +54,5 @@
             </ul>
         </div>
     </nav>
-    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog"
-         aria-labelledby="aboutModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"
-                        th:text="#{about.modal.title}"></h5>
-                    <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-                    </a>
-                </div>
-                <div class="modal-body">
-                    <p th:utext="#{about.modal.text.about}"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                            th:text="#{about.modal.close-button}"></button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div th:replace="fragments/modal/about :: about"></div>
 </header>

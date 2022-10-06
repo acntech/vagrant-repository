@@ -1,0 +1,23 @@
+<div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog" aria-labelledby="deleteItemModalLabel"
+     aria-hidden="true" th:fragment="delete-item" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="${title}"></h5>
+                <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+                </a>
+            </div>
+            <div class="modal-body">
+                <p th:utext="${text}"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirm-button" class="btn btn-danger"
+                        onclick="closeModalAndSubmitForm('#deleteItemModal', '#deleteItemForm')"
+                        th:text="#{delete-item.modal.confirm-button}"></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        th:text="#{delete-item.modal.cancel-button}"></button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -46,7 +46,6 @@ public class ProviderRepository {
         try (final var select = context.selectFrom(PROVIDERS)) {
             return select
                     .where(PROVIDERS.VERSION_ID.eq(versionId))
-                    // TODO .and(PROVIDERS.STATUS.eq(ProviderStatus.VERIFIED.name()))
                     .fetch();
         }
     }

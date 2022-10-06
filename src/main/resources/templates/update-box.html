@@ -99,30 +99,7 @@
           th:action="@{/box/{username}/{name}/delete(username=${box.username},name=${box.name})}">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
-    <div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog"
-         aria-labelledby="deleteItemModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" th:text="#{delete-box.modal.title}"></h5>
-                    <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-                    </a>
-                </div>
-                <div class="modal-body">
-                    <p th:utext="#{delete-box.modal.text.delete-warning}"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                            th:text="#{delete-box.modal.cancel-button}"></button>
-                    <button id="confirm-button" class="btn btn-danger"
-                            onclick="closeModalAndSubmitForm('#deleteItemModal', '#deleteItemForm')"
-                            th:text="#{delete-box.modal.confirm-button}"></button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div th:replace="fragments/modal/delete-item :: delete-item(title=#{delete-box.modal.title},text=#{delete-box.modal.text.delete-warning})"></div>
 </main>
 </body>
 </html>

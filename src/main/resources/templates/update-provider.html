@@ -127,7 +127,8 @@
                 </div>
                 <div class="col-4"></div>
                 <div class="col-4">
-                    <button id="delete-modal-button" class="btn btn-danger w-100" th:type="button" data-bs-toggle="modal"
+                    <button id="delete-modal-button" class="btn btn-danger w-100" th:type="button"
+                            data-bs-toggle="modal"
                             data-bs-target="#deleteItemModal"
                             th:text="#{update-provider.page.delete-button}">
                     </button>
@@ -140,30 +141,7 @@
           th:action="@{/{username}/boxes/{box}/versions/{version}/provider/{provider}/delete(username=${box.username},box=${box.name},version=${version.version},provider=${provider.name})}">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
-    <div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog"
-         aria-labelledby="deleteItemModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" th:text="#{delete-provider.modal.title}"></h5>
-                    <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-                    </a>
-                </div>
-                <div class="modal-body">
-                    <p th:utext="#{delete-provider.modal.text.delete-warning}"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                            th:text="#{delete-provider.modal.cancel-button}"></button>
-                    <button id="confirm-button" class="btn btn-danger"
-                            onclick="closeModalAndSubmitForm('#deleteItemModal', '#deleteItemForm')"
-                            th:text="#{delete-provider.modal.confirm-button}"></button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div th:replace="fragments/modal/delete-item :: delete-item(title=#{delete-provider.modal.title},text=#{delete-provider.modal.text.delete-warning})"></div>
 </main>
 </body>
 </html>

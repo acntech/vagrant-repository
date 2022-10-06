@@ -6,6 +6,19 @@ $(document).ready(() => {
             $("#externalUrlWrapper").removeClass("d-none");
         }
     });
+
+    $("#copy-vagrant-file").click(() => {
+        const text = $("#vagrant-file-code pre code").first().text();
+        navigator.clipboard.writeText(text)
+                .then(() => {
+                    console.log("YEAY")
+                    $(".copy-success").fadeIn().fadeOut(1000);
+                })
+                .catch(() => {
+                    console.log("NOOO")
+                    $(".copy-failed").fadeIn().fadeOut(1000);
+                });
+    });
 });
 
 const closeModalAndSubmitForm = (modal, form) => {

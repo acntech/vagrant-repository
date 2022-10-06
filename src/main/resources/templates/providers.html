@@ -63,6 +63,10 @@
                        th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}">
                         <span th:text="${version.version}"></span>
                     </a>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#vagrantFileModal"
+                       th:title="#{providers.page.text.vagrant-file}">
+                        <i class="fa-solid fa-file-lines text-muted fs-6 ms-2"></i>
+                    </a>
                 </h5>
                 <p class="text-muted mb-1" th:text="${version.descriptionHtml}"></p>
             </div>
@@ -140,6 +144,7 @@
           th:action="@{/{username}/boxes/{name}/version/{version}/revoke(username=${box.username},name=${box.name},version=${version.version})}">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
+    <div th:replace="fragments/modal/vagrant-file :: vagrant-file(username=${box.username},name=${box.name},version=${version.version})"></div>
 </main>
 </body>
 </html>
