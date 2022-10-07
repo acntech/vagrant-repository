@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -48,23 +48,25 @@ public class KeyService {
     }
 
     private RSAPublicKey publicKey() throws Exception {
-        byte[] publicKeyFileBytes = Files.readAllBytes(publicKeyFile.getFile().toPath());
-        String publicKey = new String(publicKeyFileBytes)
-                .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-                .replaceAll("\\s", "");
-        byte[] publicKeyBytes = Base64.getDecoder().decode(publicKey);
-        return (RSAPublicKey) rsaKeyFactory.generatePublic(new X509EncodedKeySpec(publicKeyBytes));
+        try (final var inputStream = publicKeyFile.getInputStream()) {
+            String publicKey = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8)
+                    .replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replace("-----END PUBLIC KEY-----", "")
+                    .replaceAll("\\s", "");
+            byte[] publicKeyBytes = Base64.getDecoder().decode(publicKey);
+            return (RSAPublicKey) rsaKeyFactory.generatePublic(new X509EncodedKeySpec(publicKeyBytes));
+        }
     }
 
     private RSAPrivateKey privateKey() throws Exception {
-        byte[] privateKeyFileBytes = Files.readAllBytes(privateKeyFile.getFile().toPath());
-        String privateKey = new String(privateKeyFileBytes)
-                .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
-                .replaceAll("\\s", "");
-        byte[] privateKeyBytes = Base64.getDecoder().decode(privateKey);
-        return (RSAPrivateKey) rsaKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyBytes));
+        try (final var inputStream = privateKeyFile.getInputStream()) {
+            String privateKey = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8)
+                    .replace("-----BEGIN PRIVATE KEY-----", "")
+                    .replace("-----END PRIVATE KEY-----", "")
+                    .replaceAll("\\s", "");
+            byte[] privateKeyBytes = Base64.getDecoder().decode(privateKey);
+            return (RSAPrivateKey) rsaKeyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyBytes));
+        }
 
     }
 }

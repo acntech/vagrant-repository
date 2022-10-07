@@ -30,9 +30,9 @@ springdoc:
     description: Repository application to manage Vagrant boxes
     version: v1
   api-docs:
-    path: /api/v1/docs
+    path: /api/docs
   swagger-ui:
-    path: /api/v1/docs.html
+    path: /api/docs.html
 
 ### Server ###
 server:

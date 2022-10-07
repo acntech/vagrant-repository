@@ -17,7 +17,7 @@ The application also has a GUI that can be used to manage hosted Vagrant boxes i
 ## Getting started
 The Vagrant Repository are available as a Docker container in the Docker Hub:
 
-* [vagrant-repository](https://hub.docker.com/r/acntechie/vagrant-repository)
+* [https://hub.docker.com/r/acntechie/vagrant-repository](https://hub.docker.com/r/acntechie/vagrant-repository)
 
 ### Database
 The application needs a database in order to run. PostgreSQL is the default database used.

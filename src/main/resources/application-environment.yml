@@ -3,8 +3,8 @@
 #########################
 acntech:
   keys:
-    public-key: ${ACNTECH_PUBLIC_KEY:classpath:public.pem}
-    private-key: ${ACNTECH_PRIVATE_KEY:classpath:private.pem}
+    public-key: ${ACNTECH_PUBLIC_KEY:classpath:keys/public.pem}
+    private-key: ${ACNTECH_PRIVATE_KEY:classpath:keys/private.pem}
   security:
     admin-user:
       username: ${ACNTECH_SECURITY_ADMIN_USER_USERNAME:admin}
@@ -71,4 +71,4 @@ logging:
     root: WARN
     org.springframework: ERROR
     org.jooq.Constants: WARN
-    no.acntech: WARN
+    no.acntech: INFO

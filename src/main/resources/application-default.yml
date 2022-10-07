@@ -3,8 +3,8 @@
 #########################
 acntech:
   keys:
-    public-key: classpath:public.pem
-    private-key: classpath:private.pem
+    public-key: classpath:keys/public.pem
+    private-key: classpath:keys/private.pem
   security:
     admin-user:
       username: admin
