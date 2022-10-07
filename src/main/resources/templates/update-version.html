@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{site.title}"></title>
+</head>
+<body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/organizations}" th:title="#{header.navbar.link.organizations}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.organizations}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}"
+               th:title="#{header.navbar.link.organization}">
+                <span th:text="${box.username}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{username}/boxes/{box}(username=${box.username},box=${box.name})}"
+               th:title="#{header.navbar.link.box}">
+                <span th:text="${box.name}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:href="@{/{username}/boxes/{box}/versions/{version}(username=${box.username},box=${box.name},version=${version.version})}"
+               th:title="#{header.navbar.link.version}">
+                <span th:text="${version.version}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container-fluid mt-4" role="main">
+    <section class="content content-version">
+        <h3 class="mb-4" th:text="#{update-version.page.title}"></h3>
+        <form class="mb-3"
+              th:action="@{/{username}/boxes/{name}/version/{version}(username=${box.username},name=${box.name},version=${version.version})}"
+              th:object="${formData}" th:method="post">
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <label for="version" class="form-check-label"
+                           th:text="#{update-version.page.form.version.label}"></label>
+                    <input id="version" class="form-control" th:type="text" th:field="*{version}"
+                           th:placeholder="#{update-version.page.form.version.placeholder}"
+                           th:classappend="${#fields.hasErrors('version')} ? 'is-invalid' : ''">
+                    <div id="nameFeedback" class="invalid-feedback">
+                        <span th:errors="*{version}"></span>
+                    </div>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col">
+                    <label for="description" class="form-check-label"
+                           th:text="#{update-version.page.form.description.label}"></label>
+                    <textarea id="description" class="form-control" th:field="*{description}"
+                              th:placeholder="#{update-version.page.form.description.placeholder}"
+                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                              th:rows="2"></textarea>
+                    <div id="descriptionFeedback" class="invalid-feedback">
+                        <span th:errors="*{description}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <button id="button" class="btn btn-primary w-100" th:type="submit"
+                            th:text="#{update-version.page.form.update-button}"></button>
+                </div>
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <button id="delete-modal-button" class="btn btn-danger w-100" th:type="button"
+                            data-bs-toggle="modal" data-bs-target="#deleteItemModal"
+                            th:text="#{update-version.page.delete-button}">
+                    </button>
+                </div>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </section>
+    <form id="deleteItemForm" class="mb-3" th:method="post"
+          th:action="@{/{username}/boxes/{box}/version/{version}/delete(username=${box.username},box=${box.name},version=${version.version})}">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    </form>
+    <div th:replace="fragments/modal/delete-item :: delete-item(title=#{delete-version.modal.title},text=#{delete-version.modal.text.delete-warning})"></div>
+</main>
+</body>
+</html>

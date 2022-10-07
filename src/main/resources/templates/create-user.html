@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{site.title}"></title>
+</head>
+<body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/users}" th:title="#{header.navbar.link.users}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.users}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container-fluid mt-4" role="main">
+    <section class="content content-user">
+        <h3 class="mb-4" th:text="#{create-user.page.title}"></h3>
+        <form th:action="@{/user}" th:object="${formData}" method="post"
+              class="mb-3">
+            <div class="form-group mb-3">
+                <label for="username" class="form-check-label"
+                       th:text="#{create-user.page.form.username.label}"></label>
+                <input type="text" id="username" th:field="*{username}" class="form-control"
+                       th:placeholder="#{create-user.page.form.username.placeholder}"
+                       th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''">
+                <div id="usernameFeedback" class="invalid-feedback">
+                    <span th:errors="*{username}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <label for="newPassword" class="form-check-label"
+                       th:text="#{create-user.page.form.new-password.label}"></label>
+                <input type="password" id="newPassword" th:field="*{newPassword}" class="form-control"
+                       th:placeholder="#{create-user.page.form.new-password.placeholder}"
+                       th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid' : ''">
+                <div id="newPasswordFeedback" class="invalid-feedback">
+                    <span th:errors="*{newPassword}"></span>
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                <label for="confirmPassword" class="form-check-label"
+                       th:text="#{create-user.page.form.confirm-password.label}"></label>
+                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control"
+                       th:placeholder="#{create-user.page.form.confirm-password.placeholder}"
+                       th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''">
+                <div id="confirmPasswordFeedback" class="invalid-feedback">
+                    <span th:errors="*{confirmPassword}"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-6">
+                    <label for="role" class="form-check-label"
+                           th:text="#{create-user.page.form.role.label}"></label>
+                    <select id="role" class="form-select" th:field="*{role}"
+                            th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''">
+                        <option th:each="role : ${roles}"
+                                th:value="${role.name}" th:text="${role.name}"></option>
+                    </select>
+                    <div id="roleFeedback" class="invalid-feedback">
+                        <span th:errors="*{role}"></span>
+                    </div>
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <button type="submit" class="btn btn-primary w-100"
+                            th:text="#{create-user.page.form.create-button}"></button>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </section>
+</main>
+</body>
+</html>

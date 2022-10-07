@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{site.title}"></title>
+</head>
+<body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/organizations}" th:title="#{header.navbar.link.organizations}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.organizations}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container mt-4" role="main">
+    <section class="content content-home">
+        <div class="row mb-4">
+            <div class="col">
+                <div class="p-4 border bg-light">
+                    <a th:href="@{/organizations}">
+                        <span th:text="#{index.page.link.goto-organizations}"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-2 border bg-light">
+                    <form class="mb-3" th:action="@{/search}" th:object="${formData}" th:method="post">
+                        <div class="form-group row mb-3">
+                            <div class="col-2"></div>
+                            <div class="col-8">
+                                <label for="query" class="form-check-label"
+                                       th:text="#{index.page.form.query.label}"></label>
+                                <div class="input-group">
+                                    <input id="query" class="form-control" th:type="text" th:field="*{q}"
+                                           th:placeholder="#{index.page.form.query.placeholder}"
+                                           th:classappend="${#fields.hasErrors('q')} ? 'is-invalid' : ''">
+                                    <button class="btn btn-outline-secondary" th:type="submit"
+                                            th:title="#{index.page.form.search-button}">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                </div>
+                                <div id="nameFeedback" class="invalid-feedback">
+                                    <span th:errors="*{q}"></span>
+                                </div>
+                            </div>
+                            <div class="col-2"></div>
+                        </div>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

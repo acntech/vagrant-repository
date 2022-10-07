@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{site.title}"></title>
+</head>
+<body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/organizations}" th:title="#{header.navbar.link.organizations}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.organizations}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container mt-4" role="main">
+    <section class="content content-search">
+        <div class="row mb-4">
+            <div class="col">
+                <div class="p-3 border bg-light">
+                    <h3 class="mb-4" th:text="#{search.page.text.search-for-boxes}"></h3>
+                    <form class="mb-3" th:action="@{/}" th:object="${formData}" th:method="post">
+                        <div class="form-group row mb-3">
+                            <div class="col-2"></div>
+                            <div class="col-8">
+                                <label for="query" class="form-check-label"
+                                       th:text="#{search.page.form.query.label}"></label>
+                                <input id="query" class="form-control" th:type="text" th:field="*{q}"
+                                       th:placeholder="#{search.page.form.query.placeholder}"
+                                       th:classappend="${#fields.hasErrors('q')} ? 'is-invalid' : ''">
+                                <div id="nameFeedback" class="invalid-feedback">
+                                    <span th:errors="*{q}"></span>
+                                </div>
+                            </div>
+                            <div class="col-2"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-8"></div>
+                            <div class="form-group col-2">
+                                <button id="button" class="btn btn-primary w-100" th:type="submit"
+                                        th:text="#{search.page.form.search-button}"></button>
+                            </div>
+                            <div class="col-2"></div>
+                        </div>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${boxes != null}">
+            <div class="col">
+                <div class="list-group" th:each="box : ${boxes}">
+                    <a th:href="@{/{organization}/boxes/{box}(organization=${box.username},box=${box.name})}"
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <div>
+                                <h5 class="mb-1">
+                                    <span th:text="${box.username} + '/' + ${box.name}"></span>
+                                    <i class="fa-solid fa-lock text-muted fs-6 ms-2" th:if="${box.isPrivate}"></i>
+                                </h5>
+                                <p class="text-muted mb-1" th:text="${box.descriptionShort}"></p>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block mb-2"
+                                       th:text="${#temporals.format(box.created, 'yyyy-MM-dd')}"></small>
+                                <p class="text-end mb-0">
+                                    <span class="badge bg-secondary rounded-pill" th:text="${box.downloads}"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div th:if="${#lists.isEmpty(boxes)}" class="alert alert-warning mt-3" role="alert">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                    <span th:text="#{search.page.alert.no-boxes-found}"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

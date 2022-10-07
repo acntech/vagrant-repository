@@ -1,0 +1,41 @@
+########################
+# SPRING Configuration #
+########################
+spring:
+  # Application
+  application:
+    name: vagrant-repository
+  # Messages
+  messages:
+    basename: locale/messages
+  # Jackson
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+    default-property-inclusion: NON_NULL
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    deserialization:
+      ADJUST_DATES_TO_CONTEXT_TIME_ZONE: false
+  # JMX
+  jmx:
+    enabled: false
+  # AOP
+  aop:
+    proxy-target-class: true
+
+### SpringDoc ###
+springdoc:
+  info:
+    title: AcnTech Vagrant Repository
+    description: Repository application to manage Vagrant boxes
+    version: v1
+  api-docs:
+    path: /api/docs
+  swagger-ui:
+    path: /api/docs.html
+
+### Server ###
+server:
+  error:
+    whitelabel:
+      enabled: false

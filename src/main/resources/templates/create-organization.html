@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{site.title}"></title>
+</head>
+<body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/organizations}" th:title="#{header.navbar.link.organizations}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.organizations}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container-fluid mt-4" role="main">
+    <section class="content content-organization">
+        <h3 class="mb-4" th:text="#{create-organization.page.title}"></h3>
+        <form th:action="@{/organization}" th:object="${formData}" th:method="post" class="mb-3">
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <label for="name" class="form-check-label"
+                           th:text="#{create-organization.page.form.name.label}"></label>
+                    <input id="name" th:type="text" th:field="*{name}" class="form-control"
+                           th:placeholder="#{create-organization.page.form.name.placeholder}"
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                    <div id="nameFeedback" class="invalid-feedback">
+                        <span th:errors="*{name}"></span>
+                    </div>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col">
+                    <label for="description" class="form-check-label"
+                           th:text="#{create-organization.page.form.description.label}"></label>
+                    <textarea id="description" class="form-control" th:field="*{description}"
+                              th:placeholder="#{create-organization.page.form.description.placeholder}"
+                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                              th:rows="2"></textarea>
+                    <div id="descriptionFeedback" class="invalid-feedback">
+                        <span th:errors="*{description}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col">
+                    <input id="private" class="form-check-input" th:type="checkbox" th:field="*{private}">
+                    <label for="private" class="form-check-label"
+                           th:text="#{create-organization.page.form.private.label}"></label>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <button id="button" th:type="submit" class="btn btn-primary w-100"
+                            th:text="#{create-organization.page.form.button}"></button>
+                </div>
+                <div class="col-8"></div>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>
