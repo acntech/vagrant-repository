@@ -114,7 +114,6 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc.version}</version>
         </dependency>
 
         <!-- Thymeleaf -->
@@ -173,6 +172,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
             <!-- WebJars -->
             <dependency>
                 <groupId>org.webjars</groupId>
@@ -254,7 +258,7 @@
                 <version>${jooq-codegen-maven.version}</version>
                 <executions>
                     <execution>
-                        <id>generate-postgres</id>
+                        <id>generate-meta-model</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
