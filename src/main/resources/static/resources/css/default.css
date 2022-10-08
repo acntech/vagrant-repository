@@ -2,6 +2,11 @@
     display: none !important;
 }
 
+.content-register {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
 .content-login {
     max-width: 300px;
     margin: 0 auto;

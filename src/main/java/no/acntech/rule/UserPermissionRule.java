@@ -41,7 +41,7 @@ public class UserPermissionRule extends MembershipAwarePermissionRule {
                                        @NonNull final Authentication authentication,
                                        @NonNull final Object[] arguments) {
         if (arguments.length > 0 && arguments[0] instanceof final CreateUser createUser) {
-            return isAdmin() || createUser.role() != UserRole.ADMIN;
+            return isAnonymous() || isAdmin() || createUser.role() != UserRole.ADMIN;
         } else {
             return false;
         }

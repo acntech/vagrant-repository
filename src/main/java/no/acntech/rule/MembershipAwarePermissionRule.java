@@ -30,6 +30,10 @@ public abstract class MembershipAwarePermissionRule implements CrudPermissionRul
         return securityService.hasRole(UserRole.USER);
     }
 
+    protected boolean isAnonymous() {
+        return securityService.isAnonymous();
+    }
+
     protected boolean isMember(@NonNull final String name) {
         final var username = securityService.getUsername();
         return membershipService.hasAnyRoles(name, username, MemberRole.MEMBER);
