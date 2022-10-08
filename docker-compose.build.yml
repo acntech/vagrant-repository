@@ -1,0 +1,7 @@
+version: '3.7'
+
+services:
+  repository:
+    build:
+      context: .
+    image: acntechie/vagrant-repository:latest

@@ -1,0 +1,82 @@
+.navbar .dropdown-toggle::after {
+    display: none !important;
+}
+
+.content-register {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.content-login {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.content-password {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.content-user {
+    max-width: 30%;
+    margin: 0 auto;
+}
+
+.content-organization {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.content-organizations {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.content-box {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.content-boxes {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.content-version {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.content-versions {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.content-provider {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.content-providers {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.content-upload {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.box-breadcrumb a {
+    text-decoration: none;
+}
+
+.code-block {
+    background-color: #e0e0e0;
+    border: 1px solid #b4b4b4;
+    padding: 1rem;
+}
+
+.code-block pre {
+    margin: 0;
+}

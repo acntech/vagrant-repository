@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title th:text="#{site.title}"></title>
+</head>
+<body>
+<div layout:fragment="main-menu" class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item me-4">
+            <a class="nav-link" th:href="@{/}" th:title="#{header.navbar.link.home}">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/organizations}" th:title="#{header.navbar.link.organizations}">
+                <span class="text-lowercase" th:text="#{header.navbar.link.organizations}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{username}/boxes(username=${box.username})}"
+               th:title="#{header.navbar.link.organization}">
+                <span th:text="${box.username}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/{username}/boxes/{name}(username=${box.username},name=${box.name})}"
+               th:title="#{header.navbar.link.box}">
+                <span th:text="${box.name}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:href="@{/{username}/boxes/{name}/versions/{version}(username=${box.username},name=${box.name},version=${version.version})}"
+               th:title="#{header.navbar.link.version}">
+                <span th:text="${version.version}"></span>
+                <i class="fa-solid fa-caret-right"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:href="@{/{username}/boxes/{name}/versions/{version}/provider/{provider}(username=${box.username},name=${box.name},version=${version.version},provider=${provider.name})}"
+               th:title="#{header.navbar.link.provider}">
+                <span th:text="${provider.name}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<main layout:fragment="content" class="container-fluid mt-4" role="main">
+    <section class="content content-upload">
+        <h3 class="mb-4" th:text="#{upload.page.title}"></h3>
+        <form class="mb-3"
+              th:action="@{/{organization}/boxes/{box}/versions/{version}/providers/{provider}/upload/{uid}(organization=${box.username},box=${box.name},version=${version.version},provider=${provider.name},uid=${upload.uid})}"
+              enctype="multipart/form-data" th:method="post">
+            <div class="row mb-3">
+                <div class="form-group col">
+                    <input type="file" id="file" name="file" class="form-control-file">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-4">
+                    <button type="submit" class="btn btn-primary w-100"
+                            th:text="#{upload.page.form.button}"></button>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+        <div th:if="${verified != null && verified != true}" class="alert alert-danger" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            <span th:text="#{upload.page.alert.not-verified}"></span>
+        </div>
+    </section>
+</main>
+</body>
+</html>

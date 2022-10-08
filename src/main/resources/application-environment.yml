@@ -1,0 +1,74 @@
+#########################
+# ACNTECH Configuration #
+#########################
+acntech:
+  keys:
+    public-key: ${ACNTECH_PUBLIC_KEY:classpath:keys/public.pem}
+    private-key: ${ACNTECH_PRIVATE_KEY:classpath:keys/private.pem}
+  security:
+    admin-user:
+      username: ${ACNTECH_SECURITY_ADMIN_USER_USERNAME:admin}
+    system-user:
+      username: ${ACNTECH_SECURITY_SYSTEM_USER_USERNAME:system}
+    cookie:
+      name: ${ACNTECH_SECURITY_COOKIE_NAME:ACNTECH_SESSION}
+      max-age: ${ACNTECH_SECURITY_COOKIE_MAX_AGE:-1} # -1 = no expiry
+      http-only: ${ACNTECH_SECURITY_COOKIE_HTTP_ONLY:true} # Having this as false is a big security vulnerability
+  storage:
+    file-name: ${ACNTECH_STORAGE_FILE_NAME:image.box}
+    upload-path: ${ACNTECH_STORAGE_UPLOAD_PATH}
+    overwrite-existing-files: ${ACNTECH_STORAGE_OVERWRITE_EXITING_FILES:true}
+
+########################
+# SPRING Configuration #
+########################
+spring:
+  # Servlet
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE:10GB}
+      max-request-size: ${SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE:10GB}
+      file-size-threshold: ${SPRING_SERVLET_MULTIPART_FILE_SIZE_THRESHOLD:2KB}
+  # SQL
+  sql:
+    init:
+      platform: ${SPRING_SQL_INIT_PLATFORM:postgres}
+  # Datasource
+  datasource:
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  # Flyway
+  flyway:
+    locations: ${SPRING_FLYWAY_LOCATIONS:classpath:db/vendor/${spring.sql.init.platform}}
+
+### Actuator ###
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /management
+      exposure:
+        include:
+          - info
+          - health
+  endpoint:
+    health:
+      enabled: true
+    info:
+      enabled: true
+
+### Server ###
+server:
+  error:
+    include-stacktrace: NEVER
+
+# Logging
+logging:
+  level:
+    root: WARN
+    org.springframework: ERROR
+    org.jooq.Constants: WARN
+    no.acntech: INFO

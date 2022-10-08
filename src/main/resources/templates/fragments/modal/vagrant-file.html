@@ -1,0 +1,34 @@
+<div class="modal fade" id="vagrantFileModal" tabindex="-1" role="dialog" aria-labelledby="vagrantFileModalLabel"
+     aria-hidden="true" th:fragment="vagrant-file" xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="#{vagrant-file.modal.title}"></h5>
+                <a href="#" class="close link-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+                </a>
+            </div>
+            <div class="modal-body">
+                <div id="vagrant-file-code" class="code-block">
+<pre th:if="${version == null}" th:inline="text"><code>Vagrant.configure("2") do |config|
+    config.vm.box = "[[${username}]]/[[${name}]]"
+end</code></pre>
+<pre th:if="${version != null}" th:inline="text"><code>Vagrant.configure("2") do |config|
+    config.vm.box = "[[${username}]]/[[${name}]]"
+    config.vm.box_version = "[[${version}]]"
+end</code></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <span class="copy-success text-success me-3" style="display: none"
+                      th:text="#{vagrant-file.modal.text.copy-success}"></span>
+                <span class="copy-failed text-danger me-3" style="display: none"
+                      th:text="#{vagrant-file.modal.text.copy-failed}"></span>
+                <button type="button" id="copy-vagrant-file" class="btn btn-primary"
+                        th:text="#{vagrant-file.modal.button.copy}"></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        th:text="#{vagrant-file.modal.button.close}"></button>
+            </div>
+        </div>
+    </div>
+</div>
